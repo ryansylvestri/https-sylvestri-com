@@ -1,0 +1,8 @@
+# Robots.txt for sylvestri.com
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+
+Sitemap: https://sylvestri.com/sitemap.xml
