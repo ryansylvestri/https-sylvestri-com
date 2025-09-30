@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Prime commercial development opportunity in Walden, NY. 1,999 sq ft B3-zoned lot in the heart of downtown. High traffic, excellent visibility.">
+    <title>69 Main Street, Walden NY - Commercial Investment Opportunity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #0054A4 0%, #003872 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .agent-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #ED1C24;
+        }
+        
+        .agent-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .agent-info p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23e8f4f8" width="1200" height="600"/><text x="50%" y="50%" font-family="Arial" font-size="48" fill="%230054A4" text-anchor="middle" dominant-baseline="middle">PRIME COMMERCIAL LOT</text></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 8rem 2rem;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        .price {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ED1C24;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            margin-bottom: 1rem;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background: #ED1C24;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #c01419;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(237, 28, 36, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #0054A4;
+        }
+        
+        .btn-secondary:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Section Styling */
+        section {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            color: #0054A4;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: #ED1C24;
+        }
+        
+        /* Key Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: #ED1C24;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            color: #0054A4;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Property Details */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #0054A4;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #0054A4;
+            min-width: 120px;
+        }
+        
+        /* Location Section */
+        .location-content {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+        
+        .location-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .location-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .location-icon {
+            color: #ED1C24;
+            font-size: 1.5rem;
+        }
+        
+        /* Zoning Information */
+        .zoning-box {
+            background: linear-gradient(135deg, #0054A4 0%, #003872 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+        
+        .zoning-box h3 {
+            margin-bottom: 1rem;
+        }
+        
+        .zoning-uses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .zoning-uses li {
+            list-style: none;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .zoning-uses li::before {
+            content: '✓ ';
+            color: #ED1C24;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        /* Resources Section */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .resource-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-top: 4px solid #ED1C24;
+        }
+        
+        .resource-card h3 {
+            color: #0054A4;
+            margin-bottom: 1rem;
+        }
+        
+        .resource-card a {
+            color: #0054A4;
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+        
+        .resource-card a:hover {
+            color: #ED1C24;
+        }
+        
+        /* Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            height: 250px;
+            background: #e8f4f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #0054A4;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        /* Area Highlights */
+        .highlights-section {
+            background: #f8f9fa;
+            padding: 3rem 2rem;
+            border-radius: 10px;
+        }
+        
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .highlight-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .highlight-card h4 {
+            color: #0054A4;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .highlight-card ul {
+            list-style: none;
+        }
+        
+        .highlight-card li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .highlight-card li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ED1C24;
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, #0054A4 0%, #003872 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .contact-item a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .contact-item a:hover {
+            color: #ED1C24;
+        }
+        
+        /* Footer */
+        footer {
+            background: #222;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        footer a {
+            color: #ED1C24;
+            text-decoration: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .price {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .features-grid,
+            .details-grid,
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Investment Opportunity Box */
+        .investment-box {
+            background: #fff8e1;
+            border: 2px solid #ED1C24;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .investment-box h3 {
+            color: #ED1C24;
+            margin-bottom: 1rem;
+        }
+        
+        .investment-points {
+            list-style: none;
+        }
+        
+        .investment-points li {
+            padding: 0.5rem 0;
+            padding-left: 2rem;
+            position: relative;
+        }
+        
+        .investment-points li::before {
+            content: '💰';
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="https://ik.imagekit.io/ryanthebroadcaster/RSS-HeadShot-No-Background-2MB.png" alt="Ryan Sylvestri" class="agent-photo">
+                <div class="agent-info">
+                    <h3>Ryan Sylvestri, ABR®, PSA</h3>
+                    <p>Licensed Associate Real Estate Broker</p>
+                    <p>RE/MAX Town & Country</p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">📞 <strong>845-867-2646</strong></p>
+                <p>ryan@sylvestri.com</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>69 Main Street</h1>
+        <p class="hero-subtitle">Walden, NY 12586 | Orange County</p>
+        <div class="price">$49,999</div>
+        <p style="font-size: 1.2rem; margin-bottom: 2rem;">PRIME COMMERCIAL LOT • B3 ZONING • HIGH TRAFFIC LOCATION</p>
+        <div class="cta-buttons">
+            <a href="tel:845-867-2646" class="btn btn-primary">Call Now: 845-867-2646</a>
+            <a href="mailto:ryan@sylvestri.com?subject=Inquiry about 69 Main Street, Walden" class="btn btn-secondary">Request Information</a>
+        </div>
+    </section>
+
+    <!-- Key Features -->
+    <section class="container">
+        <h2 class="section-title">Investment Opportunity Highlights</h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📏</div>
+                <h3>1,999 Sq Ft</h3>
+                <p>Vacant Commercial Lot</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🏢</div>
+                <h3>B3 Zoning</h3>
+                <p>Central Business District</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🚗</div>
+                <h3>High Traffic</h3>
+                <p>Main Street / Route 52</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Prime Location</h3>
+                <p>Downtown Walden Core</p>
+            </div>
+        </div>
+
+        <div class="investment-box">
+            <h3>Why This Property Is A Smart Investment</h3>
+            <ul class="investment-points">
+                <li><strong>Exceptional Value:</strong> Priced at just $49,999 for downtown commercial land</li>
+                <li><strong>High Visibility:</strong> Located directly on Main Street (Route 52) with excellent exposure</li>
+                <li><strong>Growing Market:</strong> Walden is experiencing commercial revitalization with new businesses opening</li>
+                <li><strong>Flexible Zoning:</strong> B3 allows for a wide range of commercial uses</li>
+                <li><strong>Established Business District:</strong> Surrounded by successful, long-standing local businesses</li>
+                <li><strong>Near Major Attractions:</strong> Minutes from Angry Orchard Cider House (attracts thousands of tourists annually)</li>
+                <li><strong>Transportation Access:</strong> Close to Interstate 84 and major regional highways</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Property Details -->
+    <section class="container">
+        <h2 class="section-title">Property Details</h2>
+        
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Address:</span>
+                <span>69 Main Street, Walden, NY 12586</span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">County:</span>
+                <span>Orange County</span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Type:</span>
+                <span>Vacant Commercial Lot/Land</span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Lot Size:</span>
+                <span>1,999 Square Feet</span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Zoning:</span>
+                <span>B3 - Central Business District</span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">School District:</span>
+                <span>Valley Central School District</span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">MLS #:</span>
+                <span>846894</span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Listed By:</span>
+                <span>Keller Williams Realty</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Zoning Information -->
+    <section class="container">
+        <div class="zoning-box">
+            <h2 style="color: white;">B3 Central Business District Zoning</h2>
+            <p>The B3 zoning classification permits a wide range of commercial uses, making this an incredibly flexible investment opportunity. This property is located in the heart of Walden's business district with established foot traffic and vehicular exposure.</p>
+            
+            <h3 style="margin-top: 2rem; color: white;">Permitted Commercial Uses Include:</h3>
+            <div class="zoning-uses">
+                <ul>
+                    <li>Retail Stores</li>
+                    <li>Restaurants & Cafes</li>
+                    <li>Professional Offices</li>
+                    <li>Personal Services</li>
+                </ul>
+                <ul>
+                    <li>Banks & Financial Services</li>
+                    <li>Medical/Dental Offices</li>
+                    <li>Specialty Shops</li>
+                    <li>Entertainment Venues</li>
+                </ul>
+                <ul>
+                    <li>Art Galleries</li>
+                    <li>Studio Spaces</li>
+                    <li>And Many More!</li>
+                </ul>
+            </div>
+            
+            <p style="margin-top: 1.5rem; font-size: 0.9rem;"><em>* Specific uses subject to Village of Walden zoning ordinances and approval. Buyers should conduct their own due diligence regarding intended use.</em></p>
+        </div>
+    </section>
+
+    <!-- Location & Area -->
+    <section class="container">
+        <h2 class="section-title">Location & Area Information</h2>
+        
+        <div class="location-content">
+            <h3 style="color: #0054A4; margin-bottom: 1rem;">About Walden, NY</h3>
+            <p>Walden is a charming village in Orange County's Hudson Valley with a population of approximately 6,900 residents. The village has a rich history dating back to the early 18th century and features a vibrant downtown Main Street district with a mix of historic buildings, local businesses, and modern amenities.</p>
+            
+            <div class="location-highlights">
+                <div class="location-item">
+                    <span class="location-icon">🏘️</span>
+                    <div>
+                        <strong>Population:</strong> 6,947 (2025)<br>
+                        <strong>Median Household Income:</strong> $89,652
+                    </div>
+                </div>
+                
+                <div class="location-item">
+                    <span class="location-icon">🎓</span>
+                    <div>
+                        <strong>Schools:</strong> Valley Central School District<br>
+                        90% graduation rate at Valley Central High School
+                    </div>
+                </div>
+                
+                <div class="location-item">
+                    <span class="location-icon">🚙</span>
+                    <div>
+                        <strong>Highway Access:</strong><br>
+                        5 miles to Interstate 84<br>
+                        Route 52 & Route 208 intersection
+                    </div>
+                </div>
+                
+                <div class="location-item">
+                    <span class="location-icon">🏞️</span>
+                    <div>
+                        <strong>Attractions:</strong><br>
+                        Angry Orchard Cider House<br>
+                        Walden-Wallkill Rail Trail
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Area Highlights -->
+    <section class="container">
+        <div class="highlights-section">
+            <h2 class="section-title" style="color: #0054A4;">What Makes Walden Special</h2>
+            
+            <div class="highlights-grid">
+                <div class="highlight-card">
+                    <h4>🍎 Angry Orchard Nearby</h4>
+                    <p>The famous Angry Orchard Innovation Cider House is just minutes away, bringing thousands of tourists to the area annually. Visitors flock to tour the 60-acre property, enjoy tastings, and explore the Hudson Valley.</p>
+                    <ul>
+                        <li>Major tourist destination</li>
+                        <li>Year-round events</li>
+                        <li>Increased foot traffic</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-card">
+                    <h4>🏪 Established Business District</h4>
+                    <p>Main Street features long-standing businesses including:</p>
+                    <ul>
+                        <li>Millspaugh Furniture (decades in business)</li>
+                        <li>Sohn's Appliances (family-owned)</li>
+                        <li>Franco's Pizza</li>
+                        <li>Sweeter than Sweet Cupcakes</li>
+                        <li>Blue Fox Books</li>
+                        <li>Multiple restaurants & cafes</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-card">
+                    <h4>🛍️ Nearby Shopping</h4>
+                    <p>Convenient access to retail and services:</p>
+                    <ul>
+                        <li>Hannaford Shopping Plaza</li>
+                        <li>Local specialty shops</li>
+                        <li>Professional services</li>
+                        <li>Banking & financial services</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-card">
+                    <h4>🌳 Recreation & Parks</h4>
+                    <ul>
+                        <li>Wooster Grove Park</li>
+                        <li>James Olley Park</li>
+                        <li>Walden-Wallkill Rail Trail (3.22 miles)</li>
+                        <li>Wallkill River access</li>
+                        <li>Community events year-round</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-card">
+                    <h4>🚗 Transportation</h4>
+                    <ul>
+                        <li>Route 52 / Main Street (high traffic)</li>
+                        <li>Route 208 (north-south corridor)</li>
+                        <li>5 miles to Interstate 84</li>
+                        <li>Near NY 17K</li>
+                        <li>12 miles to Newburgh</li>
+                        <li>Metro-North access nearby</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-card">
+                    <h4>📚 Community Amenities</h4>
+                    <ul>
+                        <li>Josephine-Louise Public Library</li>
+                        <li>Most Precious Blood School</li>
+                        <li>Valley Central Schools</li>
+                        <li>Historic downtown</li>
+                        <li>Village events & festivals</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photo Gallery -->
+    <section class="container">
+        <h2 class="section-title">Property & Area Views</h2>
+        
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                📸 Street View<br>
+                Main Street / Route 52<br>
+                High Traffic Location
+            </div>
+            <div class="gallery-item">
+                🏢 Downtown Walden<br>
+                Established Business District<br>
+                Historic Main Street
+            </div>
+            <div class="gallery-item">
+                🍎 Nearby Attractions<br>
+                Angry Orchard Cider House<br>
+                Tourist Destination
+            </div>
+            <div class="gallery-item">
+                🛍️ Shopping Center<br>
+                Hannaford Plaza<br>
+                Nearby Amenities
+            </div>
+            <div class="gallery-item">
+                🌳 Parks & Recreation<br>
+                Walden-Wallkill Rail Trail<br>
+                Community Spaces
+            </div>
+            <div class="gallery-item">
+                🚗 Highway Access<br>
+                5 Miles to I-84<br>
+                Regional Connectivity
+            </div>
+        </div>
+        
+        <p style="text-align: center; margin-top: 2rem; color: #666;">
+            <em>Contact Ryan Sylvestri to schedule a property showing and area tour</em>
+        </p>
+    </section>
+
+    <!-- Resources -->
+    <section class="container">
+        <h2 class="section-title">Helpful Resources & Links</h2>
+        
+        <div class="resources-grid">
+            <div class="resource-card">
+                <h3>📋 Property Listings</h3>
+                <a href="https://www.zillow.com/homedetails/69-Main-St-Walden-NY-12586/2105986814_zpid/" target="_blank">View on Zillow →</a>
+                <a href="https://www.redfin.com/zipcode/12586" target="_blank">Walden Properties on Redfin →</a>
+                <a href="https://www.realtor.com/realestateagents/ryan-sylvestri_poughkeepsie_ny_2147438_592656033" target="_blank">Ryan on Realtor.com →</a>
+            </div>
+            
+            <div class="resource-card">
+                <h3>🏛️ Village Information</h3>
+                <a href="https://villageofwaldenny.gov/" target="_blank">Village of Walden Website →</a>
+                <a href="https://www.orangecountygov.com/439/Walden-Village" target="_blank">Orange County - Walden Info →</a>
+                <a href="https://ecode360.com/14617673" target="_blank">Walden Zoning Code →</a>
+            </div>
+            
+            <div class="resource-card">
+                <h3>🎓 Schools</h3>
+                <a href="https://www.vcsd.k12.ny.us/" target="_blank">Valley Central School District →</a>
+                <a href="https://www.vcsd.k12.ny.us/walden-elementary/" target="_blank">Walden Elementary School →</a>
+                <a href="https://www.usnews.com/education/best-high-schools/new-york/districts/valley-central-school-district/valley-central-high-school-13884" target="_blank">Valley Central High School Rankings →</a>
+            </div>
+            
+            <div class="resource-card">
+                <h3>🏞️ Attractions</h3>
+                <a href="https://www.angryorchard.com/visiting-the-orchard" target="_blank">Angry Orchard Cider House →</a>
+                <a href="https://www.iloveny.com/listing/angry-orchard-innovation-cider-house/43349/" target="_blank">Angry Orchard Tours & Info →</a>
+                <a href="https://villageofwaldenny.gov/" target="_blank">Walden Parks & Recreation →</a>
+            </div>
+            
+            <div class="resource-card">
+                <h3>📊 Demographics</h3>
+                <a href="https://datausa.io/profile/geo/walden-ny" target="_blank">Walden Demographics (Data USA) →</a>
+                <a href="https://worldpopulationreview.com/us-cities/new-york/walden" target="_blank">Population Statistics →</a>
+                <a href="https://www.census.gov/quickfacts/fact/table/waldenvillagenewyork/PST040223" target="_blank">US Census Data →</a>
+            </div>
+            
+            <div class="resource-card">
+                <h3>🗺️ Maps & Directions</h3>
+                <a href="https://www.google.com/maps/place/69+Main+St,+Walden,+NY+12586" target="_blank">Google Maps Location →</a>
+                <a href="https://www.google.com/maps/dir//69+Main+St,+Walden,+NY+12586" target="_blank">Get Directions →</a>
+                <a href="https://www.google.com/maps/@41.5562,-74.1891,3a,75y,90t/data=!3m6!1e1!3m4!1s" target="_blank">Street View →</a>
+            </div>
+            
+            <div class="resource-card">
+                <h3>💼 Economic Development</h3>
+                <a href="https://www.orangecountygov.com/" target="_blank">Orange County Government →</a>
+                <a href="https://villageofwaldenny.gov/businesses" target="_blank">Village Business Directory →</a>
+                <a href="https://www.yellowpages.com/walden-ny" target="_blank">Local Businesses →</a>
+            </div>
+            
+            <div class="resource-card">
+                <h3>📰 Local News</h3>
+                <a href="https://www.hudsonvalley360.com/" target="_blank">Hudson Valley News →</a>
+                <a href="https://www.recordonline.com/" target="_blank">Times Herald-Record →</a>
+                <a href="https://www.facebook.com/VillageOfWalden/" target="_blank">Village of Walden Facebook →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Explore This Opportunity?</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Contact Ryan Sylvestri today to schedule a showing or discuss this investment property</p>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span style="font-size: 2rem;">📱</span>
+                    <div>
+                        <p>Mobile</p>
+                        <a href="tel:845-867-2646">845-867-2646</a>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <span style="font-size: 2rem;">☎️</span>
+                    <div>
+                        <p>Office</p>
+                        <a href="tel:845-867-2450">845-867-2450</a>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <span style="font-size: 2rem;">✉️</span>
+                    <div>
+                        <p>Email</p>
+                        <a href="mailto:ryan@sylvestri.com">ryan@sylvestri.com</a>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <span style="font-size: 2rem;">🌐</span>
+                    <div>
+                        <p>Website</p>
+                        <a href="https://sylvestri.com" target="_blank">Sylvestri.com</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 3rem;">
+                <a href="tel:845-867-2646" class="btn btn-primary" style="font-size: 1.3rem; padding: 1.2rem 3rem;">
+                    Schedule Your Showing Today
+                </a>
+            </div>
+            
+            <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                <p style="font-size: 1.1rem; margin-bottom: 0.5rem;"><strong>Ryan Sylvestri, ABR®, PSA</strong></p>
+                <p>Licensed Associate Real Estate Broker</p>
+                <p>RE/MAX Town & Country</p>
+                <p style="margin-top: 1rem; opacity: 0.9;">Your Local Expert, Backed by Global Reach</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Ryan Sylvestri, ABR®, PSA | Licensed Associate Real Estate Broker</p>
+            <p>RE/MAX Town & Country | Fishkill, NY 12524</p>
+            <p style="margin-top: 1rem;">
+                <a href="https://sylvestri.com" target="_blank">Sylvestri.com</a> | 
+                <a href="https://facebook.com/sylvestrirealtor" target="_blank">Facebook</a> | 
+                <a href="https://instagram.com/ryansylvestri" target="_blank">Instagram</a> | 
+                <a href="https://linkedin.com/in/ryansylvestri" target="_blank">LinkedIn</a>
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                Information deemed reliable but not guaranteed. Buyers should conduct their own due diligence.<br>
+                All measurements, zoning, and specifications subject to verification.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add loading animation for images (if actual images are added)
+        window.addEventListener('load', function() {
+            console.log('Property marketing page loaded successfully');
+        });
+    </script>
+</body>
+</html>
