@@ -16,6 +16,7 @@
             font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             line-height: 1.6;
             color: #333;
+            padding-bottom: 80px; /* Space for sticky bottom bar */
         }
         
         /* Header Section */
@@ -61,32 +62,59 @@
         
         /* Hero Section */
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23e8f4f8" width="1200" height="600"/><text x="50%" y="50%" font-family="Arial" font-size="48" fill="%230054A4" text-anchor="middle" dominant-baseline="middle">PRIME COMMERCIAL LOT</text></svg>');
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(135deg, #0054A4 0%, #003872 100%);
             color: white;
-            padding: 8rem 2rem;
+            padding: 6rem 2rem 4rem;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.03)"/></svg>');
+            opacity: 0.5;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
         }
         
         .hero h1 {
             font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
         }
         
         .hero-subtitle {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             margin-bottom: 2rem;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            opacity: 0.95;
         }
         
         .price {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: bold;
             color: #ED1C24;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            margin-bottom: 1rem;
+            background: white;
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .price-label {
+            font-size: 1rem;
+            color: #666;
+            display: block;
+            margin-bottom: 0.5rem;
         }
         
         .cta-buttons {
@@ -431,11 +459,12 @@
             }
             
             .hero-subtitle {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
             }
             
             .price {
                 font-size: 2.5rem;
+                padding: 0.75rem 1.5rem;
             }
             
             .section-title {
@@ -446,6 +475,72 @@
             .details-grid,
             .resources-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .hero {
+                padding: 4rem 1rem 3rem;
+            }
+        }
+        
+        /* Listing Platform Link Hover Effects */
+        a[href*="zillow"]:hover,
+        a[href*="redfin"]:hover,
+        a[href*="trulia"]:hover,
+        a[href*="homes.com"]:hover,
+        a[href*="compass"]:hover,
+        a[href*="century21"]:hover,
+        a[href*="realtor.com"]:hover,
+        a[href*="remax"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(237, 28, 36, 0.3) !important;
+            border-color: #ED1C24 !important;
+        }
+        
+        /* Sticky Bottom Bar */
+        .sticky-bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #ED1C24 0%, #c01419 100%);
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .sticky-bottom-bar a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .sticky-bottom-bar a:hover {
+            background: white;
+            color: #ED1C24;
+            border-color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .sticky-bottom-bar {
+                font-size: 0.85rem;
+                padding: 0.75rem;
+            }
+            
+            .sticky-bottom-bar a {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
             }
         }
         
@@ -501,13 +596,47 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>69 Main Street</h1>
-        <p class="hero-subtitle">Walden, NY 12586 | Orange County</p>
-        <div class="price">$49,999</div>
-        <p style="font-size: 1.2rem; margin-bottom: 2rem;">PRIME COMMERCIAL LOT • B3 ZONING • HIGH TRAFFIC LOCATION</p>
-        <div class="cta-buttons">
-            <a href="tel:845-867-2646" class="btn btn-primary">Call Now: 845-867-2646</a>
-            <a href="mailto:ryan@sylvestri.com?subject=Inquiry about 69 Main Street, Walden" class="btn btn-secondary">Request Information</a>
+        <div class="hero-content">
+            <h1>69 Main Street</h1>
+            <p class="hero-subtitle">Walden, NY 12586 | Orange County</p>
+            <div class="price">
+                <span class="price-label">Listed Price</span>
+                $49,999
+            </div>
+            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; font-weight: 600;">PRIME COMMERCIAL LOT • B3 ZONING • HIGH TRAFFIC LOCATION</p>
+            
+            <!-- Listing Platform Links -->
+            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 10px; margin: 2rem auto; max-width: 800px;">
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; opacity: 0.9;">View This Property On:</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; font-size: 0.95rem;">
+                    <a href="https://www.zillow.com/homedetails/69-Main-St-Walden-NY-12586/2105986814_zpid/" target="_blank" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease;">
+                        📍 Zillow
+                    </a>
+                    <a href="https://www.redfin.com/zipcode/12586" target="_blank" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease;">
+                        📍 Redfin
+                    </a>
+                    <a href="https://www.homes.com/new-homes/for-sale/walden-ny/12586/" target="_blank" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease;">
+                        📍 Homes.com
+                    </a>
+                    <a href="https://www.trulia.com/NY/Walden/12586/" target="_blank" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease;">
+                        📍 Trulia
+                    </a>
+                    <a href="https://www.compass.com/listing/69-main-street-walden-ny-12586/1433532357326012529/" target="_blank" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease;">
+                        📍 Compass
+                    </a>
+                    <a href="https://www.century21.com/real-estate/walden-ny/LCNYWALDEN/" target="_blank" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease;">
+                        📍 Century 21
+                    </a>
+                    <a href="https://www.realtor.com/realestateandhomes-search/Walden_NY" target="_blank" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease;">
+                        📍 Realtor.com
+                    </a>
+                </div>
+            </div>
+            
+            <div class="cta-buttons">
+                <a href="tel:845-867-2646" class="btn btn-primary">Call Now: 845-867-2646</a>
+                <a href="mailto:ryan@sylvestri.com?subject=Inquiry about 69 Main Street, Walden" class="btn btn-secondary">Request Information</a>
+            </div>
         </div>
     </section>
 
@@ -558,6 +687,26 @@
     <!-- Property Details -->
     <section class="container">
         <h2 class="section-title">Property Details</h2>
+        
+        <!-- Listing Links Callout -->
+        <div style="background: linear-gradient(135deg, #ED1C24 0%, #c01419 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.5rem;">🔍 View Complete Listing Details</h3>
+            <p style="margin-bottom: 1.5rem;">See photos, virtual tours, and additional information on these platforms:</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+                <a href="https://www.zillow.com/homedetails/69-Main-St-Walden-NY-12586/2105986814_zpid/" target="_blank" style="color: white; text-decoration: none; padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease; font-weight: 600; border: 2px solid white;">
+                    Zillow Listing →
+                </a>
+                <a href="https://www.redfin.com/zipcode/12586" target="_blank" style="color: white; text-decoration: none; padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease; font-weight: 600; border: 2px solid white;">
+                    Redfin Listing →
+                </a>
+                <a href="https://www.homes.com/new-homes/for-sale/walden-ny/12586/" target="_blank" style="color: white; text-decoration: none; padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease; font-weight: 600; border: 2px solid white;">
+                    Homes.com Listing →
+                </a>
+                <a href="https://www.trulia.com/NY/Walden/12586/" target="_blank" style="color: white; text-decoration: none; padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease; font-weight: 600; border: 2px solid white;">
+                    Trulia Listing →
+                </a>
+            </div>
+        </div>
         
         <div class="details-grid">
             <div class="detail-item">
@@ -802,12 +951,59 @@
     <section class="container">
         <h2 class="section-title">Helpful Resources & Links</h2>
         
+        <!-- Featured Listing Platforms -->
+        <div style="background: #f8f9fa; padding: 2rem; border-radius: 10px; margin-bottom: 3rem;">
+            <h3 style="color: #0054A4; margin-bottom: 1.5rem; text-align: center; font-size: 1.8rem;">View This Property on Major Real Estate Platforms</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <a href="https://www.zillow.com/homedetails/69-Main-St-Walden-NY-12586/2105986814_zpid/" target="_blank" style="display: block; background: white; padding: 1.5rem; border-radius: 8px; text-decoration: none; color: #0054A4; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏠</div>
+                    <strong style="font-size: 1.1rem;">Zillow</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">MLS #846894</span>
+                </a>
+                <a href="https://www.redfin.com/zipcode/12586" target="_blank" style="display: block; background: white; padding: 1.5rem; border-radius: 8px; text-decoration: none; color: #0054A4; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔴</div>
+                    <strong style="font-size: 1.1rem;">Redfin</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">$49,999</span>
+                </a>
+                <a href="https://www.homes.com/new-homes/for-sale/walden-ny/12586/" target="_blank" style="display: block; background: white; padding: 1.5rem; border-radius: 8px; text-decoration: none; color: #0054A4; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏘️</div>
+                    <strong style="font-size: 1.1rem;">Homes.com</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Commercial Lot</span>
+                </a>
+                <a href="https://www.trulia.com/NY/Walden/12586/" target="_blank" style="display: block; background: white; padding: 1.5rem; border-radius: 8px; text-decoration: none; color: #0054A4; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔵</div>
+                    <strong style="font-size: 1.1rem;">Trulia</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Walden Listings</span>
+                </a>
+                <a href="https://www.compass.com/listing/69-main-street-walden-ny-12586/1433532357326012529/" target="_blank" style="display: block; background: white; padding: 1.5rem; border-radius: 8px; text-decoration: none; color: #0054A4; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🧭</div>
+                    <strong style="font-size: 1.1rem;">Compass</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">View Listing</span>
+                </a>
+                <a href="https://www.century21.com/real-estate/walden-ny/LCNYWALDEN/" target="_blank" style="display: block; background: white; padding: 1.5rem; border-radius: 8px; text-decoration: none; color: #0054A4; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏢</div>
+                    <strong style="font-size: 1.1rem;">Century 21</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">$49,999</span>
+                </a>
+                <a href="https://www.realtor.com/realestateandhomes-search/Walden_NY" target="_blank" style="display: block; background: white; padding: 1.5rem; border-radius: 8px; text-decoration: none; color: #0054A4; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏡</div>
+                    <strong style="font-size: 1.1rem;">Realtor.com</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Walden Search</span>
+                </a>
+                <a href="https://www.remax.com/homes-for-sale/ny/walden/zip/12586" target="_blank" style="display: block; background: white; padding: 1.5rem; border-radius: 8px; text-decoration: none; color: #0054A4; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔴</div>
+                    <strong style="font-size: 1.1rem;">RE/MAX</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">73 Listings</span>
+                </a>
+            </div>
+        </div>
+        
         <div class="resources-grid">
             <div class="resource-card">
-                <h3>📋 Property Listings</h3>
-                <a href="https://www.zillow.com/homedetails/69-Main-St-Walden-NY-12586/2105986814_zpid/" target="_blank">View on Zillow →</a>
-                <a href="https://www.redfin.com/zipcode/12586" target="_blank">Walden Properties on Redfin →</a>
-                <a href="https://www.realtor.com/realestateagents/ryan-sylvestri_poughkeepsie_ny_2147438_592656033" target="_blank">Ryan on Realtor.com →</a>
+                <h3>🌐 Additional Resources</h3>
+                <a href="https://www.loopnet.com/search/commercial-real-estate/walden-ny/" target="_blank">LoopNet Commercial Listings →</a>
+                <a href="https://www.crexi.com/properties/location/walden-ny" target="_blank">CREXi Commercial Real Estate →</a>
+                <a href="https://www.costar.com/" target="_blank">CoStar Commercial Data →</a>
             </div>
             
             <div class="resource-card">
@@ -858,6 +1054,36 @@
                 <a href="https://www.recordonline.com/" target="_blank">Times Herald-Record →</a>
                 <a href="https://www.facebook.com/VillageOfWalden/" target="_blank">Village of Walden Facebook →</a>
             </div>
+        </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="container" style="padding: 3rem 0;">
+        <div style="background: linear-gradient(135deg, #0054A4 0%, #003872 100%); color: white; padding: 3rem 2rem; border-radius: 15px; text-align: center;">
+            <h2 style="color: white; font-size: 2rem; margin-bottom: 1rem;">📱 Quick Access Links</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.95;">Save time by viewing this property directly on your favorite platform</p>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; max-width: 900px; margin: 0 auto;">
+                <a href="https://www.zillow.com/homedetails/69-Main-St-Walden-NY-12586/2105986814_zpid/" target="_blank" class="btn" style="background: white; color: #0054A4; font-size: 1rem;">
+                    View on Zillow
+                </a>
+                <a href="https://www.redfin.com/zipcode/12586" target="_blank" class="btn" style="background: white; color: #0054A4; font-size: 1rem;">
+                    View on Redfin
+                </a>
+                <a href="https://www.homes.com/new-homes/for-sale/walden-ny/12586/" target="_blank" class="btn" style="background: white; color: #0054A4; font-size: 1rem;">
+                    View on Homes.com
+                </a>
+                <a href="https://www.trulia.com/NY/Walden/12586/" target="_blank" class="btn" style="background: white; color: #0054A4; font-size: 1rem;">
+                    View on Trulia
+                </a>
+                <a href="https://www.realtor.com/realestateandhomes-search/Walden_NY" target="_blank" class="btn" style="background: white; color: #0054A4; font-size: 1rem;">
+                    View on Realtor.com
+                </a>
+            </div>
+            
+            <p style="margin-top: 2rem; font-size: 0.95rem; opacity: 0.85;">
+                💡 <em>Tip: Each platform may show different photos and details - check them all for the complete picture!</em>
+            </p>
         </div>
     </section>
 
@@ -933,6 +1159,18 @@
             </p>
         </div>
     </footer>
+
+    <!-- Sticky Bottom Bar -->
+    <div class="sticky-bottom-bar">
+        <span style="font-weight: 600;">🔍 View Listing:</span>
+        <a href="https://www.zillow.com/homedetails/69-Main-St-Walden-NY-12586/2105986814_zpid/" target="_blank">Zillow</a>
+        <a href="https://www.redfin.com/zipcode/12586" target="_blank">Redfin</a>
+        <a href="https://www.homes.com/new-homes/for-sale/walden-ny/12586/" target="_blank">Homes.com</a>
+        <a href="https://www.trulia.com/NY/Walden/12586/" target="_blank">Trulia</a>
+        <a href="https://www.realtor.com/realestateandhomes-search/Walden_NY" target="_blank">Realtor.com</a>
+        <span style="margin-left: 1rem;">|</span>
+        <a href="tel:845-867-2646" style="background: white; color: #ED1C24;">📞 Call Ryan</a>
+    </div>
 
     <script>
         // Smooth scrolling for anchor links
