@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@source "../app";
+@source "../components";
+@source "../lib";
+
+:root {
+  --background: #fbf6ef;
+  --foreground: #132030;
+  --brand-ink: #142033;
+  --body-ink: #425066;
+  --muted-ink: #6a7487;
+  --brand-copper: #b75a24;
+  --brand-gold: #d9a65a;
+  --brand-cream: #fff8ef;
+  --brand-sky: #4d7fb3;
+  --brand-forest: #356b5b;
+  --brand-plum: #4a3654;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand-ink: var(--brand-ink);
+  --color-body-ink: var(--body-ink);
+  --color-muted-ink: var(--muted-ink);
+  --color-brand-copper: var(--brand-copper);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-sky: var(--brand-sky);
+  --color-brand-forest: var(--brand-forest);
+  --color-brand-plum: var(--brand-plum);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(217, 166, 90, 0.18), transparent 24%),
+    radial-gradient(circle at top right, rgba(77, 127, 179, 0.12), transparent 28%),
+    linear-gradient(180deg, #fbf6ef 0%, #f6efe4 36%, #fcfaf6 100%);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+canvas {
+  display: block;
+}
+
+::selection {
+  background: rgba(183, 90, 36, 0.18);
+}
+
+.font-display {
+  font-family: var(--font-display), serif;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.mesh-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.mesh-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(20, 32, 51, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 32, 51, 0.05) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.38), transparent 85%);
+  pointer-events: none;
+}
+
+.glow-outline {
+  box-shadow:
+    0 30px 90px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
