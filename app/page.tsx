@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ImmersiveStage } from "@/components/immersive-stage";
 import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
+import { RevealSection } from "@/components/reveal-section";
 import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
 import {
@@ -133,16 +134,15 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-7xl px-6 pb-8">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {firstMinuteAnswers.map((item) => (
-            <div
-              key={item.title}
-              className="mesh-panel rounded-[1.8rem] border border-[rgba(15,23,42,0.08)] bg-white/88 p-6 shadow-[0_16px_40px_rgba(15,23,42,0.05)]"
-            >
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-copper">
-                {item.title}
-              </p>
-              <p className="mt-4 text-base leading-7 text-body-ink">{item.detail}</p>
-            </div>
+          {firstMinuteAnswers.map((item, i) => (
+            <RevealSection key={item.title} delay={i * 100} direction="scale">
+              <div className="mesh-panel rounded-[1.8rem] border border-[rgba(15,23,42,0.08)] bg-white/88 p-6 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
+                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-copper">
+                  {item.title}
+                </p>
+                <p className="mt-4 text-base leading-7 text-body-ink">{item.detail}</p>
+              </div>
+            </RevealSection>
           ))}
         </div>
       </section>
@@ -205,17 +205,19 @@ export default function HomePage() {
       </section>
 
       <section id="paths" className="mx-auto max-w-7xl px-6 py-18">
-        <SectionHeading
-          eyebrow="Choose your lane"
-          title="The homepage should route people fast."
-          description="Each audience gets one clear promise, one path, and one next step. That keeps the personal brand broad without turning the site into a mess."
-        />
+        <RevealSection>
+          <SectionHeading
+            eyebrow="Choose your lane"
+            title="The homepage should route people fast."
+            description="Each audience gets one clear promise, one path, and one next step. That keeps the personal brand broad without turning the site into a mess."
+          />
+        </RevealSection>
         <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-5">
           {audienceRoutes.map((route, index) => (
+            <RevealSection key={route.href} delay={index * 100} direction="scale">
             <Link
-              key={route.href}
               href={route.href}
-              className="group mesh-panel relative rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/84 p-7 transition hover:-translate-y-1 hover:border-brand-gold hover:shadow-[0_24px_60px_rgba(15,23,42,0.08)]"
+              className="group mesh-panel relative block rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/84 p-7 transition hover:-translate-y-1 hover:border-brand-gold hover:shadow-[0_24px_60px_rgba(15,23,42,0.08)]"
             >
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-copper via-brand-gold to-brand-ink opacity-80" />
               <div className="absolute right-5 top-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-ink">
@@ -233,6 +235,7 @@ export default function HomePage() {
                 Explore this lane
               </p>
             </Link>
+            </RevealSection>
           ))}
         </div>
       </section>

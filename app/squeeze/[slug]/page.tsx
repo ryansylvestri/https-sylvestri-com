@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
+import { RevealSection } from "@/components/reveal-section";
+import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
+import { getFaqsForCategory } from "@/lib/faq-content";
+import { getExtendedFaqsForCategory } from "@/lib/faq-content-extended";
+import { getPageImage } from "@/lib/media-map";
 import { getSqueezePage, siteConfig, squeezePages } from "@/lib/site-content";
 
 type PageProps = {
@@ -47,6 +53,16 @@ export default async function SqueezePage({ params }: PageProps) {
     url: `${siteConfig.siteUrl}/squeeze/${page.slug}`,
   };
 
+  const heroPublicId = getPageImage(page.slug);
+  const heroUrl = getCloudinaryAssetUrl(heroPublicId, {
+    crop: "fill",
+    gravity: "auto",
+    width: 700,
+    height: 400,
+    quality: "auto",
+    format: "auto",
+  });
+
   return (
     <>
       <JsonLd data={schema} />
@@ -54,6 +70,18 @@ export default async function SqueezePage({ params }: PageProps) {
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr]">
             <section className="overflow-hidden rounded-[2.2rem] border border-white/60 bg-[linear-gradient(160deg,_rgba(20,32,51,0.96)_0%,_rgba(37,18,10,0.92)_100%)] p-8 text-white shadow-[0_28px_90px_rgba(15,23,42,0.2)] md:p-10">
+              {heroUrl && (
+                <div className="mb-6 overflow-hidden rounded-[1.5rem]">
+                  <Image
+                    src={heroUrl}
+                    alt={page.headline}
+                    width={700}
+                    height={400}
+                    className="h-auto w-full object-cover"
+                    priority
+                  />
+                </div>
+              )}
               <p className="text-sm font-semibold uppercase tracking-[0.34em] text-white/70">
                 {page.title}
               </p>
@@ -92,14 +120,53 @@ export default async function SqueezePage({ params }: PageProps) {
               </div>
             </section>
 
-            <LeadCaptureForm
-              title="Quick intake"
-              description={page.trustLine}
-              submitLabel={page.cta}
-              source={`squeeze:${page.slug}`}
-              campaign={page.slug}
-            />
+            <RevealSection direction="right" delay={200}>
+              <LeadCaptureForm
+                title="Quick intake"
+                description={page.trustLine}
+                submitLabel={page.cta}
+                source={`squeeze:${page.slug}`}
+                campaign={page.slug}
+              />
+            </RevealSection>
           </div>
+
+          {/* ── FAQ section ── */}
+          {(() => {
+            const faqs: { q: string; a: string }[] = [];
+            const slugParts = page.slug.split("-");
+            for (const part of slugParts) {
+              const items = [
+                ...getFaqsForCategory(part),
+                ...getExtendedFaqsForCategory(part),
+              ];
+              for (const item of items) {
+                if (!faqs.some((f) => f.q === item.q)) faqs.push(item);
+              }
+            }
+            if (faqs.length === 0) return null;
+            return (
+              <div className="mt-10">
+                <h2 className="font-display text-2xl text-brand-ink">
+                  Common questions about this topic
+                </h2>
+                <div className="mt-6 grid gap-4 lg:grid-cols-2">
+                  {faqs.slice(0, 6).map((item, i) => (
+                    <RevealSection key={i} delay={i * 70}>
+                      <div className="rounded-[1.5rem] border border-[rgba(15,23,42,0.08)] bg-white/80 p-6">
+                        <h3 className="text-base font-semibold text-brand-ink">
+                          {item.q}
+                        </h3>
+                        <p className="mt-2 text-sm leading-7 text-body-ink">
+                          {item.a}
+                        </p>
+                      </div>
+                    </RevealSection>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </main>
     </>

@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { JsonLd } from "@/components/json-ld";
 import { MotivatedSellerForm } from "@/components/motivated-seller-form";
+import { RevealSection } from "@/components/reveal-section";
 import { SiteShell } from "@/components/site-shell";
+import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
+import { getPageImage } from "@/lib/media-map";
 import {
   getResourcePage,
   resourcePages,
@@ -53,6 +57,16 @@ export default async function ResourcePage({ params }: PageProps) {
     .map((s) => getResourcePage(s))
     .filter(Boolean);
 
+  const heroPublicId = getPageImage(page.slug);
+  const heroUrl = getCloudinaryAssetUrl(heroPublicId, {
+    crop: "fill",
+    gravity: "auto",
+    width: 1000,
+    height: 500,
+    quality: "auto",
+    format: "auto",
+  });
+
   return (
     <SiteShell>
       <JsonLd data={schema} />
@@ -66,6 +80,18 @@ export default async function ResourcePage({ params }: PageProps) {
           >
             ← All Resources
           </Link>
+          {heroUrl && (
+            <div className="overflow-hidden rounded-[2rem]">
+              <Image
+                src={heroUrl}
+                alt={page.heroHeadline}
+                width={1000}
+                height={500}
+                className="h-auto w-full object-cover"
+                priority
+              />
+            </div>
+          )}
           <h1 className="font-display text-4xl leading-tight text-balance text-brand-ink md:text-6xl">
             {page.heroHeadline}
           </h1>
@@ -93,27 +119,29 @@ export default async function ResourcePage({ params }: PageProps) {
       <article className="mx-auto max-w-4xl px-6 pb-16">
         <div className="space-y-12">
           {page.sections.map((section, i) => (
-            <section key={i} className="space-y-4">
-              <h2 className="font-display text-2xl leading-tight text-brand-ink md:text-3xl">
-                {section.heading}
-              </h2>
-              <p className="text-base leading-8 text-body-ink">
-                {section.body}
-              </p>
-              {section.bullets && (
-                <ul className="ml-1 space-y-2">
-                  {section.bullets.map((b, j) => (
-                    <li
-                      key={j}
-                      className="flex items-start gap-3 text-base leading-7 text-body-ink"
-                    >
-                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-copper" />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
+            <RevealSection key={i} delay={i * 60}>
+              <section className="space-y-4">
+                <h2 className="font-display text-2xl leading-tight text-brand-ink md:text-3xl">
+                  {section.heading}
+                </h2>
+                <p className="text-base leading-8 text-body-ink">
+                  {section.body}
+                </p>
+                {section.bullets && (
+                  <ul className="ml-1 space-y-2">
+                    {section.bullets.map((b, j) => (
+                      <li
+                        key={j}
+                        className="flex items-start gap-3 text-base leading-7 text-body-ink"
+                      >
+                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-copper" />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            </RevealSection>
           ))}
         </div>
       </article>
@@ -121,22 +149,23 @@ export default async function ResourcePage({ params }: PageProps) {
       {/* ── FAQ ── */}
       {page.faq.length > 0 && (
         <section className="mx-auto max-w-4xl px-6 py-16">
-          <h2 className="font-display text-3xl text-brand-ink">
-            Frequently Asked Questions
-          </h2>
+          <RevealSection>
+            <h2 className="font-display text-3xl text-brand-ink">
+              Frequently Asked Questions
+            </h2>
+          </RevealSection>
           <div className="mt-8 space-y-6">
             {page.faq.map((item, i) => (
-              <div
-                key={i}
-                className="rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/80 p-8"
-              >
-                <h3 className="text-lg font-semibold text-brand-ink">
-                  {item.q}
-                </h3>
-                <p className="mt-3 text-base leading-7 text-body-ink">
-                  {item.a}
-                </p>
-              </div>
+              <RevealSection key={i} delay={i * 80}>
+                <div className="rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/80 p-8">
+                  <h3 className="text-lg font-semibold text-brand-ink">
+                    {item.q}
+                  </h3>
+                  <p className="mt-3 text-base leading-7 text-body-ink">
+                    {item.a}
+                  </p>
+                </div>
+              </RevealSection>
             ))}
           </div>
         </section>

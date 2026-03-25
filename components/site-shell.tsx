@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ReactNode } from "react";
 
 import { GlobalLeadCaptureSection } from "@/components/global-lead-capture";
+import { MobileNav } from "@/components/mobile-nav";
 import { brandEcosystem, personalSiteConfig } from "@/lib/personal-brand-content";
 
 type SiteShellProps = {
@@ -11,10 +12,17 @@ type SiteShellProps = {
 export function SiteShell({ children }: SiteShellProps) {
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(217,119,6,0.18),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(37,99,235,0.12),_transparent_30%),linear-gradient(180deg,_#f8f2e8_0%,_#f4efe8_30%,_#fcfbf8_72%,_#f1ece3_100%)] text-foreground">
-      <header className="sticky top-0 z-30 border-b border-white/45 bg-[rgba(255,252,247,0.76)] backdrop-blur-xl">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-brand-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+      >
+        Skip to content
+      </a>
+
+      <header role="banner" className="sticky top-0 z-30 border-b border-white/45 bg-[rgba(255,252,247,0.76)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-4">
           <div className="space-y-1">
-            <Link href="/" className="font-display text-2xl tracking-[0.08em] text-brand-ink">
+            <Link href="/" className="font-display text-2xl tracking-[0.08em] text-brand-ink" aria-label="Ryan Sylvestri — Home">
               {personalSiteConfig.name}
             </Link>
             <p className="text-[11px] uppercase tracking-[0.38em] text-muted-ink">
@@ -22,7 +30,7 @@ export function SiteShell({ children }: SiteShellProps) {
             </p>
           </div>
 
-          <nav className="hidden items-center gap-5 text-sm font-semibold text-muted-ink lg:flex">
+          <nav aria-label="Primary navigation" className="hidden items-center gap-5 text-sm font-semibold text-muted-ink lg:flex">
             {personalSiteConfig.navItems.map((item) => (
               <Link
                 key={item.href}
@@ -37,7 +45,8 @@ export function SiteShell({ children }: SiteShellProps) {
           <div className="flex items-center gap-3">
             <a
               href={personalSiteConfig.phoneHref}
-              className="rounded-full border border-[rgba(17,24,39,0.12)] bg-white/70 px-4 py-2 text-sm font-semibold text-brand-ink transition hover:border-brand-gold hover:text-brand-copper"
+              aria-label={`Call Ryan at ${personalSiteConfig.phone}`}
+              className="hidden rounded-full border border-[rgba(17,24,39,0.12)] bg-white/70 px-4 py-2 text-sm font-semibold text-brand-ink transition hover:border-brand-gold hover:text-brand-copper sm:inline-flex"
             >
               Call {personalSiteConfig.phone}
             </a>
@@ -47,15 +56,16 @@ export function SiteShell({ children }: SiteShellProps) {
             >
               Start Here
             </Link>
+            <MobileNav />
           </div>
         </div>
       </header>
 
-      <main>{children}</main>
+      <main id="main-content" tabIndex={-1}>{children}</main>
 
       <GlobalLeadCaptureSection />
 
-      <footer className="border-t border-[rgba(15,23,42,0.08)] bg-[rgba(255,250,244,0.9)]">
+      <footer role="contentinfo" className="border-t border-[rgba(15,23,42,0.08)] bg-[rgba(255,250,244,0.9)]">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.2fr_1fr_1fr]">
           <div className="space-y-4">
             <p className="text-sm font-semibold uppercase tracking-[0.32em] text-muted-ink">

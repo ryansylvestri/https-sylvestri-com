@@ -192,17 +192,19 @@ export function LeadCaptureForm({
           {status === "submitting" ? "Submitting..." : submitLabel}
         </button>
 
-        {message ? (
-          <p
-            className={`rounded-[1.2rem] border px-4 py-3 text-sm leading-6 ${
-              status === "error"
-                ? "border-red-200 bg-red-50 text-red-700"
-                : "border-[rgba(15,23,42,0.08)] bg-[rgba(255,248,239,0.9)] text-body-ink"
-            }`}
-          >
-            {message}
-          </p>
-        ) : null}
+        <div aria-live="polite" aria-atomic="true" role="status">
+          {message ? (
+            <p
+              className={`rounded-[1.2rem] border px-4 py-3 text-sm leading-6 ${
+                status === "error"
+                  ? "border-red-200 bg-red-50 text-red-700"
+                  : "border-[rgba(15,23,42,0.08)] bg-[rgba(255,248,239,0.9)] text-body-ink"
+              }`}
+            >
+              {message}
+            </p>
+          ) : null}
+        </div>
       </form>
     </div>
   );
