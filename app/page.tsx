@@ -17,6 +17,7 @@ import {
   selectedStories,
   storyMilestones,
 } from "@/lib/personal-brand-content";
+import { localBusinessSchema } from "@/lib/schema";
 import { siteConfig } from "@/lib/site-content";
 
 export const metadata: Metadata = {
@@ -56,6 +57,7 @@ const homeSchema = [
     url: personalSiteConfig.siteUrl,
     description:
       "Personal hub for Ryan Sylvestri: Hudson Valley real estate, systems thinking, applied AI, and direct audience routing.",
+    publisher: { "@id": localBusinessSchema["@id"] },
   },
   {
     "@context": "https://schema.org",
@@ -64,10 +66,7 @@ const homeSchema = [
     telephone: personalSiteConfig.phone,
     email: personalSiteConfig.email,
     jobTitle: "Licensed Associate Real Estate Broker",
-    worksFor: {
-      "@type": "Organization",
-      name: personalSiteConfig.office,
-    },
+    worksFor: { "@id": localBusinessSchema["@id"] },
     address: {
       "@type": "PostalAddress",
       streetAddress: "584 Route 9",

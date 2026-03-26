@@ -64,6 +64,7 @@ export const personalSiteConfig = {
   emailHref: "mailto:ryan@sylvestri.com",
   office: "RE/MAX Town & Country",
   address: "584 Route 9, Fishkill, NY 12524",
+  googleReviewUrl: "https://g.page/r/CV5BYkl3vmZuEBM/review",
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://sylvestri.com",
   navItems: [
     { href: "/", label: "Home" },

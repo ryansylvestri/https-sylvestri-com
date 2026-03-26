@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
 
+import { JsonLd } from "@/components/json-ld";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
 import { personalMedia } from "@/lib/personal-brand-content";
+import { localBusinessSchema } from "@/lib/schema";
 import { siteConfig } from "@/lib/site-content";
 
 const fraunces = Fraunces({
@@ -79,7 +81,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${fraunces.variable} ${manrope.variable} antialiased`}>{children}</body>
+      <body className={`${fraunces.variable} ${manrope.variable} antialiased`}>
+        <JsonLd data={localBusinessSchema} />
+        {children}
+      </body>
     </html>
   );
 }

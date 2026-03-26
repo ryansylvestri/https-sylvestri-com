@@ -39,6 +39,8 @@ export const siteConfig = {
     { href: "/brands", label: "Brands" },
     { href: "/intake", label: "Start Here" },
   ],
+  googleBusinessProfile: "https://g.page/r/CV5BYkl3vmZuEBM",
+  googleReviewUrl: "https://g.page/r/CV5BYkl3vmZuEBM/review",
   sameAs: [
     "https://sylvestri.com",
     "https://sylvestrirealty.com",
@@ -51,6 +53,7 @@ export const siteConfig = {
     "https://www.zillow.com/profile/ryansylvestri0",
     "https://www.realtor.com/realestateagents/56cbb29b89a68901006f31e1",
     "https://www.onekeymls.com/realtor/agents/Ryan-S-dot-Sylvestri/31845",
+    "https://g.page/r/CV5BYkl3vmZuEBM",
   ],
   regions: [
     "Hudson Valley",

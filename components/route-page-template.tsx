@@ -1,11 +1,16 @@
 import Link from "next/link";
 
+import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { RevealSection } from "@/components/reveal-section";
 import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
+import { getFaqsForCategory } from "@/lib/faq-content";
+import { getExtendedFaqsForCategory } from "@/lib/faq-content-extended";
 import { guideTopics, type GuideTopic } from "@/lib/guide-topics";
 import { type RoutePageContent } from "@/lib/personal-brand-content";
+import { localBusinessSchema } from "@/lib/schema";
+import { siteConfig } from "@/lib/site-content";
 
 type RoutePageTemplateProps = {
   page: RoutePageContent;
@@ -83,9 +88,78 @@ function getRelatedGuides(interest?: string): GuideTopic[] {
   return guideTopics.filter((g) => categories.includes(g.category)).slice(0, 6);
 }
 
+function getServiceSchema(page: RoutePageContent) {
+  const serviceMap: Record<string, { name: string; description: string }> = {
+    buyer: {
+      name: "Buyer Representation — Hudson Valley",
+      description:
+        "Structured buyer planning for first-time buyers, relocations, and move-up searchers across Dutchess, Putnam, Orange, and Ulster counties.",
+    },
+    seller: {
+      name: "Seller Launch Strategy — Hudson Valley",
+      description:
+        "Human valuation, pricing strategy, prep planning, and listing launch for homeowners across the Hudson Valley.",
+    },
+    investor: {
+      name: "Investor Intake — Hudson Valley",
+      description:
+        "Criteria-first intake for value-add, multifamily, flip, rental, and opportunistic investment opportunities in the Hudson Valley.",
+    },
+    renter: {
+      name: "Relocation & Rental Guidance — Hudson Valley",
+      description:
+        "Town-matching, commute analysis, and lifestyle-fit orientation for renters and inbound Hudson Valley movers.",
+    },
+  };
+  const interest = page.leadForm.defaultInterest ?? "";
+  const service = serviceMap[interest];
+  if (!service) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: service.name,
+    description: service.description,
+    provider: { "@id": localBusinessSchema["@id"] },
+    areaServed: siteConfig.regions.map((r) => ({
+      "@type": "AdministrativeArea",
+      name: r,
+    })),
+    url: `${siteConfig.siteUrl}/${interest === "renter" ? "renters" : interest + "s"}`,
+  };
+}
+
+function getFaqSchema(interest?: string) {
+  const faqKeyMap: Record<string, string[]> = {
+    buyer: ["buyers"],
+    seller: ["sellers"],
+    investor: ["investors"],
+    renter: ["renters", "relocation"],
+  };
+  const keys = interest ? faqKeyMap[interest] ?? [] : [];
+  if (keys.length === 0) return null;
+
+  const faqs = keys.flatMap((k) => [...getFaqsForCategory(k), ...getExtendedFaqsForCategory(k)]);
+  if (faqs.length === 0) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+}
+
 export function RoutePageTemplate({ page }: RoutePageTemplateProps) {
   const theme = getLaneTheme(page.leadForm.defaultInterest);
   const relatedGuides = getRelatedGuides(page.leadForm.defaultInterest);
+  const serviceSchema = getServiceSchema(page);
+  const faqSchema = getFaqSchema(page.leadForm.defaultInterest);
   const heroImageUrl = page.heroImageId
     ? getCloudinaryAssetUrl(page.heroImageId, {
         crop: "fill",
@@ -105,6 +179,8 @@ export function RoutePageTemplate({ page }: RoutePageTemplateProps) {
 
   return (
     <SiteShell>
+      {serviceSchema ? <JsonLd data={serviceSchema} /> : null}
+      {faqSchema ? <JsonLd data={faqSchema} /> : null}
       <PageHero
         eyebrow={page.eyebrow}
         title={page.title}
