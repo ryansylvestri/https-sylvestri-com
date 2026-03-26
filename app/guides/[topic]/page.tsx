@@ -16,6 +16,7 @@ import {
   guideSlugs,
   guideTopics,
 } from "@/lib/guide-topics";
+import { guideProse } from "@/lib/guide-prose";
 import { getPageImage } from "@/lib/media-map";
 import { siteConfig } from "@/lib/site-content";
 
@@ -68,6 +69,9 @@ export default async function GuidePage({ params }: PageProps) {
     quality: "auto",
     format: "auto",
   });
+
+  /* ── Prose sections ── */
+  const sections = guideProse[guide.slug] ?? [];
 
   /* ── Related guides in the same category ── */
   const relatedGuides = guideTopics.filter(
@@ -133,6 +137,26 @@ export default async function GuidePage({ params }: PageProps) {
           </div>
         )}
       </PageHero>
+
+      {/* ── Article prose ── */}
+      {sections.length > 0 && (
+        <section className="mx-auto max-w-4xl px-6 py-18">
+          <article className="prose-brand space-y-12">
+            {sections.map((section, i) => (
+              <RevealSection key={i} delay={i * 80}>
+                <div>
+                  <h2 className="font-display text-3xl leading-tight text-brand-ink">
+                    {section.heading}
+                  </h2>
+                  <p className="mt-4 text-base leading-8 text-body-ink">
+                    {section.body}
+                  </p>
+                </div>
+              </RevealSection>
+            ))}
+          </article>
+        </section>
+      )}
 
       {/* ── FAQ section ── */}
       {allFaqs.length > 0 && (

@@ -1,8 +1,10 @@
 import Link from "next/link";
 
 import { LeadCaptureForm } from "@/components/lead-capture-form";
+import { RevealSection } from "@/components/reveal-section";
 import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
+import { guideTopics, type GuideTopic } from "@/lib/guide-topics";
 import { type RoutePageContent } from "@/lib/personal-brand-content";
 
 type RoutePageTemplateProps = {
@@ -69,8 +71,21 @@ function getLaneTheme(defaultInterest?: string) {
   }
 }
 
+function getRelatedGuides(interest?: string): GuideTopic[] {
+  const categoryMap: Record<string, GuideTopic["category"][]> = {
+    buyer: ["buyer", "lifestyle"],
+    seller: ["seller", "process"],
+    investor: ["investor"],
+    renter: ["lifestyle"],
+  };
+  const categories = interest ? categoryMap[interest] ?? [] : [];
+  if (categories.length === 0) return [];
+  return guideTopics.filter((g) => categories.includes(g.category)).slice(0, 6);
+}
+
 export function RoutePageTemplate({ page }: RoutePageTemplateProps) {
   const theme = getLaneTheme(page.leadForm.defaultInterest);
+  const relatedGuides = getRelatedGuides(page.leadForm.defaultInterest);
   const heroImageUrl = page.heroImageId
     ? getCloudinaryAssetUrl(page.heroImageId, {
         crop: "fill",
@@ -234,6 +249,36 @@ export function RoutePageTemplate({ page }: RoutePageTemplateProps) {
           </div>
         </div>
       </section>
+
+      {/* ── Related guides (hub-and-spoke SEO) ── */}
+      {relatedGuides.length > 0 && (
+        <section className="mx-auto max-w-7xl px-6 py-18">
+          <RevealSection>
+            <SectionHeading
+              eyebrow="Go deeper"
+              title="Free guides for your situation"
+              description="Each guide covers one topic in depth — the specific answers that help you move forward with confidence."
+            />
+          </RevealSection>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {relatedGuides.map((guide, i) => (
+              <RevealSection key={guide.slug} delay={i * 80} direction="scale">
+                <Link
+                  href={`/guides/${guide.slug}`}
+                  className={`group block rounded-[1.9rem] border p-7 transition hover:border-brand-gold ${theme.surfaceClass}`}
+                >
+                  <h3 className="font-display text-xl leading-tight text-brand-ink transition group-hover:text-brand-gold">
+                    {guide.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-body-ink">
+                    {guide.description}
+                  </p>
+                </Link>
+              </RevealSection>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <div className={`rounded-[2.25rem] border border-[rgba(15,23,42,0.08)] px-8 py-10 text-white shadow-[0_30px_80px_rgba(15,23,42,0.18)] ${theme.ctaClass}`}>
