@@ -1,7 +1,7 @@
 # Session Handoff — sylvestri.com SEO & Guide Expansion
 
-**Last updated:** 2026-03-25
-**Last commit:** `56ffb53` (feat: add long-form prose to guide pages + hub-and-spoke cross-links)
+**Last updated:** 2026-03-26
+**Last commit:** `0622bc7` (feat: add Google Search Console verification meta tag)
 **Branch:** `main`
 **Repo local path:** `/Users/ryansylvestri/dev/github/https-sylvestri-com`
 **Sandbox mirror:** `/sessions/zealous-blissful-wozniak/mnt/https-sylvestri-com`
@@ -23,14 +23,19 @@
 11. **Guide prose content** at `lib/guide-prose.ts` — 23 guides × 3-4 article sections (~75 sections total)
 12. **Hub-and-spoke cross-links** in `components/route-page-template.tsx` — /buyers, /sellers, /investors, /renters all link to matching guide pages
 
+## What's Also Done (Session 3)
+
+13. **Google Search Console verification** — HTML tag method via `metadata.verification.google` in `app/layout.tsx`
+14. **Sitemap submitted to GSC** — `https://sylvestri.com/sitemap.xml` submitted Mar 26, 2026; Google will index 248 URLs
+
 ## What Could Be Done Next
 
+- Monitor GSC sitemap status — initial "Couldn't fetch" is normal, should resolve within hours
 - Enable Hostinger Reach for SEO/SMO readiness (manual step in Hostinger dashboard)
-- Verify "Domain is not working" status on Hostinger (may need DNS check)
-- Submit sitemap to Google Search Console: `https://sylvestri.com/sitemap.xml`
 - Add guide cross-links from landing pages and squeeze pages (not just audience hub pages)
 - Add Open Graph images per guide page using Cloudinary dynamic OG image generation
 - Consider adding structured data (HowTo, LocalBusiness) to more pages
+- Delete the old `/sitemap.website.xml` entry in GSC (legacy Hostinger sitemap, 1 error, 0 pages)
 
 ## Key File Reference
 
@@ -46,6 +51,7 @@
 | `lib/resource-pages.ts` | 21+ resource pages |
 | `app/sitemap.ts` | Dynamic sitemap covering 150+ URLs |
 | `app/robots.ts` | robots.txt pointing to sitemap |
+| `app/layout.tsx` | Root layout with GSC verification meta tag (`metadata.verification.google`) |
 | `app/guides/page.tsx` | Guide index page |
 | `app/guides/[topic]/page.tsx` | Individual guide dynamic route |
 | `components/route-page-template.tsx` | Shared template for /buyers, /sellers, /investors, /renters, /ai |
