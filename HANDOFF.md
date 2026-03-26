@@ -1,52 +1,36 @@
 # Session Handoff — sylvestri.com SEO & Guide Expansion
 
 **Last updated:** 2026-03-25
-**Last commit:** `0111dc5` (feat: add /guides/[topic] routes)
+**Last commit:** `56ffb53` (feat: add long-form prose to guide pages + hub-and-spoke cross-links)
 **Branch:** `main`
 **Repo local path:** `/Users/ryansylvestri/dev/github/https-sylvestri-com`
 **Sandbox mirror:** `/sessions/zealous-blissful-wozniak/mnt/https-sylvestri-com`
 
 ---
 
-## What's Done
+## What's Done (ALL COMPLETE)
 
 1. **Cloudinary media integration** across all 120+ pages (landing, squeeze, resource, homepage)
 2. **ARIA accessibility** — skip-to-content, landmarks, aria-live, mobile nav with aria-expanded/aria-modal
 3. **RevealSection scroll animations** — IntersectionObserver with prefers-reduced-motion respect
 4. **FAQ content** — 150+ Q&As across 23 categories in `lib/faq-content.ts` and `lib/faq-content-extended.ts`
 5. **FAQPage JSON-LD** on landing pages
-6. **Dynamic sitemap** at `app/sitemap.ts` — 150+ URLs with priority tiers, includes all static routes, landing, squeeze, resource, brand, and guide pages
+6. **Dynamic sitemap** at `app/sitemap.ts` — 150+ URLs with priority tiers
 7. **robots.txt** at `app/robots.ts` — points to sitemap
-8. **Guide topics metadata** at `lib/guide-topics.ts` — 23 guides with slug, title, description, category, faqKeys, relatedLanding
-9. **Guide index page** at `app/guides/page.tsx` — category-grouped cards with RevealSection
-10. **Guide dynamic route** at `app/guides/[topic]/page.tsx` — FAQ content, Cloudinary hero, JSON-LD Article + FAQPage, lead capture, related guides
-11. **Guide prose content** at `lib/guide-prose.ts` — JUST CREATED, 23 guides × 3-4 sections each of original long-form article content
+8. **Guide topics metadata** at `lib/guide-topics.ts` — 23 guides
+9. **Guide index page** at `app/guides/page.tsx` — category-grouped cards
+10. **Guide dynamic route** at `app/guides/[topic]/page.tsx` — prose + FAQ + hero + lead capture + related guides
+11. **Guide prose content** at `lib/guide-prose.ts` — 23 guides × 3-4 article sections (~75 sections total)
+12. **Hub-and-spoke cross-links** in `components/route-page-template.tsx` — /buyers, /sellers, /investors, /renters all link to matching guide pages
 
-## What's In Progress
+## What Could Be Done Next
 
-### Task 1: Render prose sections in guide pages (NOT YET DONE)
-- **File:** `app/guides/[topic]/page.tsx`
-- **Action:** Import `guideProse` from `lib/guide-prose.ts`, render sections between the hero and FAQ section
-- **Pattern:** Each section gets a `<RevealSection>` wrapper with staggered delay, `<h2>` heading, `<p>` body
-
-### Task 2: Hub-and-spoke cross-links (NOT YET DONE)
-- **File:** `components/route-page-template.tsx`
-- **Action:** Add a "Related Guides" section between the process/steps section and the final CTA
-- **Data source:** Import `guideTopics` from `lib/guide-topics.ts`, filter by matching category:
-  - `buyer` interest → buyer + lifestyle guides
-  - `seller` interest → seller guides
-  - `investor` interest → investor guides
-- **Design:** Grid of guide cards linking to `/guides/{slug}`, using the same card style as the guides index page
-
-### Task 3: TypeScript verification
-- Run `npx tsc --noEmit` after both tasks above
-- Fix any errors
-
-### Task 4: Commit and push
-- Stage: `lib/guide-prose.ts`, `app/guides/[topic]/page.tsx`, `components/route-page-template.tsx`
-- Commit message format: `feat: add long-form prose to guide pages + hub-and-spoke cross-links`
-- Push via Desktop Commander: `cd /Users/ryansylvestri/dev/github/https-sylvestri-com && git push origin main`
-- Hostinger auto-deploys from main
+- Enable Hostinger Reach for SEO/SMO readiness (manual step in Hostinger dashboard)
+- Verify "Domain is not working" status on Hostinger (may need DNS check)
+- Submit sitemap to Google Search Console: `https://sylvestri.com/sitemap.xml`
+- Add guide cross-links from landing pages and squeeze pages (not just audience hub pages)
+- Add Open Graph images per guide page using Cloudinary dynamic OG image generation
+- Consider adding structured data (HowTo, LocalBusiness) to more pages
 
 ## Key File Reference
 
