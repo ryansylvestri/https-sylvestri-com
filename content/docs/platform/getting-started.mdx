@@ -1,0 +1,35 @@
+---
+title: "Publishing Platform Getting Started"
+slug: "platform/getting-started"
+section: "docs"
+category: "platform"
+tags:
+  - "docs"
+  - "mdx"
+  - "publishing"
+description: "Overview of the new MDX-driven docs, resources, and articles engine."
+summary: "A quick orientation to the publishing platform, routing rules, and migration model."
+access: "public"
+status: "published"
+publishedAt: "2026-03-26"
+updatedAt: "2026-03-26"
+author: "Ryan Sylvestri"
+---
+
+## What this layer does
+
+The docs engine gives the site a reusable publishing foundation for docs, resources, and articles without disturbing the current guide, landing, or squeeze systems.
+
+## Migration rules
+
+- `/resources` can be migrated incrementally because the app now checks MDX content first and falls back to the legacy resource registry when a slug has not been migrated.
+- `/guides` remains its own system in v1.
+- `/articles` is the new long-form destination for content that sits outside the current guide framework.
+
+## Access model
+
+The launch model is intentionally conservative:
+
+- `public` is visible to everyone.
+- `free` requires login.
+- `pro` remains discoverable but locked while paid acquisition stays disabled.

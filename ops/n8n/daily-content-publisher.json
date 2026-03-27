@@ -1,0 +1,172 @@
+{
+  "name": "daily-content-publisher-template",
+  "nodes": [
+    {
+      "id": "schedule",
+      "name": "Daily UTC Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        260
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 11 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "topic-brief",
+      "name": "Topic Brief",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        500,
+        260
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"section\": \"articles\",\n  \"sourceBlog\": \"default-blog\",\n  \"sourceChannel\": \"daily-cron\",\n  \"publishWindow\": \"11:00Z\",\n  \"topic\": \"Replace with topic selection or AI brief node output\"\n}"
+      }
+    },
+    {
+      "id": "draft",
+      "name": "Generate Draft Payload",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        760,
+        260
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"section\": \"{{$json.section}}\",\n  \"sourceBlog\": \"{{$json.sourceBlog}}\",\n  \"sourceChannel\": \"{{$json.sourceChannel}}\",\n  \"dryRun\": true,\n  \"frontmatter\": {\n    \"title\": \"Replace with generated title\",\n    \"slug\": \"replace-with-generated-slug\",\n    \"section\": \"{{$json.section}}\",\n    \"category\": \"market-intelligence\",\n    \"tags\": [\"hudson-valley\", \"seo\", \"daily\"],\n    \"description\": \"Replace with generated meta description between 110 and 170 chars.\",\n    \"summary\": \"Replace with generated summary.\",\n    \"access\": \"public\",\n    \"status\": \"published\",\n    \"publishedAt\": \"{{$now.toISO()}}\",\n    \"updatedAt\": \"{{$now.toISO()}}\",\n    \"author\": \"Ryan Sylvestri\",\n    \"seoTitle\": \"Replace with generated SEO title\",\n    \"seoDescription\": \"Replace with generated SEO description\",\n    \"seoImage\": \"https://res.cloudinary.com/example/image/upload/seo-image.jpg\",\n    \"publishWindow\": \"{{$json.publishWindow}}\",\n    \"sourceChannel\": \"{{$json.sourceChannel}}\",\n    \"sourceBlog\": \"{{$json.sourceBlog}}\",\n    \"slugBase\": \"replace-with-generated-slug\",\n    \"assetRefs\": []\n  },\n  \"content\": \"Replace with generated markdown body that meets the publish quality gates.\"\n}"
+      }
+    },
+    {
+      "id": "dry-run",
+      "name": "Dry Run Publish",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1030,
+        260
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://sylvestri.com/api/ops/content/publish",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\",\n  \"x-hostinger-n8n-webhook-token\": \"={{$env.HOSTINGER_N8N_WEBHOOK_TOKEN}}\",\n  \"x-n8n-source-id\": \"={{$env.N8N_SOURCE_ID}}\",\n  \"x-n8n-signature\": \"replace-with-precomputed-signature\"\n}",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{JSON.stringify($json)}}"
+      }
+    },
+    {
+      "id": "publish",
+      "name": "Publish MDX",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1290,
+        260
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://sylvestri.com/api/ops/content/publish",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\",\n  \"x-hostinger-n8n-webhook-token\": \"={{$env.HOSTINGER_N8N_WEBHOOK_TOKEN}}\",\n  \"x-n8n-source-id\": \"={{$env.N8N_SOURCE_ID}}\",\n  \"x-n8n-signature\": \"replace-with-precomputed-signature\"\n}",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{JSON.stringify({...$json, dryRun: false})}}"
+      }
+    },
+    {
+      "id": "seo-push",
+      "name": "Push SEO Signals",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1540,
+        260
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://sylvestri.com/api/seo/push",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\",\n  \"x-hostinger-n8n-webhook-token\": \"={{$env.HOSTINGER_N8N_WEBHOOK_TOKEN}}\",\n  \"x-n8n-source-id\": \"={{$env.N8N_SOURCE_ID}}\",\n  \"x-n8n-signature\": \"replace-with-precomputed-signature\"\n}",
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={\"urls\": [$json.routePath], \"sitemapPaths\": [\"/sitemap.xml\", \"/sitemap-content.xml\"]}"
+      }
+    }
+  ],
+  "connections": {
+    "Daily UTC Schedule": {
+      "main": [
+        [
+          {
+            "node": "Topic Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic Brief": {
+      "main": [
+        [
+          {
+            "node": "Generate Draft Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Draft Payload": {
+      "main": [
+        [
+          {
+            "node": "Dry Run Publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dry Run Publish": {
+      "main": [
+        [
+          {
+            "node": "Publish MDX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish MDX": {
+      "main": [
+        [
+          {
+            "node": "Push SEO Signals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

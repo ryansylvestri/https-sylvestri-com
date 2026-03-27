@@ -7,6 +7,10 @@
     "build": "next build",
     "start": "next start --hostname 0.0.0.0",
     "lint": "eslint",
+    "cloudinary:test-upload": "node ./scripts/test-cloudinary-signed-upload.mjs",
+    "assets:worker": "node ./scripts/asset-worker.mjs",
+    "plans:scaffold": "node ./scripts/scaffold-plans.mjs",
+    "audit:sitemap": "node ./scripts/audit-sitemap.mjs",
     "hostinger:verify": "npm run lint && npm run build",
     "hostinger:package": "bash ./ops/hostinger/package-upload.sh"
   },
@@ -15,9 +19,18 @@
     "npm": ">=10"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.9.0",
+    "@supabase/supabase-js": "^2.100.1",
+    "@types/nodemailer": "^7.0.11",
+    "bullmq": "^5.71.1",
+    "gray-matter": "^4.0.3",
+    "ioredis": "^5.10.1",
     "next": "16.1.6",
+    "next-mdx-remote": "^6.0.0",
+    "nodemailer": "^8.0.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "stripe": "^21.0.1",
     "three": "^0.183.2"
   },
   "devDependencies": {

@@ -1,0 +1,29 @@
+---
+title: "Why the Publishing Engine Is Being Split Out"
+slug: "publishing-engine-v1"
+section: "articles"
+category: "platform"
+tags:
+  - "articles"
+  - "platform"
+  - "migration"
+description: "The reasoning behind moving docs, resources, and articles onto a normalized MDX engine."
+summary: "An implementation note on why the repo is adding a shared content engine instead of extending the old in-memory resource arrays forever."
+access: "public"
+status: "published"
+publishedAt: "2026-03-26"
+updatedAt: "2026-03-26"
+author: "Ryan Sylvestri"
+---
+
+## The old model worked for speed
+
+The current site was built quickly and intentionally. Hardcoded arrays made it easy to ship a lot of route inventory with strong static generation and tight editorial control.
+
+## The new model works for scale
+
+Once docs, articles, gated content, and asset attachments enter the picture, the old pattern becomes expensive to maintain. A normalized content engine gives the app one place to validate metadata, build search indexes, and support access-aware rendering.
+
+## Why not migrate guides right away
+
+Guides already have a stable runtime and a lot of connected logic. Keeping them intact in v1 keeps the migration smaller, reduces regressions, and lets the new engine prove itself before it touches existing guide behavior.

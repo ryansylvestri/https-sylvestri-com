@@ -1,14 +1,9 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { usePathname } from "next/navigation";
 
-/**
- * Webhook endpoint — configurable via env var.
- * Falls back to the Hostinger n8n instance.
- */
-const WEBHOOK_URL =
-  process.env.NEXT_PUBLIC_LEAD_WEBHOOK_URL ||
-  "https://n8n.srv1106931.hstgr.cloud/webhook/lead-capture";
+import { pushDataLayerEvent, sourcePathToToken } from "@/lib/tracking";
 
 type MotivatedSellerFormProps = {
   /** Slug of the source page, e.g. "divorce-home-sale" */
@@ -21,11 +16,24 @@ type MotivatedSellerFormProps = {
 
 type Status = "idle" | "submitting" | "success" | "error";
 
+function inferLeadTypeFromSourceSlug(sourceSlug: string) {
+  if (sourceSlug.includes("valuation")) return "home-valuation";
+  if (
+    /(foreclosure|probate|divorce|inherited|estate|code-violation|tax-lien|bankruptcy|vacant|expired|fsbo|lis-pendens)/.test(
+      sourceSlug,
+    )
+  ) {
+    return "seller-distress";
+  }
+  return "seller";
+}
+
 export function MotivatedSellerForm({
   sourceSlug,
   ctaLabel = "Get My Free Consultation",
   variant = "light",
 }: MotivatedSellerFormProps) {
+  const pathname = usePathname();
   const [status, setStatus] = useState<Status>("idle");
   const [errMsg, setErrMsg] = useState("");
 
@@ -34,6 +42,7 @@ export function MotivatedSellerForm({
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
     setStatus("submitting");
     setErrMsg("");
 
@@ -45,22 +54,57 @@ export function MotivatedSellerForm({
       phone: fd.get("phone")?.toString().trim() ?? "",
       propertyAddress: fd.get("propertyAddress")?.toString().trim() ?? "",
       message: fd.get("message")?.toString().trim() ?? "",
-      source: sourceSlug,
-      category: "motivated-seller",
-      system: "sylvestri-lead-pages",
+      honeypot: fd.get("website")?.toString().trim() ?? "",
+      leadType: inferLeadTypeFromSourceSlug(sourceSlug),
+      source: `resource:${sourceSlug}`,
+      campaign: `resource-${sourceSlug}`,
+      sourcePath: pathname || "/resources",
+      consentEmail: true,
+      consentSms: false,
       submittedAt: new Date().toISOString(),
-      pageUrl: typeof window !== "undefined" ? window.location.href : "",
     };
 
     try {
-      const res = await fetch(WEBHOOK_URL, {
+      pushDataLayerEvent("lead_form_submit", {
+        source: payload.source,
+        campaign: payload.campaign,
+        sourcePath: payload.sourcePath,
+        leadType: payload.leadType,
+      });
+
+      const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          fullName: `${payload.firstName} ${payload.lastName}`.trim(),
+          email: payload.email,
+          phone: payload.phone,
+          leadType: payload.leadType,
+          market: "",
+          timeline: "",
+          propertyAddress: payload.propertyAddress,
+          notes: payload.message,
+          source: payload.source,
+          campaign: payload.campaign,
+          sourcePath: payload.sourcePath,
+          sourceToken: sourcePathToToken(payload.sourcePath),
+          consentEmail: payload.consentEmail,
+          consentSms: payload.consentSms,
+          submittedAt: payload.submittedAt,
+          honeypot: payload.honeypot,
+        }),
       });
-      if (!res.ok) throw new Error(`Server responded ${res.status}`);
+      const json = (await res.json()) as { message?: string };
+      if (!res.ok) throw new Error(json.message || `Server responded ${res.status}`);
       setStatus("success");
       e.currentTarget.reset();
+
+      pushDataLayerEvent("lead_form_success", {
+        source: payload.source,
+        campaign: payload.campaign,
+        sourcePath: payload.sourcePath,
+        leadType: payload.leadType,
+      });
 
       // Auto-generate homeowner report if property address was provided
       const addr = payload.propertyAddress;
@@ -80,7 +124,13 @@ export function MotivatedSellerForm({
 
       // Redirect to canonical domain after a short delay so they see the thank-you
       setTimeout(() => {
-        window.location.href = "https://sylvestri.com?ref=lead-capture&source=" + encodeURIComponent(sourceSlug);
+        const params = new URLSearchParams({
+          source: payload.source,
+          campaign: payload.campaign,
+          leadType: payload.leadType,
+          from: payload.sourcePath,
+        });
+        window.location.href = `/thank-you?${params.toString()}`;
       }, 4000);
     } catch (err) {
       setStatus("error");
@@ -112,7 +162,12 @@ export function MotivatedSellerForm({
         </p>
         <p className={`mt-4 text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
           Need immediate help?{" "}
-          <a href="tel:+18458672646" className="font-semibold underline">
+          <a
+            href="tel:+18458672646"
+            data-track-event="cta_click_call"
+            data-track-label={`motivated-seller-success-${sourceSlug}`}
+            className="font-semibold underline"
+          >
             (845) 867-2646
           </a>
         </p>
@@ -138,6 +193,8 @@ export function MotivatedSellerForm({
   return (
     <div className={wrapCls}>
       <form onSubmit={onSubmit} className="space-y-5" id={`msf-${sourceSlug}`}>
+        <input tabIndex={-1} autoComplete="off" name="website" className="hidden" aria-hidden />
+
         {/* Name row */}
         <div className="grid gap-5 sm:grid-cols-2">
           <div>

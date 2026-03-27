@@ -1,76 +1,277 @@
+import { createHmac, randomUUID } from "node:crypto";
+
 import { NextResponse } from "next/server";
+
+import { deliverLeadToFub, hasFubDirectConfig, sendLeadNotificationEmail } from "@/lib/lead-delivery";
 
 type LeadPayload = {
   fullName?: string;
   email?: string;
   phone?: string;
-  interest?: string;
+  leadType?: string;
   timeline?: string;
-  location?: string;
+  market?: string;
+  propertyAddress?: string;
   notes?: string;
+  leadMagnet?: string;
+  consentEmail?: boolean;
+  consentSms?: boolean;
   source?: string;
   campaign?: string;
+  sourcePath?: string;
+  sourceToken?: string;
   submittedAt?: string;
+  honeypot?: string;
 };
 
-function missingRequiredField(payload: LeadPayload) {
-  return !payload.fullName || !payload.email || !payload.source || !payload.campaign;
+type NormalizedLead = {
+  requestId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  leadType: string;
+  timeline: string;
+  market: string;
+  propertyAddress: string;
+  notes: string;
+  leadMagnet: string;
+  consentEmail: boolean;
+  consentSms: boolean;
+  source: string;
+  campaign: string;
+  sourcePath: string;
+  sourceToken: string;
+  submittedAt: string;
+  receivedAt: string;
+};
+
+const ADDRESS_REQUIRED_LEAD_TYPES = new Set(["home-valuation", "seller-distress"]);
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 6;
+const rateLimitStore = new Map<string, number[]>();
+
+function requiredText(value?: string) {
+  return Boolean(value && value.trim());
+}
+
+function getClientIp(request: Request) {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0].trim();
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+  return "unknown";
+}
+
+function normalizeSourceToken(sourcePath: string, sourceToken?: string) {
+  if (sourceToken && sourceToken.trim()) return sourceToken.trim();
+  if (sourcePath === "/") return "home";
+  return sourcePath.replace(/\//g, "-").replace(/^-+|-+$/g, "") || "page";
+}
+
+function isRateLimited(rateKey: string) {
+  const now = Date.now();
+  const existing = rateLimitStore.get(rateKey) || [];
+  const trimmed = existing.filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS);
+
+  if (trimmed.length >= RATE_LIMIT_MAX_REQUESTS) {
+    rateLimitStore.set(rateKey, trimmed);
+    return true;
+  }
+
+  trimmed.push(now);
+  rateLimitStore.set(rateKey, trimmed);
+  return false;
+}
+
+function getMissingFields(payload: LeadPayload) {
+  const missing: string[] = [];
+  if (!requiredText(payload.fullName)) missing.push("fullName");
+  if (!requiredText(payload.email)) missing.push("email");
+  if (!requiredText(payload.leadType)) missing.push("leadType");
+  if (!requiredText(payload.source)) missing.push("source");
+  if (!requiredText(payload.campaign)) missing.push("campaign");
+  if (!requiredText(payload.sourcePath)) missing.push("sourcePath");
+  if (!requiredText(payload.submittedAt)) missing.push("submittedAt");
+
+  if (
+    requiredText(payload.leadType) &&
+    ADDRESS_REQUIRED_LEAD_TYPES.has(payload.leadType!.trim()) &&
+    !requiredText(payload.propertyAddress)
+  ) {
+    missing.push("propertyAddress");
+  }
+
+  return missing;
+}
+
+function normalizeLead(payload: LeadPayload): NormalizedLead {
+  const sourcePath = payload.sourcePath!.trim();
+
+  return {
+    requestId: randomUUID(),
+    fullName: payload.fullName!.trim(),
+    email: payload.email!.trim().toLowerCase(),
+    phone: payload.phone?.trim() || "",
+    leadType: payload.leadType!.trim(),
+    timeline: payload.timeline?.trim() || "",
+    market: payload.market?.trim() || "",
+    propertyAddress: payload.propertyAddress?.trim() || "",
+    notes: payload.notes?.trim() || "",
+    leadMagnet: payload.leadMagnet?.trim() || "",
+    consentEmail: Boolean(payload.consentEmail),
+    consentSms: Boolean(payload.consentSms),
+    source: payload.source!.trim(),
+    campaign: payload.campaign!.trim(),
+    sourcePath,
+    sourceToken: normalizeSourceToken(sourcePath, payload.sourceToken),
+    submittedAt: payload.submittedAt!.trim(),
+    receivedAt: new Date().toISOString(),
+  };
+}
+
+function signPayload(payload: NormalizedLead, secret?: string) {
+  if (!secret) return "";
+  return createHmac("sha256", secret).update(JSON.stringify(payload)).digest("hex");
+}
+
+async function triggerAutoresponder(lead: NormalizedLead) {
+  const autoresponderUrl = process.env.LEAD_AUTORESPONDER_WEBHOOK_URL;
+  if (!autoresponderUrl) return;
+
+  try {
+    await fetch(autoresponderUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        requestId: lead.requestId,
+        eventType: "lead_autoresponder",
+        leadType: lead.leadType,
+        leadMagnet: lead.leadMagnet,
+        email: lead.email,
+        fullName: lead.fullName,
+        source: lead.source,
+        campaign: lead.campaign,
+        sourcePath: lead.sourcePath,
+      }),
+    });
+  } catch (error) {
+    console.error("[lead-intake] autoresponder webhook failed", error);
+  }
+}
+
+async function triggerLeadNotifications(lead: NormalizedLead) {
+  const [notificationResult, autoresponderResult] = await Promise.allSettled([
+    sendLeadNotificationEmail(lead),
+    triggerAutoresponder(lead),
+  ]);
+
+  if (notificationResult.status === "rejected") {
+    console.error("[lead-intake] notification email failed", notificationResult.reason);
+  }
+
+  if (autoresponderResult.status === "rejected") {
+    console.error("[lead-intake] autoresponder fanout failed", autoresponderResult.reason);
+  }
 }
 
 export async function POST(request: Request) {
   const payload = (await request.json()) as LeadPayload;
 
-  if (missingRequiredField(payload)) {
+  if (payload.honeypot && payload.honeypot.trim()) {
     return NextResponse.json(
-      { message: "Full name, email, source, and campaign are required." },
+      { message: "Lead accepted." },
+      {
+        status: 202,
+      },
+    );
+  }
+
+  const missingFields = getMissingFields(payload);
+  if (missingFields.length > 0) {
+    return NextResponse.json(
+      { message: `Missing required fields: ${missingFields.join(", ")}.` },
       { status: 400 },
+    );
+  }
+
+  const normalizedLead = normalizeLead(payload);
+  const clientIp = getClientIp(request);
+  const rateKey = `${clientIp}:${normalizedLead.email}:${normalizedLead.leadType}`;
+
+  if (isRateLimited(rateKey)) {
+    return NextResponse.json(
+      { message: "Too many submissions. Please wait a few minutes and try again." },
+      { status: 429 },
     );
   }
 
   const leadRouterUrl = process.env.LEAD_ROUTER_URL;
   const leadRouterToken = process.env.LEAD_ROUTER_TOKEN;
+  const leadRouterSigningSecret = process.env.LEAD_ROUTER_SIGNING_SECRET;
+  const signature = signPayload(normalizedLead, leadRouterSigningSecret);
 
-  const normalizedLead = {
-    fullName: payload.fullName,
-    email: payload.email,
-    phone: payload.phone || "",
-    interest: payload.interest || "agent-match",
-    timeline: payload.timeline || "",
-    location: payload.location || "",
-    notes: payload.notes || "",
-    source: payload.source,
-    campaign: payload.campaign,
-    submittedAt: payload.submittedAt || new Date().toISOString(),
-  };
+  let deliveryMessage =
+    "Lead captured in the site layer. Set LEAD_ROUTER_URL or FUB_API_TOKEN to forward submissions.";
+  let deliveryStatus = 202;
 
-  if (!leadRouterUrl) {
+  if (leadRouterUrl) {
+    try {
+      const response = await fetch(leadRouterUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Lead-Request-Id": normalizedLead.requestId,
+          ...(signature ? { "X-Lead-Signature": signature } : {}),
+          ...(leadRouterToken ? { Authorization: `Bearer ${leadRouterToken}` } : {}),
+        },
+        body: JSON.stringify(normalizedLead),
+      });
+
+      if (response.ok) {
+        deliveryMessage = "Lead captured and forwarded to the n8n intake router.";
+        deliveryStatus = 200;
+      } else if (hasFubDirectConfig()) {
+        await deliverLeadToFub(normalizedLead);
+        deliveryMessage =
+          "Lead captured and delivered to Follow Up Boss via direct fallback after router failure.";
+        deliveryStatus = 200;
+      } else {
+        return NextResponse.json(
+          { message: "Lead accepted locally but failed to forward to the router endpoint." },
+          { status: 502 },
+        );
+      }
+    } catch (error) {
+      if (hasFubDirectConfig()) {
+        await deliverLeadToFub(normalizedLead);
+        deliveryMessage =
+          "Lead captured and delivered to Follow Up Boss via direct fallback after router error.";
+        deliveryStatus = 200;
+      } else {
+        console.error("[lead-intake] router forward failed", error);
+        return NextResponse.json(
+          { message: "Lead accepted locally but failed to forward to the router endpoint." },
+          { status: 502 },
+        );
+      }
+    }
+  } else if (hasFubDirectConfig()) {
+    await deliverLeadToFub(normalizedLead);
+    deliveryMessage = "Lead captured and delivered directly to Follow Up Boss.";
+    deliveryStatus = 200;
+  } else {
     console.info("[lead-intake] accepted without router", normalizedLead);
-    return NextResponse.json(
-      {
-        message:
-          "Lead captured in the site layer. Set LEAD_ROUTER_URL to forward submissions into n8n and Follow Up Boss.",
-      },
-      { status: 202 },
-    );
   }
 
-  const response = await fetch(leadRouterUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(leadRouterToken ? { Authorization: `Bearer ${leadRouterToken}` } : {}),
+  await triggerLeadNotifications(normalizedLead);
+
+  return NextResponse.json(
+    {
+      message: deliveryMessage,
+      requestId: normalizedLead.requestId,
     },
-    body: JSON.stringify(normalizedLead),
-  });
-
-  if (!response.ok) {
-    return NextResponse.json(
-      { message: "Lead accepted locally but failed to forward to the router endpoint." },
-      { status: 502 },
-    );
-  }
-
-  return NextResponse.json({
-    message: "Lead captured and forwarded to the n8n intake router.",
-  });
+    { status: deliveryStatus },
+  );
 }

@@ -1,0 +1,75 @@
+{
+  "name": "daily-pdf-publisher-template",
+  "nodes": [
+    {
+      "id": "schedule",
+      "name": "Post Publish Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.0,
+      "position": [
+        280,
+        220
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "pdf-payload",
+      "name": "Compose PDF Payload",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        220
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"section\": \"articles\",\n  \"slug\": \"replace-with-published-slug\",\n  \"pdfUrl\": \"https://res.cloudinary.com/example/raw/upload/generated.pdf\",\n  \"cloudinaryPublicId\": \"generated.pdf\",\n  \"filename\": \"generated.pdf\",\n  \"dryRun\": false,\n  \"sourceBlog\": \"default-blog\",\n  \"sourceChannel\": \"daily-pdf\"\n}"
+      }
+    },
+    {
+      "id": "publish-pdf",
+      "name": "Register PDF Artifact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://sylvestri.com/api/ops/assets/publish-pdf",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\",\n  \"x-hostinger-n8n-webhook-token\": \"={{$env.HOSTINGER_N8N_WEBHOOK_TOKEN}}\",\n  \"x-n8n-source-id\": \"={{$env.N8N_SOURCE_ID}}\",\n  \"x-n8n-signature\": \"replace-with-precomputed-signature\"\n}",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{JSON.stringify($json)}}"
+      }
+    }
+  ],
+  "connections": {
+    "Post Publish Trigger": {
+      "main": [
+        [
+          {
+            "node": "Compose PDF Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compose PDF Payload": {
+      "main": [
+        [
+          {
+            "node": "Register PDF Artifact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

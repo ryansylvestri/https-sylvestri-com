@@ -91,3 +91,166 @@
 | `/investors` | `investor` | investor |
 | `/renters` | `renter` | lifestyle |
 | `/ai` | (none/systems) | systems |
+
+---
+
+## Thread Update
+
+Date: 2026-03-26
+Scope: Cloudinary signed upload API parity planning
+
+### Context
+- Cloudinary signed upload API was implemented first in:
+  - `/Users/ryansylvestri/dev/github/hudsonriverrealtors/blog-site`
+- This repo has not yet received the mirrored implementation in this execution step.
+
+### This Repo Update
+- Added cross-repo parity note in `README.md`.
+- Updated `documentation.md` with the current parity status.
+- Added `codex.md` for standardized session orientation.
+- Kept this handoff file as the canonical handoff artifact (case-insensitive filesystem means `handoff.md` maps to `HANDOFF.md`).
+
+### Pending Mirror Work
+- Add:
+  - `POST /api/cloudinary/sign`
+  - `POST /api/cloudinary/upload-complete`
+- Add env vars:
+  - `CLOUDINARY_CLOUD_NAME`
+  - `CLOUDINARY_API_KEY`
+  - `CLOUDINARY_API_SECRET`
+  - `CLOUDINARY_UPLOAD_FOLDER`
+  - `UPLOAD_ADMIN_TOKEN`
+- Add deterministic test script equivalent to HRR `blog-site/scripts/test-cloudinary-signed-upload.mjs`.
+
+### Mirror Completion
+- The pending Cloudinary signed-upload mirror work is now complete in this repo.
+- Added endpoints:
+  - `POST /api/cloudinary/sign`
+  - `POST /api/cloudinary/upload-complete`
+- Added supporting files:
+  - `lib/cloudinary-upload-server.ts`
+  - `scripts/test-cloudinary-signed-upload.mjs`
+- Updated env contract and npm script:
+  - `.env.example`
+  - `package.json` (`cloudinary:test-upload`)
+
+---
+
+## Thread Update
+
+Date: 2026-03-26
+Scope: Docs/resources/articles platform v1
+
+### What Landed
+
+- Added a shared MDX content engine:
+  - `lib/content-engine.ts`
+- Added access and auth helpers:
+  - `lib/content-access.ts`
+  - `lib/supabase.ts`
+  - `lib/stripe.ts`
+- Added content roots:
+  - `content/docs`
+  - `content/resources`
+  - `content/articles`
+- Added route surfaces:
+  - `/docs`
+  - `/docs/[...slug]`
+  - `/articles`
+  - `/articles/[slug]`
+  - `/login`
+  - `/account`
+- Added hybrid `/resources` behavior:
+  - MDX resource first
+  - legacy `lib/resource-pages.ts` fallback for non-migrated slugs
+- Preserved `/guides` and added optional redirect support to migrated articles via `legacyUrl`.
+- Added APIs:
+  - `POST /api/waitlist/pro`
+  - `POST /api/stripe/webhook`
+  - `POST /api/assets/upload-url`
+  - `POST /api/assets/complete`
+  - `GET /api/assets/[id]/access-url`
+- Added Supabase SQL scaffold:
+  - `supabase/migrations/20260326_docs_platform_v1.sql`
+
+### Verification
+
+- `npx tsc --noEmit` passes
+- `npm run build` passes
+- `npm run lint` required one pre-existing `RevealSection` hook fix, then passed aside from existing image warnings if not yet addressed in follow-up work
+
+### Media Pipeline Continuation
+
+- Added queue and policy helpers:
+  - `lib/asset-queue.ts`
+  - `lib/asset-policy.ts`
+- Updated asset endpoints for queue-first processing:
+  - `POST /api/assets/upload-url`
+  - `POST /api/assets/complete`
+  - `GET /api/assets/[id]/access-url`
+- Added worker script and npm command:
+  - `scripts/asset-worker.mjs`
+  - `npm run assets:worker`
+- Added podcast feed endpoint:
+  - `GET /podcast/feed.xml`
+- Added expanded Supabase migration:
+  - `supabase/migrations/20260326_docs_platform_v1_worker.sql`
+
+---
+
+## Thread Update
+
+Date: 2026-03-26
+Scope: Aggressive SEO + SEO-first publishing automation baseline
+
+### What Landed
+
+- Added signed n8n publish surfaces:
+  - `POST /api/ops/content/publish`
+  - `POST /api/ops/assets/publish-pdf`
+- Added SEO refresh worker endpoints:
+  - `POST /api/seo/ping`
+  - `POST /api/seo/push`
+- Added helper modules:
+  - `lib/ops-publish-utils.ts`
+  - `lib/seo.ts`
+  - `lib/seo-ping.ts`
+- Added dedicated content sitemap:
+  - `/sitemap-content.xml`
+- Tightened robots/noindex behavior:
+  - `/login`, `/account`, `/auth/*`, `/api/*`
+- Replaced remaining critical raw images in core public routes with `next/image`.
+- Added Hostinger packaging script and runbook:
+  - `ops/hostinger/package-upload.sh`
+  - `ops/hostinger/README.md`
+- Added n8n workflow templates and docs:
+  - `ops/n8n/README.md`
+  - `ops/n8n/daily-content-publisher.json`
+  - `ops/n8n/daily-pdf-publisher.json`
+- Expanded env contract:
+  - `HOSTINGER_N8N_WEBHOOK_TOKEN`
+  - `N8N_SIGNATURE_SECRET`
+  - `N8N_SOURCE_ID`
+  - `GSC_PING_TOKEN`
+  - `LEAD_NOTIFICATION_EMAILS`
+  - `LEAD_NOTIFICATION_FROM`
+  - `SMTP_HOST`
+  - `SMTP_PORT`
+  - `SMTP_SECURE`
+  - `SMTP_USER`
+  - `SMTP_PASS`
+  - optional GSC/IndexNow helper vars
+
+### Verification
+
+- `npm run lint` passes
+- `npm run build` passes
+- `npm run hostinger:package` passes
+- Hostinger artifact created at:
+  - `/Users/ryansylvestri/dev/github/https-sylvestri-com/dist/hostinger/sylvestri-hostinger-package.tgz`
+
+### Notes For Next Session
+
+- Import the `ops/n8n/*.json` workflow templates into the live Hostinger n8n instances.
+- Wire real signature generation inside n8n for `x-n8n-signature`.
+- Configure `GSC_PING_ENDPOINT` and/or `INDEXNOW_KEY` if live indexing pushes should fire beyond Bing sitemap pings.
