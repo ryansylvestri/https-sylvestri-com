@@ -546,3 +546,77 @@ Implement the aggressive SEO-first publishing and daily content automation plan 
 
 - The new SEO push worker supports Bing sitemap pings and optional custom GSC/IndexNow helpers, but live third-party indexing still depends on env configuration outside this repo.
 - The n8n templates are scaffolded and ready for import, but they still need live credential wiring and signature generation in the actual n8n instances.
+
+---
+
+## Thread Update
+
+Date: 2026-03-26
+Workspace: /Users/ryansylvestri/dev/github/https-sylvestri-com
+Scope: deploy follow-through, Hostinger parity hardening, and lead-routing verification
+
+### Source Changes Added In This Pass
+
+1. Hardened the content sitemap route for Hostinger runtime compatibility:
+   - moved `next-mdx-remote/rsc` to a lazy import inside `renderContentDocument()` in `lib/content-engine.ts`
+   - added resilient dynamic import + filesystem fallback in `app/sitemap-content.xml/route.ts`
+   - added XML escaping and invalid-date guards in the sitemap serializer
+2. Fixed packaging duplication in `ops/hostinger/package-upload.sh`:
+   - no longer nests `content/content/**` inside the staging artifact when `.next/standalone` already contains `content/`
+3. Reduced homepage staleness risk after deploy:
+   - added `export const revalidate = 300` to `app/page.tsx`
+
+### Verification Completed In This Pass
+
+1. Repo/build/package checks:
+   - `npm run lint`
+   - `npm run build`
+   - `npm run hostinger:package`
+   - `npm run lint` again after packaging
+2. Standalone runtime checks:
+   - local standalone server returns `200` for `/sitemap-content.xml`
+   - homepage now emits `Cache-Control: s-maxage=300, stale-while-revalidate=31535700`
+   - staging artifact now contains only:
+     - `dist/hostinger/staging/content/articles`
+     - `dist/hostinger/staging/content/resources`
+     - `dist/hostinger/staging/content/docs`
+3. Lead-path smoke checks against the real `/api/lead` implementation with a mock router and bot-email preview transport:
+   - verified payloads for:
+     - shared intake form
+     - home valuation form
+     - motivated seller / distress form
+     - newsletter signup
+     - exit-intent capture
+     - Monkey Maghees static form
+   - verified normalized payload forwarding with deterministic `requestId`
+   - verified `X-Lead-Signature` and `X-Lead-Request-Id` headers on routed submissions
+   - verified notification email fanout targets `bot@sylvestri.com` when SMTP is configured
+
+### Production Findings
+
+1. Git push deploy path is active:
+   - live origin serves new robots rules and cache-busted homepage metadata from the latest code
+2. Production CDN is still serving stale homepage HTML on `/` without a cache-busting query string:
+   - stale response still shows `<title>Home</title>`
+   - cache-busted response shows `Hudson Valley Real Estate Broker, Systems Builder, and AI Operator`
+3. Production lead routing is not configured yet:
+   - live `POST https://sylvestri.com/api/lead` returned:
+     - `Lead captured in the site layer. Set LEAD_ROUTER_URL or FUB_API_TOKEN to forward submissions.`
+   - this confirms live leads are currently not being forwarded to Follow Up Boss
+   - bot email delivery on production also cannot be confirmed until SMTP envs are configured in Hostinger
+4. Production `sitemap-content.xml` was still returning `500` before this hardening patch was committed and pushed
+
+### Operational Conclusion
+
+- The repo now contains the code needed for:
+  - resilient content sitemap generation
+  - repo-first content publishing
+  - lead notification fanout to `bot@sylvestri.com`
+  - direct or router-based Follow Up Boss delivery
+- Production still requires live environment configuration for:
+  - `LEAD_ROUTER_URL` or `FUB_API_TOKEN`
+  - `SMTP_HOST`
+  - `SMTP_PORT`
+  - `SMTP_SECURE`
+  - `SMTP_USER`
+  - `SMTP_PASS`

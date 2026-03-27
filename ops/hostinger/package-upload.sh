@@ -36,7 +36,7 @@ if [[ -d "public" ]]; then
   cp -R public "$STAGING_DIR/public"
 fi
 
-if [[ -d "content" ]]; then
+if [[ -d "content" && ! -d "$STAGING_DIR/content" ]]; then
   cp -R content "$STAGING_DIR/content"
 fi
 

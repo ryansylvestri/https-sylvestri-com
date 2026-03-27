@@ -5,7 +5,6 @@ import path from "node:path";
 import { cache } from "react";
 
 import matter from "gray-matter";
-import { compileMDX } from "next-mdx-remote/rsc";
 import { z } from "zod";
 
 const CONTENT_ROOT = path.join(process.cwd(), "content");
@@ -227,6 +226,7 @@ export function getRelatedContent(doc: ContentDocument, limit = 3): ContentDocum
 }
 
 export async function renderContentDocument(doc: ContentDocument) {
+  const { compileMDX } = await import("next-mdx-remote/rsc");
   return compileMDX<ContentFrontmatter>({
     source: doc.body,
     options: { parseFrontmatter: false },

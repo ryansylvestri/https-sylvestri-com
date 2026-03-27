@@ -33,6 +33,8 @@ export const metadata = buildPageMetadata({
   path: "/",
 });
 
+export const revalidate = 300;
+
 const firstMinuteAnswers = [
   {
     title: "Who Ryan is",
