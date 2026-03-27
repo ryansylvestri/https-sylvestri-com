@@ -1,125 +1,101 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
+import { ContentSearch } from "@/components/content-search";
 import { SectionHeading, SiteShell } from "@/components/site-shell";
+import { getPublishedContent } from "@/lib/content-engine";
 import { resourcePages } from "@/lib/resource-pages";
+import { buildPageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-content";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Homeowner Resources",
   description:
     "In-depth guides for Hudson Valley homeowners navigating divorce sales, probate, foreclosure, tax liens, downsizing, relocation, and more. Free resources from Ryan Sylvestri.",
-  alternates: { canonical: "/resources" },
+  path: "/resources",
+});
+
+type ResourceCard = {
+  id: string;
+  title: string;
+  routePath: string;
+  category: string;
+  summary: string;
+  tags: string[];
+  access: string;
 };
 
-const tagLabels: Record<string, string> = {
-  distressed: "Financial Distress",
-  "life-event": "Life Events",
-  lifestyle: "Lifestyle Moves",
-  property: "Property Situations",
-  market: "Market Challenges",
-};
+function getResourceCards(): ResourceCard[] {
+  const mdxResources = getPublishedContent("resources").map((doc) => ({
+    id: doc.id,
+    title: doc.title,
+    routePath: doc.routePath,
+    category: doc.category,
+    summary: doc.summary,
+    tags: doc.tags,
+    access: doc.access,
+  }));
 
-const tagIcons: Record<string, string> = {
-  distressed: "⚠️",
-  "life-event": "💙",
-  lifestyle: "🏡",
-  property: "🏚️",
-  market: "📊",
-};
+  const migratedSlugs = new Set(mdxResources.map((item) => item.routePath.split("/").pop()));
+  const legacyResources = resourcePages
+    .filter((page) => !migratedSlugs.has(page.slug))
+    .map((page) => ({
+      id: `legacy:${page.slug}`,
+      title: page.heroHeadline,
+      routePath: `/resources/${page.slug}`,
+      category: page.tag,
+      summary: page.heroSubheadline,
+      tags: [page.tag],
+      access: "public",
+    }));
 
-const uniqueTags = [...new Set(resourcePages.map((p) => p.tag))];
+  return [...mdxResources, ...legacyResources];
+}
 
 export default function ResourcesIndex() {
+  const cards = getResourceCards();
+
   return (
     <SiteShell>
-      <section className="mx-auto max-w-7xl px-6 py-20 md:py-28">
+      <section className="mx-auto max-w-7xl px-6 py-20 md:py-24">
         <div className="max-w-3xl space-y-5">
           <p className="text-sm font-semibold uppercase tracking-[0.34em] text-brand-copper">
             Homeowner Resources
           </p>
           <h1 className="font-display text-5xl leading-none text-balance text-brand-ink md:text-7xl">
-            Information for Every Situation
+            Information for every situation
           </h1>
           <p className="max-w-3xl text-xl leading-9 text-body-ink">
-            Whether you are facing foreclosure, going through a divorce,
-            relocating for work, or simply ready to downsize — we have a
-            detailed guide for your exact situation. No pressure, no sales
-            pitch — just the information you need to make the right decision.
+            This route now runs on a hybrid model. Migrated resources come from the new MDX engine,
+            while untouched slugs still resolve from the legacy content registry.
           </p>
         </div>
 
-        <div className="mt-12 flex flex-wrap gap-3">
-          {uniqueTags.map((tag) => (
-            <a
-              key={tag}
-              href={`#${tag}`}
-              className="rounded-full border border-[rgba(15,23,42,0.1)] bg-white/70 px-4 py-2 text-sm font-semibold text-brand-ink transition hover:border-brand-gold hover:text-brand-copper"
-            >
-              {tagIcons[tag]} {tagLabels[tag]}
-            </a>
-          ))}
-        </div>
-      </section>
-
-      {uniqueTags.map((tag) => {
-        const pages = resourcePages.filter((p) => p.tag === tag);
-        return (
-          <section
-            key={tag}
-            id={tag}
-            className="mx-auto max-w-7xl px-6 py-16"
+        <div className="mt-8 flex flex-wrap gap-4">
+          <Link
+            href="/docs"
+            className="rounded-full border border-[rgba(15,23,42,0.12)] bg-white/70 px-5 py-3 text-sm font-semibold text-brand-ink transition hover:border-brand-gold"
           >
-            <SectionHeading
-              eyebrow={`${tagIcons[tag]} ${tagLabels[tag]}`}
-              title={`${tagLabels[tag]} Resources`}
-              description={`Guides for homeowners dealing with ${tagLabels[tag].toLowerCase()} situations in the Hudson Valley.`}
-            />
-
-            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {pages.map((page) => (
-                <Link
-                  key={page.slug}
-                  href={`/resources/${page.slug}`}
-                  className="group rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/80 p-8 transition hover:border-brand-gold hover:shadow-[0_16px_60px_rgba(15,23,42,0.07)]"
-                >
-                  <h3 className="font-display text-xl leading-tight text-brand-ink transition group-hover:text-brand-copper">
-                    {page.heroHeadline}
-                  </h3>
-                  <p className="mt-3 text-sm leading-6 text-body-ink">
-                    {page.heroSubheadline.slice(0, 140)}…
-                  </p>
-                  <p className="mt-4 text-sm font-semibold text-brand-copper">
-                    Read the full guide →
-                  </p>
-                </Link>
-              ))}
-            </div>
-          </section>
-        );
-      })}
-
-      <section className="mx-auto max-w-4xl px-6 py-20 text-center">
-        <h2 className="font-display text-3xl text-brand-ink md:text-4xl">
-          Not Sure Which Guide Fits Your Situation?
-        </h2>
-        <p className="mt-4 text-lg leading-8 text-body-ink">
-          Call Ryan directly for a confidential conversation about
-          your options. No obligation, no pressure.
-        </p>
-        <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            Browse docs
+          </Link>
           <a
             href={siteConfig.phoneHref}
-            className="rounded-full bg-brand-ink px-8 py-4 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(15,23,42,0.16)] transition hover:bg-brand-copper"
+            data-track-event="cta_click_call"
+            data-track-label="resources-index-call"
+            className="rounded-full bg-brand-ink px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-copper"
           >
             Call {siteConfig.phone}
           </a>
-          <a
-            href={siteConfig.emailHref}
-            className="rounded-full border border-[rgba(15,23,42,0.12)] bg-white/70 px-8 py-4 text-sm font-semibold text-brand-ink transition hover:border-brand-gold hover:text-brand-copper"
-          >
-            Email Ryan
-          </a>
+        </div>
+
+        <div className="mt-10">
+          <SectionHeading
+            eyebrow="Resources"
+            title="Hybrid migration inventory"
+            description="Search across migrated MDX resources and the legacy resource library while the transition stays incremental."
+          />
+          <div className="mt-8">
+            <ContentSearch items={cards} emptyLabel="No resources are available yet." />
+          </div>
         </div>
       </section>
     </SiteShell>

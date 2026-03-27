@@ -3,8 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ImmersiveStage } from "@/components/immersive-stage";
+import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
+import { coreLeadMagnets } from "@/lib/lead-magnets";
+import { buildBreadcrumbJsonLd, buildPageMetadata } from "@/lib/seo";
 import { brandEntries, getBrandEntry, landingPages, squeezePages } from "@/lib/site-content";
 
 type PageProps = {
@@ -23,13 +26,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {};
   }
 
-  return {
+  return buildPageMetadata({
     title: brand.name,
     description: brand.summary,
-    alternates: {
-      canonical: `/brands/${brand.slug}`,
-    },
-  };
+    path: `/brands/${brand.slug}`,
+  });
 }
 
 export default async function BrandPage({ params }: PageProps) {
@@ -49,6 +50,13 @@ export default async function BrandPage({ params }: PageProps) {
 
   return (
     <SiteShell>
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Brands", path: "/brands" },
+          { name: brand.name, path: `/brands/${brand.slug}` },
+        ])}
+      />
       <PageHero
         eyebrow={`${brand.role} brand`}
         title={brand.name}
@@ -139,6 +147,8 @@ export default async function BrandPage({ params }: PageProps) {
             submitLabel="Submit brand lead"
             source={`brand:${brand.slug}`}
             campaign={brand.slug}
+            defaultLeadType="agent-match"
+            leadMagnetOptions={coreLeadMagnets}
           />
         </div>
       </section>

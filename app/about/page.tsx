@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import Image from "next/image";
 
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
+import { coreLeadMagnets } from "@/lib/lead-magnets";
 import {
   credibilityPills,
   operatingPrinciples,
@@ -10,11 +11,14 @@ import {
   personalSiteConfig,
   storyMilestones,
 } from "@/lib/personal-brand-content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "About",
-  description: "About Ryan Sylvestri: local credibility, operating style, and the thinking behind the personal brand.",
-};
+  description:
+    "About Ryan Sylvestri: local credibility, operating style, and the thinking behind the personal brand.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   const portraitUrl = getCloudinaryAssetUrl(personalMedia.portrait, {
@@ -35,9 +39,11 @@ export default function AboutPage() {
       >
         <div className="overflow-hidden rounded-[1.75rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(20,32,51,0.96)]">
           {portraitUrl ? (
-            <img
+            <Image
               src={portraitUrl}
               alt={personalSiteConfig.founderName}
+              width={1200}
+              height={900}
               className="h-[28rem] w-full object-cover"
             />
           ) : null}
@@ -94,6 +100,8 @@ export default function AboutPage() {
             submitLabel="Send details"
             source="about-page"
             campaign="sylvestri-about"
+            defaultLeadType="agent-match"
+            leadMagnetOptions={coreLeadMagnets}
           />
         </div>
       </section>

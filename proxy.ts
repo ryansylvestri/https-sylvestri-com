@@ -6,6 +6,23 @@ const PUBLIC_FILE = /\.(.*)$/;
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get("host");
+
+  const noIndexPaths = [
+    pathname === "/login",
+    pathname === "/account",
+    pathname === "/kpi",
+    pathname === "/thank-you",
+    pathname.startsWith("/auth"),
+    pathname.startsWith("/api"),
+  ];
+
+  if (host?.toLowerCase() === "www.sylvestri.com") {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.host = "sylvestri.com";
+    redirectUrl.protocol = "https";
+    return NextResponse.redirect(redirectUrl, 308);
+  }
 
   if (
     pathname.startsWith("/api") ||
@@ -15,18 +32,29 @@ export function proxy(request: NextRequest) {
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml"
   ) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    if (noIndexPaths.some(Boolean)) {
+      response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    }
+    return response;
   }
 
-  const host = request.headers.get("host");
   if (!host) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    if (noIndexPaths.some(Boolean)) {
+      response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    }
+    return response;
   }
 
   const brand = getBrandEntryByDomain(host);
 
   if (!brand || brand.role === "canonical" || pathname !== "/") {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    if (noIndexPaths.some(Boolean)) {
+      response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    }
+    return response;
   }
 
   const url = request.nextUrl.clone();

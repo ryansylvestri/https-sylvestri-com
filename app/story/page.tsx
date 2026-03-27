@@ -1,13 +1,16 @@
-import type { Metadata } from "next";
+import Image from "next/image";
 
 import { SectionHeading, SiteShell } from "@/components/site-shell";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
 import { personalMedia, selectedStories, storyMilestones } from "@/lib/personal-brand-content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Story",
-  description: "The story behind Ryan Sylvestri's operator-first approach to Hudson Valley real estate, systems, and leverage.",
-};
+  description:
+    "The story behind Ryan Sylvestri's operator-first approach to Hudson Valley real estate, systems, and leverage.",
+  path: "/story",
+});
 
 export default function StoryPage() {
   const signUrl = getCloudinaryAssetUrl(personalMedia.sign, {
@@ -19,13 +22,16 @@ export default function StoryPage() {
 
   return (
     <SiteShell>
+      <h1 className="sr-only">Story</h1>
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="grid gap-10 lg:grid-cols-[0.94fr_1.06fr]">
           <div className="overflow-hidden rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(20,32,51,0.96)] shadow-[0_24px_70px_rgba(15,23,42,0.16)]">
             {signUrl ? (
-              <img
+              <Image
                 src={signUrl}
                 alt="Ryan Sylvestri real-estate branding"
+                width={1600}
+                height={1000}
                 className="h-full min-h-[28rem] w-full object-cover"
               />
             ) : null}

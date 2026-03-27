@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 type ImmersiveStageProps = {
@@ -197,12 +198,12 @@ export function ImmersiveStage({
       <div ref={mountRef} className="absolute inset-0" aria-hidden />
       <div className="relative z-10 max-w-xs space-y-3">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/70">{eyebrow}</p>
-        <h3 className="font-display text-3xl leading-tight">{title}</h3>
+        <h2 className="font-display text-3xl leading-tight">{title}</h2>
         <p className="text-sm leading-7 text-white/78">{detail}</p>
       </div>
       {portraitUrl ? (
         <div className="absolute bottom-8 right-6 z-10 w-[11rem] overflow-hidden rounded-[1.5rem] border border-white/14 bg-white/8 shadow-[0_24px_60px_rgba(0,0,0,0.24)] backdrop-blur">
-          <img src={portraitUrl} alt="" className="h-[14rem] w-full object-cover" />
+          <Image src={portraitUrl} alt="" width={176} height={224} className="h-[14rem] w-full object-cover" />
         </div>
       ) : null}
       <div className="relative z-10 mt-44 grid gap-3 text-xs uppercase tracking-[0.24em] text-white/70 sm:grid-cols-2">

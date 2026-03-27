@@ -9,6 +9,22 @@
 
 import { siteConfig } from "./site-content";
 
+const aggregateRatingValue = Number(process.env.NEXT_PUBLIC_GBP_RATING_VALUE || "4.6");
+const aggregateReviewCount = Number(process.env.NEXT_PUBLIC_GBP_REVIEW_COUNT || "25");
+
+const aggregateRating =
+  Number.isFinite(aggregateRatingValue) &&
+  Number.isFinite(aggregateReviewCount) &&
+  aggregateReviewCount > 0
+    ? {
+        "@type": "AggregateRating" as const,
+        ratingValue: aggregateRatingValue.toFixed(1),
+        reviewCount: String(Math.round(aggregateReviewCount)),
+        bestRating: "5",
+        worstRating: "1",
+      }
+    : undefined;
+
 /* ── Shared address block ── */
 const postalAddress = {
   "@type": "PostalAddress" as const,
@@ -58,6 +74,7 @@ export const localBusinessSchema = {
   hasMap: "https://maps.google.com/?q=584+Route+9+Fishkill+NY+12524",
   /* Google Business Profile canonical link — reinforces GBP ↔ website entity match */
   additionalType: "https://g.page/r/CV5BYkl3vmZuEBM",
+  aggregateRating,
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",

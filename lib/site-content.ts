@@ -594,9 +594,12 @@ export function getSqueezePage(slug: string) {
 export const intakeOptions = [
   { value: "buyer", label: "Buyer" },
   { value: "seller", label: "Seller" },
+  { value: "home-valuation", label: "Home valuation" },
+  { value: "seller-distress", label: "Seller (distress / urgent)" },
   { value: "investor", label: "Investor" },
   { value: "renter", label: "Renter / relocation" },
   { value: "ai-coaching", label: "AI / systems" },
+  { value: "newsletter", label: "Newsletter" },
   { value: "agent-match", label: "Need the right route" },
   { value: "other", label: "Other" },
 ] as const;

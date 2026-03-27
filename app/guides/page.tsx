@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import { JsonLd } from "@/components/json-ld";
@@ -9,14 +8,15 @@ import {
   guideTopics,
   type GuideTopic,
 } from "@/lib/guide-topics";
+import { buildPageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-content";
 
-export const metadata: Metadata = {
-  title: "Real Estate Guides — Hudson Valley",
+export const metadata = buildPageMetadata({
+  title: "Real Estate Guides - Hudson Valley",
   description:
     "Free educational guides covering buying, selling, investing, relocation, and every situation-specific topic for Hudson Valley real estate.",
-  alternates: { canonical: "/guides" },
-};
+  path: "/guides",
+});
 
 export default function GuidesIndex() {
   const schema = {

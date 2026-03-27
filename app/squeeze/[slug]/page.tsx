@@ -3,18 +3,37 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { GoogleReviewsPanel } from "@/components/google-reviews-panel";
 import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { RevealSection } from "@/components/reveal-section";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
 import { getFaqsForCategory } from "@/lib/faq-content";
 import { getExtendedFaqsForCategory } from "@/lib/faq-content-extended";
+import { getLeadMagnetsForLane } from "@/lib/lead-magnets";
 import { getPageImage } from "@/lib/media-map";
+import { buildBreadcrumbJsonLd, buildFaqJsonLd, buildPageMetadata } from "@/lib/seo";
 import { getSqueezePage, siteConfig, squeezePages } from "@/lib/site-content";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+function inferLeadTypeFromSqueeze(slug: string) {
+  if (slug.includes("valuation")) return "home-valuation";
+  if (
+    /(foreclosure|pre-foreclosure|probate|divorce|tax-lien|lis-pendens|code-violation|bankruptcy|inherited|estate|fsbo|vacant|expired)/.test(
+      slug,
+    )
+  ) {
+    return "seller-distress";
+  }
+  if (slug.includes("investor")) return "investor";
+  if (slug.includes("relocation") || slug.includes("renter")) return "renter";
+  if (slug.includes("buyer")) return "buyer";
+  if (slug.includes("seller")) return "seller";
+  return "agent-match";
+}
 
 export async function generateStaticParams() {
   return squeezePages.map((page) => ({ slug: page.slug }));
@@ -28,13 +47,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {};
   }
 
-  return {
-    title: page.title,
+  return buildPageMetadata({
+    title: `${page.title} | Squeeze Page`,
     description: page.subheadline,
-    alternates: {
-      canonical: `/squeeze/${page.slug}`,
-    },
-  };
+    path: `/squeeze/${page.slug}`,
+  });
 }
 
 export default async function SqueezePage({ params }: PageProps) {
@@ -45,15 +62,36 @@ export default async function SqueezePage({ params }: PageProps) {
     notFound();
   }
 
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: page.title,
-    description: page.subheadline,
-    url: `${siteConfig.siteUrl}/squeeze/${page.slug}`,
-  };
+  const faqs: { q: string; a: string }[] = [];
+  const slugParts = page.slug.split("-");
+  for (const part of slugParts) {
+    const items = [
+      ...getFaqsForCategory(part),
+      ...getExtendedFaqsForCategory(part),
+    ];
+    for (const item of items) {
+      if (!faqs.some((entry) => entry.q === item.q)) faqs.push(item);
+    }
+  }
+
+  const schema = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: page.title,
+      description: page.subheadline,
+      url: `${siteConfig.siteUrl}/squeeze/${page.slug}`,
+    },
+    buildBreadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Squeeze Pages", path: "/squeeze" },
+      { name: page.title, path: `/squeeze/${page.slug}` },
+    ]),
+    ...(faqs.length > 0 ? [buildFaqJsonLd(faqs.slice(0, 6))] : []),
+  ];
 
   const heroPublicId = getPageImage(page.slug);
+  const defaultLeadType = inferLeadTypeFromSqueeze(page.slug);
   const heroUrl = getCloudinaryAssetUrl(heroPublicId, {
     crop: "fill",
     gravity: "auto",
@@ -127,48 +165,36 @@ export default async function SqueezePage({ params }: PageProps) {
                 submitLabel={page.cta}
                 source={`squeeze:${page.slug}`}
                 campaign={page.slug}
+                defaultLeadType={defaultLeadType}
+                leadMagnetOptions={getLeadMagnetsForLane(defaultLeadType)}
               />
             </RevealSection>
           </div>
 
-          {/* ── FAQ section ── */}
-          {(() => {
-            const faqs: { q: string; a: string }[] = [];
-            const slugParts = page.slug.split("-");
-            for (const part of slugParts) {
-              const items = [
-                ...getFaqsForCategory(part),
-                ...getExtendedFaqsForCategory(part),
-              ];
-              for (const item of items) {
-                if (!faqs.some((f) => f.q === item.q)) faqs.push(item);
-              }
-            }
-            if (faqs.length === 0) return null;
-            return (
-              <div className="mt-10">
-                <h2 className="font-display text-2xl text-brand-ink">
-                  Common questions about this topic
-                </h2>
-                <div className="mt-6 grid gap-4 lg:grid-cols-2">
-                  {faqs.slice(0, 6).map((item, i) => (
-                    <RevealSection key={i} delay={i * 70}>
-                      <div className="rounded-[1.5rem] border border-[rgba(15,23,42,0.08)] bg-white/80 p-6">
-                        <h3 className="text-base font-semibold text-brand-ink">
-                          {item.q}
-                        </h3>
-                        <p className="mt-2 text-sm leading-7 text-body-ink">
-                          {item.a}
-                        </p>
-                      </div>
-                    </RevealSection>
-                  ))}
-                </div>
+          {faqs.length > 0 ? (
+            <div className="mt-10">
+              <h2 className="font-display text-2xl text-brand-ink">
+                Common questions about this topic
+              </h2>
+              <div className="mt-6 grid gap-4 lg:grid-cols-2">
+                {faqs.slice(0, 6).map((item, i) => (
+                  <RevealSection key={i} delay={i * 70}>
+                    <div className="rounded-[1.5rem] border border-[rgba(15,23,42,0.08)] bg-white/80 p-6">
+                      <h3 className="text-base font-semibold text-brand-ink">
+                        {item.q}
+                      </h3>
+                      <p className="mt-2 text-sm leading-7 text-body-ink">
+                        {item.a}
+                      </p>
+                    </div>
+                  </RevealSection>
+                ))}
               </div>
-            );
-          })()}
+            </div>
+          ) : null}
         </div>
       </main>
+      <GoogleReviewsPanel />
     </>
   );
 }

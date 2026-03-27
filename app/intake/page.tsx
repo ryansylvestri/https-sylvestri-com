@@ -1,16 +1,17 @@
-import type { Metadata } from "next";
-
 import { ImmersiveStage } from "@/components/immersive-stage";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { PageHero, SiteShell } from "@/components/site-shell";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
+import { coreLeadMagnets } from "@/lib/lead-magnets";
 import { personalMedia } from "@/lib/personal-brand-content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Start Here",
   description:
     "Shared intake page for sylvestri.com with one clean first step for buyers, sellers, investors, renters, and AI or referral conversations.",
-};
+  path: "/intake",
+});
 
 export default function IntakePage() {
   const headshotUrl = getCloudinaryAssetUrl(personalMedia.headshot, {
@@ -45,6 +46,8 @@ export default function IntakePage() {
           submitLabel="Submit details"
           source="intake-page"
           campaign="sylvestri-intake"
+          defaultLeadType="agent-match"
+          leadMagnetOptions={coreLeadMagnets}
         />
       </section>
     </SiteShell>

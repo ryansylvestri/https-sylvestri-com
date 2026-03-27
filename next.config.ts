@@ -13,6 +13,29 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "www.sylvestri.com",
+          },
+        ],
+        destination: "https://sylvestri.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/monkeymaghees",
+        destination: "/monkeymaghees/index.html",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

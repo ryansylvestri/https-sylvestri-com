@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { SectionHeading, SiteShell } from "@/components/site-shell";
+import { coreLeadMagnets } from "@/lib/lead-magnets";
+import { buildPageMetadata } from "@/lib/seo";
 import { landingPageCategories, landingPages } from "@/lib/site-content";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Landing Pages",
   description:
     "In-depth landing pages for buyers, sellers, investors, and homeowners navigating complex situations in the Hudson Valley.",
-};
+  path: "/landing",
+});
 
 export default function LandingIndexPage() {
   const groupedPages = Object.entries(landingPageCategories).map(([key, label]) => ({
@@ -20,6 +22,7 @@ export default function LandingIndexPage() {
 
   return (
     <SiteShell>
+      <h1 className="sr-only">Landing Pages</h1>
       <section className="mx-auto max-w-7xl px-6 py-20">
         <SectionHeading
           eyebrow="Landing-page library"
@@ -65,6 +68,8 @@ export default function LandingIndexPage() {
             submitLabel="Help me choose"
             source="landing-index"
             campaign="sylvestri-landing-library"
+            defaultLeadType="agent-match"
+            leadMagnetOptions={coreLeadMagnets}
           />
         </div>
       </section>

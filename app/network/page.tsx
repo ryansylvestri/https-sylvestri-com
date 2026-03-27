@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
-
 import { ImmersiveStage } from "@/components/immersive-stage";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
+import { coreLeadMagnets } from "@/lib/lead-magnets";
+import { buildPageMetadata } from "@/lib/seo";
 import { brandEntries } from "@/lib/site-content";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Network Architecture",
   description:
     "Brand, domain, media, CRM, and intake-routing architecture for the sylvestri.com ecosystem.",
-};
+  path: "/network",
+});
 
 const systemBlocks = [
   {
@@ -103,6 +104,8 @@ export default function NetworkPage() {
             submitLabel="Submit network lead"
             source="network-page"
             campaign="sylvestri-network"
+            defaultLeadType="agent-match"
+            leadMagnetOptions={coreLeadMagnets}
           />
         </div>
       </section>

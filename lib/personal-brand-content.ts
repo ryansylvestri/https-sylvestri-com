@@ -70,6 +70,8 @@ export const personalSiteConfig = {
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/story", label: "Story" },
+    { href: "/docs", label: "Docs" },
+    { href: "/articles", label: "Articles" },
     { href: "/buyers", label: "Buyers" },
     { href: "/sellers", label: "Sellers" },
     { href: "/investors", label: "Investors" },

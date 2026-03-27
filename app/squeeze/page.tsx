@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { SectionHeading, SiteShell } from "@/components/site-shell";
+import { coreLeadMagnets } from "@/lib/lead-magnets";
+import { buildPageMetadata } from "@/lib/seo";
 import { landingPageCategories, squeezePages } from "@/lib/site-content";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Squeeze Pages",
   description:
     "Quick-start squeeze pages for Hudson Valley buyers, sellers, investors, and homeowners who need a fast first conversion.",
-};
+  path: "/squeeze",
+});
 
 export default function SqueezeIndexPage() {
   const groupedPages = Object.entries(landingPageCategories).map(([key, label]) => ({
@@ -20,6 +22,7 @@ export default function SqueezeIndexPage() {
 
   return (
     <SiteShell>
+      <h1 className="sr-only">Squeeze Pages</h1>
       <section className="mx-auto max-w-7xl px-6 py-20">
         <SectionHeading
           eyebrow="Fast-entry pages"
@@ -65,6 +68,8 @@ export default function SqueezeIndexPage() {
             submitLabel="Route me correctly"
             source="squeeze-index"
             campaign="sylvestri-squeeze-library"
+            defaultLeadType="agent-match"
+            leadMagnetOptions={coreLeadMagnets}
           />
         </div>
       </section>

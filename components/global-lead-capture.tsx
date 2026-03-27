@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 
 import { LeadCaptureForm } from "@/components/lead-capture-form";
+import { getLeadMagnetsForLane } from "@/lib/lead-magnets";
+import { inferLeadLane } from "@/lib/tracking";
 
 function normalizePathToken(pathname: string) {
   if (pathname === "/") {
@@ -24,6 +26,7 @@ export function GlobalLeadCaptureSection() {
   const pathname = usePathname();
   const pathToken = normalizePathToken(pathname);
   const pathLabel = normalizePathLabel(pathname);
+  const lane = inferLeadLane(pathname);
 
   return (
     <section className="border-t border-[rgba(15,23,42,0.08)] bg-[rgba(255,248,240,0.94)]">
@@ -52,6 +55,8 @@ export function GlobalLeadCaptureSection() {
           submitLabel="Send inquiry"
           source={`sylvestri-${pathToken}-global`}
           campaign="sylvestri-global-site-shell"
+          defaultLeadType={lane}
+          leadMagnetOptions={getLeadMagnetsForLane(lane)}
           compact
         />
       </div>

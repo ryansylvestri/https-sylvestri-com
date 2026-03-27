@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ReactNode } from "react";
 
+import { ChatLauncher } from "@/components/chat-launcher";
+import { ExitIntentCapture } from "@/components/exit-intent-capture";
 import { GlobalLeadCaptureSection } from "@/components/global-lead-capture";
 import { MobileNav } from "@/components/mobile-nav";
 import { brandEcosystem, personalSiteConfig } from "@/lib/personal-brand-content";
@@ -46,12 +48,16 @@ export function SiteShell({ children }: SiteShellProps) {
             <a
               href={personalSiteConfig.phoneHref}
               aria-label={`Call Ryan at ${personalSiteConfig.phone}`}
+              data-track-event="cta_click_call"
+              data-track-label="header-call"
               className="hidden rounded-full border border-[rgba(17,24,39,0.12)] bg-white/70 px-4 py-2 text-sm font-semibold text-brand-ink transition hover:border-brand-gold hover:text-brand-copper sm:inline-flex"
             >
               Call {personalSiteConfig.phone}
             </a>
             <Link
               href="/intake"
+              data-track-event="cta_click_start_here"
+              data-track-label="header-start-here"
               className="rounded-full bg-brand-ink px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.16)] transition hover:bg-brand-copper"
             >
               Start Here
@@ -64,6 +70,8 @@ export function SiteShell({ children }: SiteShellProps) {
       <main id="main-content" tabIndex={-1}>{children}</main>
 
       <GlobalLeadCaptureSection />
+      <ExitIntentCapture />
+      <ChatLauncher />
 
       <footer role="contentinfo" className="border-t border-[rgba(15,23,42,0.08)] bg-[rgba(255,250,244,0.9)]">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.2fr_1fr_1fr]">
@@ -118,7 +126,12 @@ export function SiteShell({ children }: SiteShellProps) {
             <div className="space-y-1 text-sm text-body-ink">
               <div>{personalSiteConfig.address}</div>
               <div>
-                <a href={personalSiteConfig.phoneHref} className="transition hover:text-brand-copper">
+                <a
+                  href={personalSiteConfig.phoneHref}
+                  data-track-event="cta_click_call"
+                  data-track-label="footer-call"
+                  className="transition hover:text-brand-copper"
+                >
                   {personalSiteConfig.phone}
                 </a>
               </div>
@@ -184,6 +197,14 @@ export function PageHero({
   children,
 }: PageHeroProps) {
   const primaryIsInternal = primaryCta.href.startsWith("/");
+  const isStartHerePrimary =
+    primaryCta.href.startsWith("/intake") || /start here/i.test(primaryCta.label);
+  const primaryTrackProps = isStartHerePrimary
+    ? {
+        "data-track-event": "cta_click_start_here",
+        "data-track-label": `hero-${primaryCta.label.toLowerCase().replace(/\s+/g, "-")}`,
+      }
+    : {};
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-20 md:py-28">
@@ -203,6 +224,7 @@ export function PageHero({
             {primaryIsInternal ? (
               <Link
                 href={primaryCta.href}
+                {...primaryTrackProps}
                 className="rounded-full bg-brand-ink px-6 py-3 text-center text-sm font-semibold text-white shadow-[0_16px_40px_rgba(15,23,42,0.16)] transition hover:bg-brand-copper"
               >
                 {primaryCta.label}
@@ -210,6 +232,7 @@ export function PageHero({
             ) : (
               <a
                 href={primaryCta.href}
+                {...primaryTrackProps}
                 className="rounded-full bg-brand-ink px-6 py-3 text-center text-sm font-semibold text-white shadow-[0_16px_40px_rgba(15,23,42,0.16)] transition hover:bg-brand-copper"
               >
                 {primaryCta.label}

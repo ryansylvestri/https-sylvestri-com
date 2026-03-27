@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { GoogleReviewsPanel } from "@/components/google-reviews-panel";
 import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { RevealSection } from "@/components/reveal-section";
@@ -10,7 +11,9 @@ import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
 import { getFaqsForCategory } from "@/lib/faq-content";
 import { getExtendedFaqsForCategory } from "@/lib/faq-content-extended";
+import { getLeadMagnetsForLane } from "@/lib/lead-magnets";
 import { getCategoryTopic, getPageImage } from "@/lib/media-map";
+import { buildBreadcrumbJsonLd, buildFaqJsonLd, buildPageMetadata } from "@/lib/seo";
 import {
   getLandingPage,
   landingPageCategories,
@@ -21,6 +24,22 @@ import {
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+function inferLeadTypeFromLanding(category: string, slug: string) {
+  if (slug.includes("home-valuation")) return "home-valuation";
+  if (
+    /(foreclosure|pre-foreclosure|probate|divorce|tax-lien|lis-pendens|code-violation|bankruptcy|inherited|estate|fsbo|vacant|expired)/.test(
+      slug,
+    )
+  ) {
+    return "seller-distress";
+  }
+  if (category === "buyers") return "buyer";
+  if (category === "sellers") return "seller";
+  if (category === "investors") return "investor";
+  if (category === "referrals") return "agent-match";
+  return "agent-match";
+}
 
 export async function generateStaticParams() {
   return landingPages.map((page) => ({ slug: page.slug }));
@@ -34,13 +53,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {};
   }
 
-  return {
-    title: page.title,
+  return buildPageMetadata({
+    title: `${page.title} | Landing Page`,
     description: page.description,
-    alternates: {
-      canonical: `/landing/${page.slug}`,
-    },
-  };
+    path: `/landing/${page.slug}`,
+  });
 }
 
 export default async function LandingPage({ params }: PageProps) {
@@ -54,6 +71,7 @@ export default async function LandingPage({ params }: PageProps) {
   const relatedPages = landingPages.filter(
     (entry) => entry.category === page.category && entry.slug !== page.slug,
   );
+  const defaultLeadType = inferLeadTypeFromLanding(page.category, page.slug);
 
   const allFaqs = [
     ...getFaqsForCategory(page.category),
@@ -85,22 +103,12 @@ export default async function LandingPage({ params }: PageProps) {
       description: page.description,
       url: `${siteConfig.siteUrl}/landing/${page.slug}`,
     },
-    ...(allFaqs.length > 0
-      ? [
-          {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: allFaqs.slice(0, 8).map((item) => ({
-              "@type": "Question",
-              name: item.q,
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: item.a,
-              },
-            })),
-          },
-        ]
-      : []),
+    buildBreadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Landing Pages", path: "/landing" },
+      { name: page.title, path: `/landing/${page.slug}` },
+    ]),
+    ...(allFaqs.length > 0 ? [buildFaqJsonLd(allFaqs.slice(0, 8))] : []),
   ];
 
   const topics = getCategoryTopic(page.category);
@@ -203,6 +211,8 @@ export default async function LandingPage({ params }: PageProps) {
               submitLabel={page.cta}
               source={`landing:${page.slug}`}
               campaign={page.slug}
+              defaultLeadType={defaultLeadType}
+              leadMagnetOptions={getLeadMagnetsForLane(defaultLeadType)}
             />
           </RevealSection>
         </div>
@@ -284,6 +294,8 @@ export default async function LandingPage({ params }: PageProps) {
           </div>
         </section>
       ) : null}
+
+      <GoogleReviewsPanel />
     </SiteShell>
   );
 }

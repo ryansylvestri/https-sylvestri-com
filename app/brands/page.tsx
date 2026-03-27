@@ -1,14 +1,17 @@
-import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 import { SectionHeading, SiteShell } from "@/components/site-shell";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
 import { brandEcosystem, personalMedia } from "@/lib/personal-brand-content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Brands",
-  description: "Brand and domain map for sylvestri.com, its feeder voices, and the systems infrastructure supporting the Hudson Valley real estate stack.",
-};
+  description:
+    "Brand and domain map for sylvestri.com, its feeder voices, and the systems infrastructure supporting the Hudson Valley real estate stack.",
+  path: "/brands",
+});
 
 export default function BrandsPage() {
   const systemsLogoUrl = getCloudinaryAssetUrl(personalMedia.systemsLogo, {
@@ -33,6 +36,7 @@ export default function BrandsPage() {
 
   return (
     <SiteShell>
+      <h1 className="sr-only">Brands</h1>
       <section className="mx-auto max-w-7xl px-6 py-20">
         <SectionHeading
           eyebrow="Brands and projects"
@@ -49,9 +53,11 @@ export default function BrandsPage() {
               className="overflow-hidden rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/80 shadow-[0_18px_50px_rgba(15,23,42,0.06)]"
             >
               {cardImages[index] ? (
-                <img
+                <Image
                   src={cardImages[index]}
                   alt={brand.title}
+                  width={1400}
+                  height={900}
                   className="h-[16rem] w-full object-cover"
                 />
               ) : null}

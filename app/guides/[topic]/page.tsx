@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { RevealSection } from "@/components/reveal-section";
 import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
+import { getPublishedDocByLegacyUrl } from "@/lib/content-engine";
 import { getFaqsForCategory } from "@/lib/faq-content";
 import { getExtendedFaqsForCategory } from "@/lib/faq-content-extended";
+import { getLeadMagnetsForLane } from "@/lib/lead-magnets";
 import {
   getGuideTopic,
   guideCategoryLabels,
@@ -18,6 +20,7 @@ import {
 } from "@/lib/guide-topics";
 import { guideProse } from "@/lib/guide-prose";
 import { getPageImage } from "@/lib/media-map";
+import { buildBreadcrumbJsonLd, buildFaqJsonLd, buildPageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-content";
 
 type PageProps = {
@@ -34,15 +37,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!guide) return {};
 
-  return {
+  return buildPageMetadata({
     title: guide.title,
     description: guide.description,
-    alternates: { canonical: `/guides/${guide.slug}` },
-  };
+    path: `/guides/${guide.slug}`,
+  });
 }
 
 export default async function GuidePage({ params }: PageProps) {
   const { topic } = await params;
+  const migratedArticle = getPublishedDocByLegacyUrl(`/guides/${topic}`);
+  if (migratedArticle) {
+    redirect(migratedArticle.routePath);
+  }
+
   const guide = getGuideTopic(topic);
 
   if (!guide) notFound();
@@ -78,6 +86,16 @@ export default async function GuidePage({ params }: PageProps) {
     (t) => t.category === guide.category && t.slug !== guide.slug,
   );
 
+  const defaultLeadTypeByCategory: Record<string, string> = {
+    buyer: "buyer",
+    seller: "seller",
+    investor: "investor",
+    lifestyle: "renter",
+    process: "seller",
+    ai: "ai-coaching",
+  };
+  const defaultLeadType = defaultLeadTypeByCategory[guide.category] || "agent-match";
+
   /* ── JSON-LD ── */
   const schemas = [
     {
@@ -95,21 +113,13 @@ export default async function GuidePage({ params }: PageProps) {
         name: siteConfig.name,
       },
     },
+    buildBreadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Guides", path: "/guides" },
+      { name: guide.title, path: `/guides/${guide.slug}` },
+    ]),
     ...(allFaqs.length > 0
-      ? [
-          {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: allFaqs.map((item) => ({
-              "@type": "Question",
-              name: item.q,
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: item.a,
-              },
-            })),
-          },
-        ]
+      ? [buildFaqJsonLd(allFaqs)]
       : []),
   ];
 
@@ -194,6 +204,8 @@ export default async function GuidePage({ params }: PageProps) {
                   submitLabel="Get in touch"
                   source={`guide:${guide.slug}`}
                   campaign={guide.slug}
+                  defaultLeadType={defaultLeadType}
+                  leadMagnetOptions={getLeadMagnetsForLane(defaultLeadType)}
                 />
               </div>
             </RevealSection>

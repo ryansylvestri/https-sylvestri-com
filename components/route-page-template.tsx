@@ -1,13 +1,17 @@
+import Image from "next/image";
 import Link from "next/link";
 
+import { GoogleReviewsPanel } from "@/components/google-reviews-panel";
 import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { RevealSection } from "@/components/reveal-section";
 import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
+import { TrustStrip } from "@/components/trust-strip";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
 import { getFaqsForCategory } from "@/lib/faq-content";
 import { getExtendedFaqsForCategory } from "@/lib/faq-content-extended";
 import { guideTopics, type GuideTopic } from "@/lib/guide-topics";
+import { getLeadMagnetsForLane } from "@/lib/lead-magnets";
 import { type RoutePageContent } from "@/lib/personal-brand-content";
 import { localBusinessSchema } from "@/lib/schema";
 import { siteConfig } from "@/lib/site-content";
@@ -194,7 +198,13 @@ export function RoutePageTemplate({ page }: RoutePageTemplateProps) {
               className={`mesh-panel overflow-hidden rounded-[1.9rem] border ${theme.panelClass} shadow-[0_24px_70px_rgba(15,23,42,0.12)]`}
             >
               <div className={`pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${theme.stripClass}`} />
-              <img src={heroImageUrl} alt={page.title} className="h-[24rem] w-full object-cover" />
+              <Image
+                src={heroImageUrl}
+                alt={page.title}
+                width={1200}
+                height={1400}
+                className="h-[24rem] w-full object-cover"
+              />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[rgba(20,32,51,0.75)] to-transparent" />
               <div
                 className={`absolute left-4 top-4 rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] shadow-[0_10px_30px_rgba(15,23,42,0.12)] ${theme.badgeClass}`}
@@ -218,6 +228,8 @@ export function RoutePageTemplate({ page }: RoutePageTemplateProps) {
           </div>
         </div>
       </PageHero>
+
+      <TrustStrip />
 
       <section className="mx-auto max-w-7xl px-6 pb-8">
         <div className={`mesh-panel glow-outline rounded-[2rem] border p-7 lg:p-8 ${theme.panelClass}`}>
@@ -306,9 +318,11 @@ export function RoutePageTemplate({ page }: RoutePageTemplateProps) {
                 className={`mesh-panel overflow-hidden rounded-[2rem] border shadow-[0_18px_50px_rgba(15,23,42,0.06)] ${theme.panelClass}`}
               >
                 <div className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${theme.stripClass}`} />
-                <img
+                <Image
                   src={detailImageUrl}
                   alt={`${page.eyebrow} visual`}
+                  width={1400}
+                  height={900}
                   className="h-[20rem] w-full object-cover"
                 />
               </div>
@@ -321,6 +335,8 @@ export function RoutePageTemplate({ page }: RoutePageTemplateProps) {
               source={page.leadForm.source}
               campaign={page.leadForm.campaign}
               defaultInterest={page.leadForm.defaultInterest}
+              defaultLeadType={page.leadForm.defaultInterest}
+              leadMagnetOptions={getLeadMagnetsForLane(page.leadForm.defaultInterest)}
             />
           </div>
         </div>
@@ -373,6 +389,8 @@ export function RoutePageTemplate({ page }: RoutePageTemplateProps) {
             </div>
             <Link
               href="/intake"
+              data-track-event="cta_click_start_here"
+              data-track-label="route-template-next-step"
               className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-ink transition hover:bg-brand-gold"
             >
               Open the shared intake
@@ -380,6 +398,8 @@ export function RoutePageTemplate({ page }: RoutePageTemplateProps) {
           </div>
         </div>
       </section>
+
+      <GoogleReviewsPanel />
     </SiteShell>
   );
 }

@@ -1,12 +1,17 @@
-import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
+import { GoogleReviewsPanel } from "@/components/google-reviews-panel";
 import { ImmersiveStage } from "@/components/immersive-stage";
 import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
+import { NewsletterSignup } from "@/components/newsletter-signup";
 import { RevealSection } from "@/components/reveal-section";
 import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
+import { TestimonialsSection } from "@/components/testimonials-section";
+import { TrustStrip } from "@/components/trust-strip";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
+import { coreLeadMagnets } from "@/lib/lead-magnets";
 import {
   audienceRoutes,
   brandEcosystem,
@@ -17,14 +22,16 @@ import {
   selectedStories,
   storyMilestones,
 } from "@/lib/personal-brand-content";
+import { buildPageMetadata } from "@/lib/seo";
 import { localBusinessSchema } from "@/lib/schema";
 import { siteConfig } from "@/lib/site-content";
 
-export const metadata: Metadata = {
-  title: "Home",
+export const metadata = buildPageMetadata({
+  title: "Hudson Valley Real Estate Broker, Systems Builder, and AI Operator",
   description:
     "Ryan Sylvestri's personal brand hub for Hudson Valley real estate, systems thinking, and applied AI, with clear routes for buyers, sellers, investors, renters, and future coaching clients.",
-};
+  path: "/",
+});
 
 const firstMinuteAnswers = [
   {
@@ -203,6 +210,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      <TrustStrip />
+
       <section id="paths" className="mx-auto max-w-7xl px-6 py-18">
         <RevealSection>
           <SectionHeading
@@ -241,19 +250,23 @@ export default function HomePage() {
 
       <section className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(255,252,247,0.82)] px-6 py-18 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
         {ambientUrl ? (
-          <img
+          <Image
             src={ambientUrl}
             alt=""
             aria-hidden
+            width={512}
+            height={512}
             className="pointer-events-none absolute right-[-14rem] top-[-8rem] h-[32rem] w-[32rem] opacity-10"
           />
         ) : null}
         <div className="relative z-10 grid gap-10 lg:grid-cols-[0.92fr_1.08fr]">
           <div className="overflow-hidden rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(20,32,51,0.94)] shadow-[0_24px_60px_rgba(15,23,42,0.18)]">
             {portraitUrl ? (
-              <img
+              <Image
                 src={portraitUrl}
                 alt={personalSiteConfig.founderName}
+                width={1200}
+                height={900}
                 className="h-full min-h-[28rem] w-full object-cover"
               />
             ) : null}
@@ -346,9 +359,11 @@ export default function HomePage() {
           <div className="grid gap-6">
             <div className="mesh-panel overflow-hidden rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/80 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
               {signUrl ? (
-                <img
+                <Image
                   src={signUrl}
                   alt="Ryan Sylvestri real-estate branding"
+                  width={1400}
+                  height={960}
                   className="h-[15rem] w-full object-cover"
                 />
               ) : null}
@@ -368,9 +383,11 @@ export default function HomePage() {
 
             <div className="mesh-panel overflow-hidden rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/80 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
               {systemsLogoUrl ? (
-                <img
+                <Image
                   src={systemsLogoUrl}
                   alt="Sylvestri Systems"
+                  width={900}
+                  height={900}
                   className="h-[15rem] w-full object-cover"
                 />
               ) : null}
@@ -421,10 +438,16 @@ export default function HomePage() {
               submitLabel="Send my details"
               source="homepage"
               campaign="sylvestri-home"
+              defaultLeadType="agent-match"
+              leadMagnetOptions={coreLeadMagnets}
             />
           </div>
         </div>
       </section>
+
+      <GoogleReviewsPanel />
+      <TestimonialsSection />
+      <NewsletterSignup source="homepage-newsletter" campaign="sylvestri-newsletter-home" />
     </SiteShell>
   );
 }

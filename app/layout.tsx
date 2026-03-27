@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Fraunces, Manrope } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 
 import { JsonLd } from "@/components/json-ld";
+import { TrackingClient } from "@/components/tracking-client";
+import { TrackingScripts } from "@/components/tracking-scripts";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
 import { personalMedia } from "@/lib/personal-brand-content";
 import { localBusinessSchema } from "@/lib/schema";
@@ -72,6 +75,14 @@ export const metadata: Metadata = {
   verification: {
     google: "GjvLYAWrlY96Su9DwEpMGdtapPQI8tqyu8Xcq3BZILU",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -82,6 +93,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${fraunces.variable} ${manrope.variable} antialiased`}>
+        <TrackingScripts />
+        <Suspense fallback={null}>
+          <TrackingClient />
+        </Suspense>
         <JsonLd data={localBusinessSchema} />
         {children}
       </body>

@@ -104,6 +104,8 @@ export function MobileNav() {
             <a
               href={personalSiteConfig.phoneHref}
               aria-label={`Call Ryan at ${personalSiteConfig.phone}`}
+              data-track-event="cta_click_call"
+              data-track-label="mobile-nav-call"
               className="block rounded-full border border-[rgba(15,23,42,0.12)] bg-white/70 px-4 py-3 text-center text-sm font-semibold text-brand-ink transition hover:border-brand-gold"
             >
               Call {personalSiteConfig.phone}
@@ -111,6 +113,8 @@ export function MobileNav() {
             <Link
               href="/intake"
               onClick={close}
+              data-track-event="cta_click_start_here"
+              data-track-label="mobile-nav-start-here"
               className="block rounded-full bg-brand-ink px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.16)] transition hover:bg-brand-copper"
             >
               Start Here
