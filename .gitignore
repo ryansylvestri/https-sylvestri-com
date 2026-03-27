@@ -20,6 +20,10 @@ out/
 
 # production
 /build
+/dist
+/dist/
+/dist/hostinger/staging/
+/dist/hostinger/*.tgz
 
 # misc
 .DS_Store
