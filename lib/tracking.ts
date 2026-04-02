@@ -1,3 +1,5 @@
+import { normalizeLeadSourceToken } from "@/lib/lead-contract";
+
 export type DataLayerValue = string | number | boolean | null | undefined;
 
 export type DataLayerPayload = Record<string, DataLayerValue>;
@@ -44,6 +46,5 @@ export function inferLeadLane(pathname: string) {
 }
 
 export function sourcePathToToken(pathname: string) {
-  if (pathname === "/") return "home";
-  return pathname.replace(/\//g, "-").replace(/^-+|-+$/g, "") || "page";
+  return normalizeLeadSourceToken(pathname);
 }

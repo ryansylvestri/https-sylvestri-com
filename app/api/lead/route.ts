@@ -2,27 +2,12 @@ import { createHmac, randomUUID } from "node:crypto";
 
 import { NextResponse } from "next/server";
 
+import {
+  leadTypeRequiresPropertyAddress,
+  normalizeLeadSourceToken,
+  type LeadPayload,
+} from "@/lib/lead-contract";
 import { deliverLeadToFub, hasFubDirectConfig, sendLeadNotificationEmail } from "@/lib/lead-delivery";
-
-type LeadPayload = {
-  fullName?: string;
-  email?: string;
-  phone?: string;
-  leadType?: string;
-  timeline?: string;
-  market?: string;
-  propertyAddress?: string;
-  notes?: string;
-  leadMagnet?: string;
-  consentEmail?: boolean;
-  consentSms?: boolean;
-  source?: string;
-  campaign?: string;
-  sourcePath?: string;
-  sourceToken?: string;
-  submittedAt?: string;
-  honeypot?: string;
-};
 
 type NormalizedLead = {
   requestId: string;
@@ -45,7 +30,6 @@ type NormalizedLead = {
   receivedAt: string;
 };
 
-const ADDRESS_REQUIRED_LEAD_TYPES = new Set(["home-valuation", "seller-distress"]);
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 6;
 const rateLimitStore = new Map<string, number[]>();
@@ -60,12 +44,6 @@ function getClientIp(request: Request) {
   const realIp = request.headers.get("x-real-ip");
   if (realIp) return realIp.trim();
   return "unknown";
-}
-
-function normalizeSourceToken(sourcePath: string, sourceToken?: string) {
-  if (sourceToken && sourceToken.trim()) return sourceToken.trim();
-  if (sourcePath === "/") return "home";
-  return sourcePath.replace(/\//g, "-").replace(/^-+|-+$/g, "") || "page";
 }
 
 function isRateLimited(rateKey: string) {
@@ -93,11 +71,7 @@ function getMissingFields(payload: LeadPayload) {
   if (!requiredText(payload.sourcePath)) missing.push("sourcePath");
   if (!requiredText(payload.submittedAt)) missing.push("submittedAt");
 
-  if (
-    requiredText(payload.leadType) &&
-    ADDRESS_REQUIRED_LEAD_TYPES.has(payload.leadType!.trim()) &&
-    !requiredText(payload.propertyAddress)
-  ) {
+  if (leadTypeRequiresPropertyAddress(payload.leadType) && !requiredText(payload.propertyAddress)) {
     missing.push("propertyAddress");
   }
 
@@ -123,7 +97,7 @@ function normalizeLead(payload: LeadPayload): NormalizedLead {
     source: payload.source!.trim(),
     campaign: payload.campaign!.trim(),
     sourcePath,
-    sourceToken: normalizeSourceToken(sourcePath, payload.sourceToken),
+    sourceToken: normalizeLeadSourceToken(sourcePath, payload.sourceToken),
     submittedAt: payload.submittedAt!.trim(),
     receivedAt: new Date().toISOString(),
   };

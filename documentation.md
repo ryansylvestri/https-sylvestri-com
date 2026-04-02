@@ -620,3 +620,86 @@ Scope: deploy follow-through, Hostinger parity hardening, and lead-routing verif
   - `SMTP_SECURE`
   - `SMTP_USER`
   - `SMTP_PASS`
+
+---
+
+## Thread Update
+
+Date: 2026-03-28
+Workspace: /Users/ryansylvestri/dev/github/https-sylvestri-com
+Scope: production lead ops completion
+
+### Source Changes Added In This Pass
+
+1. Standardized the canonical lead contract across client and server:
+   - added shared lead types and helpers in `lib/lead-contract.ts`
+   - added shared client submit helper in `lib/lead-client.ts`
+   - updated `app/api/lead/route.ts` to use shared contract helpers for property-address rules and source token normalization
+2. Tightened every distinct lead surface onto the same payload shape:
+   - `components/lead-capture-form.tsx`
+   - `components/motivated-seller-form.tsx`
+   - `components/newsletter-signup.tsx`
+   - `components/exit-intent-capture.tsx`
+   - `public/monkeymaghees/index.html`
+3. Fixed the motivated-seller UX mismatch:
+   - property address is now required in the UI when the inferred lead type is `home-valuation` or `seller-distress`
+4. Added deterministic verification tooling:
+   - `scripts/lead-smoke.mjs`
+   - `npm run lead:smoke`
+5. Added lead-router operational docs for n8n:
+   - `ops/n8n/lead-intake-router.md`
+   - updated `ops/n8n/README.md`, `README.md`, and `HANDOFF.md`
+
+### Verification Completed In This Pass
+
+1. Repo checks:
+   - `npm run lint`
+   - `npm run build`
+   - `npm run lead:smoke -- --skip-build`
+   - `npm run hostinger:package`
+2. Lead smoke harness results:
+   - router success path returned `200`
+   - router failure fell back to direct Follow Up Boss delivery
+   - missing required fields returned `400`
+   - address-required lead types rejected missing `propertyAddress`
+   - honeypot submissions returned `202` without router/FUB fanout
+   - rate limit returned `429` on the seventh duplicate request
+   - SMTP JSON transport generated `bot@sylvestri.com` notification previews
+3. Packaging result:
+   - Hostinger artifact rebuilt at:
+     - `/Users/ryansylvestri/dev/github/https-sylvestri-com/dist/hostinger/sylvestri-hostinger-package.tgz`
+
+### Live Findings
+
+1. Production lead routing is still not configured:
+   - live `POST https://sylvestri.com/api/lead` on March 28, 2026 returned:
+     - `Lead captured in the site layer. Set LEAD_ROUTER_URL or FUB_API_TOKEN to forward submissions.`
+   - this confirms production leads are still not reaching Follow Up Boss from the live site
+   - live `bot@sylvestri.com` notification delivery also remains unconfirmed until SMTP envs are configured in Hostinger
+2. Live SEO surfaces are mixed:
+   - `robots.txt` is correct
+   - `sitemap-content.xml` returns `200`
+   - stable homepage `/` currently serves `<title>Home</title>` again
+3. VPS inspection confirmed the n8n stack is online:
+   - `n8n-n8n-1`
+   - `n8n-runners-1`
+   - no lead-router workflow was imported from this repo in this pass
+
+### Operational Conclusion
+
+- The repo now contains the app-side code needed for:
+  - canonical lead intake through `/api/lead`
+  - n8n-primary router handoff
+  - direct Follow Up Boss fallback
+  - app-owned SMTP notifications to `bot@sylvestri.com`
+  - deterministic local smoke verification
+- Production still requires external configuration and deployment work for:
+  - `LEAD_ROUTER_URL`
+  - `LEAD_ROUTER_TOKEN`
+  - `LEAD_ROUTER_SIGNING_SECRET`
+  - `FUB_API_TOKEN`
+  - `SMTP_HOST`
+  - `SMTP_PORT`
+  - `SMTP_SECURE`
+  - `SMTP_USER`
+  - `SMTP_PASS`

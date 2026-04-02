@@ -3,7 +3,8 @@
 import { FormEvent, useState } from "react";
 import { usePathname } from "next/navigation";
 
-import { pushDataLayerEvent } from "@/lib/tracking";
+import { submitLead } from "@/lib/lead-client";
+import { pushDataLayerEvent, sourcePathToToken } from "@/lib/tracking";
 
 type NewsletterSignupProps = {
   source: string;
@@ -14,6 +15,7 @@ export function NewsletterSignup({ source, campaign }: NewsletterSignupProps) {
   const pathname = usePathname();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
@@ -22,25 +24,34 @@ export function NewsletterSignup({ source, campaign }: NewsletterSignupProps) {
     setStatus("loading");
     setMessage("");
 
+    if (honeypot.trim()) {
+      setStatus("success");
+      setMessage("Subscribed. You will get market and systems updates.");
+      return;
+    }
+
     try {
-      const response = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName,
-          email,
-          leadType: "newsletter",
-          source,
-          campaign,
-          sourcePath: pathname,
-          submittedAt: new Date().toISOString(),
-          consentEmail: true,
-          consentSms: false,
-          notes: "Newsletter signup",
-        }),
+      pushDataLayerEvent("lead_form_submit", {
+        source,
+        campaign,
+        sourcePath: pathname,
+        leadType: "newsletter",
       });
-      const payload = (await response.json()) as { message?: string };
-      if (!response.ok) throw new Error(payload.message || "Signup failed.");
+
+      const payload = await submitLead({
+        fullName,
+        email,
+        leadType: "newsletter",
+        source,
+        campaign,
+        sourcePath: pathname,
+        sourceToken: sourcePathToToken(pathname),
+        submittedAt: new Date().toISOString(),
+        consentEmail: true,
+        consentSms: false,
+        notes: "Newsletter signup",
+        honeypot,
+      });
 
       pushDataLayerEvent("lead_form_success", {
         source,
@@ -50,9 +61,10 @@ export function NewsletterSignup({ source, campaign }: NewsletterSignupProps) {
       });
 
       setStatus("success");
-      setMessage("Subscribed. You will get market and systems updates.");
+      setMessage(payload.message || "Subscribed. You will get market and systems updates.");
       setFullName("");
       setEmail("");
+      setHoneypot("");
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Signup failed.");
@@ -77,6 +89,15 @@ export function NewsletterSignup({ source, campaign }: NewsletterSignupProps) {
           </div>
 
           <form onSubmit={handleSubmit} className="grid gap-3">
+            <input
+              tabIndex={-1}
+              autoComplete="off"
+              name="website"
+              value={honeypot}
+              onChange={(event) => setHoneypot(event.target.value)}
+              className="hidden"
+              aria-hidden
+            />
             <input
               required
               value={fullName}

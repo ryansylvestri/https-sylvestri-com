@@ -3,6 +3,8 @@
 import { FormEvent, useState } from "react";
 import { usePathname } from "next/navigation";
 
+import { submitLead } from "@/lib/lead-client";
+import { leadTypeRequiresPropertyAddress } from "@/lib/lead-contract";
 import { pushDataLayerEvent, sourcePathToToken } from "@/lib/tracking";
 
 type MotivatedSellerFormProps = {
@@ -39,6 +41,9 @@ export function MotivatedSellerForm({
 
   const isDark = variant === "dark";
   const isEmbedded = variant === "embedded";
+  const leadType = inferLeadTypeFromSourceSlug(sourceSlug);
+  const requiresPropertyAddress = leadTypeRequiresPropertyAddress(leadType);
+  const sourcePath = pathname || "/resources";
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,10 +60,10 @@ export function MotivatedSellerForm({
       propertyAddress: fd.get("propertyAddress")?.toString().trim() ?? "",
       message: fd.get("message")?.toString().trim() ?? "",
       honeypot: fd.get("website")?.toString().trim() ?? "",
-      leadType: inferLeadTypeFromSourceSlug(sourceSlug),
+      leadType,
       source: `resource:${sourceSlug}`,
       campaign: `resource-${sourceSlug}`,
-      sourcePath: pathname || "/resources",
+      sourcePath,
       consentEmail: true,
       consentSms: false,
       submittedAt: new Date().toISOString(),
@@ -72,30 +77,24 @@ export function MotivatedSellerForm({
         leadType: payload.leadType,
       });
 
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName: `${payload.firstName} ${payload.lastName}`.trim(),
-          email: payload.email,
-          phone: payload.phone,
-          leadType: payload.leadType,
-          market: "",
-          timeline: "",
-          propertyAddress: payload.propertyAddress,
-          notes: payload.message,
-          source: payload.source,
-          campaign: payload.campaign,
-          sourcePath: payload.sourcePath,
-          sourceToken: sourcePathToToken(payload.sourcePath),
-          consentEmail: payload.consentEmail,
-          consentSms: payload.consentSms,
-          submittedAt: payload.submittedAt,
-          honeypot: payload.honeypot,
-        }),
+      await submitLead({
+        fullName: `${payload.firstName} ${payload.lastName}`.trim(),
+        email: payload.email,
+        phone: payload.phone,
+        leadType: payload.leadType,
+        market: "",
+        timeline: "",
+        propertyAddress: payload.propertyAddress,
+        notes: payload.message,
+        source: payload.source,
+        campaign: payload.campaign,
+        sourcePath: payload.sourcePath,
+        sourceToken: sourcePathToToken(payload.sourcePath),
+        consentEmail: payload.consentEmail,
+        consentSms: payload.consentSms,
+        submittedAt: payload.submittedAt,
+        honeypot: payload.honeypot,
       });
-      const json = (await res.json()) as { message?: string };
-      if (!res.ok) throw new Error(json.message || `Server responded ${res.status}`);
       setStatus("success");
       e.currentTarget.reset();
 
@@ -221,8 +220,16 @@ export function MotivatedSellerForm({
 
         {/* Property */}
         <div>
-          <label htmlFor={`addr-${sourceSlug}`} className={label}>Property Address</label>
-          <input id={`addr-${sourceSlug}`} name="propertyAddress" placeholder="123 Main St, Fishkill, NY 12524" className={input} />
+          <label htmlFor={`addr-${sourceSlug}`} className={label}>
+            Property Address{requiresPropertyAddress ? " *" : ""}
+          </label>
+          <input
+            id={`addr-${sourceSlug}`}
+            name="propertyAddress"
+            required={requiresPropertyAddress}
+            placeholder="123 Main St, Fishkill, NY 12524"
+            className={input}
+          />
         </div>
 
         {/* Message */}

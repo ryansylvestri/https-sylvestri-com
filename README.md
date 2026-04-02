@@ -94,11 +94,13 @@ npm run dev
 - `lib/cloudinary.ts`
   - Cloudinary URL helper
 - `ops/n8n/`
-  - daily content and PDF workflow templates for one n8n instance per blog/source
+  - daily content templates plus the lead-intake router runbook
 - `ops/hostinger/`
   - packaging script and deploy notes
 - `ops/state/`
   - idempotency state for content and PDF publish operations
+- `scripts/lead-smoke.mjs`
+  - deterministic local smoke harness for `/api/lead`, router failover, and SMTP preview
 
 ## Cloudinary Signed Upload API
 - Endpoints:
@@ -140,6 +142,25 @@ npm run dev
 - Use the auth headers documented in `ops/n8n/README.md`
 - Publish PDFs back into the matching MDX document through `POST /api/ops/assets/publish-pdf`
 - Trigger search refresh through `POST /api/seo/push` after deploy
+
+## Lead Intake Contract
+- Browser forms post only to `POST /api/lead`
+- Primary delivery path:
+  - app -> `LEAD_ROUTER_URL` -> n8n router -> Follow Up Boss
+- App fallback path:
+  - direct Follow Up Boss delivery through `FUB_API_TOKEN`
+- Operator email path:
+  - app-owned SMTP notification to `bot@sylvestri.com`
+- Deterministic local verification:
+
+```bash
+cd /Users/ryansylvestri/dev/github/https-sylvestri-com
+export NVM_DIR="$HOME/.nvm"
+. "$NVM_DIR/nvm.sh"
+nvm use
+npm ci
+npm run lead:smoke
+```
 
 ### Deterministic Local Upload Test
 ```bash

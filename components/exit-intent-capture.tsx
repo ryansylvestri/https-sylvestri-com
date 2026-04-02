@@ -3,7 +3,8 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 
-import { pushDataLayerEvent, inferLeadLane } from "@/lib/tracking";
+import { submitLead } from "@/lib/lead-client";
+import { pushDataLayerEvent, inferLeadLane, sourcePathToToken } from "@/lib/tracking";
 
 const STORAGE_KEY = "sylvestri_exit_intent_seen";
 
@@ -30,6 +31,7 @@ export function ExitIntentCapture() {
   const [open, setOpen] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
@@ -72,6 +74,12 @@ export function ExitIntentCapture() {
     setStatus("loading");
     setMessage("");
 
+    if (honeypot.trim()) {
+      setStatus("success");
+      setMessage("Sent. Check your inbox for the guide.");
+      return;
+    }
+
     try {
       pushDataLayerEvent("lead_form_submit", {
         source: "exit-intent",
@@ -81,26 +89,21 @@ export function ExitIntentCapture() {
         leadMagnet,
       });
 
-      const response = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName,
-          email,
-          leadType: leadLane,
-          source: "exit-intent",
-          campaign: "exit-intent-offer",
-          sourcePath: pathname,
-          submittedAt: new Date().toISOString(),
-          leadMagnet,
-          notes: "Exit intent capture",
-          consentEmail: true,
-          consentSms: false,
-        }),
+      await submitLead({
+        fullName,
+        email,
+        leadType: leadLane,
+        source: "exit-intent",
+        campaign: "exit-intent-offer",
+        sourcePath: pathname,
+        sourceToken: sourcePathToToken(pathname),
+        submittedAt: new Date().toISOString(),
+        leadMagnet,
+        notes: "Exit intent capture",
+        consentEmail: true,
+        consentSms: false,
+        honeypot,
       });
-
-      const payload = (await response.json()) as { message?: string };
-      if (!response.ok) throw new Error(payload.message || "Could not submit.");
 
       pushDataLayerEvent("lead_form_success", {
         source: "exit-intent",
@@ -120,6 +123,7 @@ export function ExitIntentCapture() {
       setMessage("Sent. Check your inbox for the guide.");
       setFullName("");
       setEmail("");
+      setHoneypot("");
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Could not submit.");
@@ -153,6 +157,15 @@ export function ExitIntentCapture() {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-5 grid gap-3">
+          <input
+            tabIndex={-1}
+            autoComplete="off"
+            name="website"
+            value={honeypot}
+            onChange={(event) => setHoneypot(event.target.value)}
+            className="hidden"
+            aria-hidden
+          />
           <input
             required
             value={fullName}

@@ -227,6 +227,7 @@ Scope: Aggressive SEO + SEO-first publishing automation baseline
   - `ops/n8n/README.md`
   - `ops/n8n/daily-content-publisher.json`
   - `ops/n8n/daily-pdf-publisher.json`
+  - `ops/n8n/lead-intake-router.md`
 - Expanded env contract:
   - `HOSTINGER_N8N_WEBHOOK_TOKEN`
   - `N8N_SIGNATURE_SECRET`
@@ -254,3 +255,10 @@ Scope: Aggressive SEO + SEO-first publishing automation baseline
 - Import the `ops/n8n/*.json` workflow templates into the live Hostinger n8n instances.
 - Wire real signature generation inside n8n for `x-n8n-signature`.
 - Configure `GSC_PING_ENDPOINT` and/or `INDEXNOW_KEY` if live indexing pushes should fire beyond Bing sitemap pings.
+- Use `npm run lead:smoke` before production lead changes to verify:
+  - router success
+  - router failure -> direct Follow Up Boss fallback
+  - honeypot handling
+  - address-required validation
+  - rate limiting
+  - SMTP JSON preview for `bot@sylvestri.com`

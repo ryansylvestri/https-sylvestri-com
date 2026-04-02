@@ -3,6 +3,8 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
+import { submitLead } from "@/lib/lead-client";
+import { leadTypeRequiresPropertyAddress } from "@/lib/lead-contract";
 import { intakeOptions } from "@/lib/site-content";
 import { pushDataLayerEvent, sourcePathToToken } from "@/lib/tracking";
 
@@ -37,8 +39,6 @@ type FormState = {
   consentSms: boolean;
   honeypot: string;
 };
-
-const ADDRESS_REQUIRED_LEAD_TYPES = new Set(["home-valuation", "seller-distress"]);
 
 const leadTypeHints: Record<string, string> = {
   buyer: "Tell Ryan your budget range, towns, and where you feel stuck.",
@@ -108,7 +108,7 @@ export function LeadCaptureForm({
     [compact],
   );
 
-  const requiresPropertyAddress = ADDRESS_REQUIRED_LEAD_TYPES.has(form.leadType);
+  const requiresPropertyAddress = leadTypeRequiresPropertyAddress(form.leadType);
   const helperText = leadTypeHints[form.leadType] || leadTypeHints["agent-match"];
 
   useEffect(() => {
@@ -140,36 +140,25 @@ export function LeadCaptureForm({
     });
 
     try {
-      const response = await fetch("/api/lead", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName: form.fullName,
-          email: form.email,
-          phone: form.phone,
-          leadType: form.leadType,
-          timeline: form.timeline,
-          market: form.market,
-          propertyAddress: form.propertyAddress,
-          notes: form.notes,
-          leadMagnet: form.leadMagnet || undefined,
-          consentEmail: form.consentEmail,
-          consentSms: form.consentSms,
-          source,
-          campaign,
-          sourcePath: pathname,
-          submittedAt: new Date().toISOString(),
-          sourceToken: sourcePathToToken(pathname),
-        }),
+      const payload = await submitLead({
+        fullName: form.fullName,
+        email: form.email,
+        phone: form.phone,
+        leadType: form.leadType,
+        timeline: form.timeline,
+        market: form.market,
+        propertyAddress: form.propertyAddress,
+        notes: form.notes,
+        leadMagnet: form.leadMagnet || undefined,
+        consentEmail: form.consentEmail,
+        consentSms: form.consentSms,
+        source,
+        campaign,
+        sourcePath: pathname,
+        submittedAt: new Date().toISOString(),
+        sourceToken: sourcePathToToken(pathname),
+        honeypot: form.honeypot,
       });
-
-      const payload = (await response.json()) as { message?: string };
-
-      if (!response.ok) {
-        throw new Error(payload.message || "Lead capture failed.");
-      }
 
       setStatus("success");
       setMessage(payload.message || "Details received. Ryan can review the intake from here.");

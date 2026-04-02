@@ -1,6 +1,25 @@
-# n8n Content Automation
+# n8n Automation Contracts
 
-This repo now ships a repo-first MDX publishing contract for one `n8n` instance per source blog.
+This repo ships two `n8n` contract families:
+
+1. repo-first MDX publishing for one `n8n` instance per source blog
+2. lead intake routing from `sylvestri.com` into Follow Up Boss
+
+## Lead intake router
+
+- Browser forms post only to `POST /api/lead`
+- The app forwards normalized leads to `LEAD_ROUTER_URL`
+- The app includes:
+  - `X-Lead-Request-Id`
+  - `X-Lead-Signature`
+  - optional bearer auth via `LEAD_ROUTER_TOKEN`
+- n8n is the primary router into Follow Up Boss
+- The app retains direct Follow Up Boss fallback when the router is down
+- The app owns SMTP notifications to `bot@sylvestri.com`
+
+Runbook:
+
+- `ops/n8n/lead-intake-router.md`
 
 ## Workflow pattern
 
@@ -25,6 +44,10 @@ This repo now ships a repo-first MDX publishing contract for one `n8n` instance 
 - `N8N_SIGNATURE_SECRET`
 - `N8N_SOURCE_ID`
 - `GSC_PING_TOKEN`
+- `LEAD_ROUTER_URL`
+- `LEAD_ROUTER_TOKEN`
+- `LEAD_ROUTER_SIGNING_SECRET`
+- `FUB_API_TOKEN`
 
 ## Templates
 

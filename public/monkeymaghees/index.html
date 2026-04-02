@@ -1162,6 +1162,7 @@
             <!-- ===== LEAD CAPTURE FORM ===== -->
             <div class="lc-form-wrap">
                 <form id="leadCaptureForm" novalidate>
+                    <input type="text" name="website" id="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none !important">
                     <!-- Contact Info -->
                     <fieldset class="form-section" id="section-contact">
                         <legend>Your Information</legend>
@@ -1564,6 +1565,7 @@
               utmContent: form.utmContent.value,
               referringUrl: form.referringUrl.value,
               formId: form.formId.value,
+              honeypot: form.website ? form.website.value.trim() : '',
               submittedAt: new Date().toISOString()
             };
             if (intent && (intent.value === 'Buying' || intent.value === 'Investor')) {
@@ -1571,6 +1573,11 @@
               data.priceRange = form.priceRange ? form.priceRange.value : '';
             }
             return data;
+          }
+
+          function sourcePathToToken(pathname) {
+            if (pathname === '/') return 'home';
+            return pathname.replace(/\//g, '-').replace(/^-+|-+$/g, '') || 'page';
           }
 
           function toLeadPayload(data) {
@@ -1606,7 +1613,9 @@
               source: 'monkeymaghees',
               campaign: 'monkeymaghees-asset-sale',
               sourcePath: window.location.pathname || '/monkeymaghees',
-              submittedAt: data.submittedAt
+              sourceToken: sourcePathToToken(window.location.pathname || '/monkeymaghees'),
+              submittedAt: data.submittedAt,
+              honeypot: data.honeypot
             };
           }
 
