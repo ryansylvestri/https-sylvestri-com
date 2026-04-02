@@ -258,6 +258,95 @@ Implement the repo-hygiene, production-SEO-parity, and daily publishing plan wit
    - `npm run lint`
    - `npm run build`
    - `npm run hostinger:package`
+
+---
+
+## Thread Update
+
+Date: 2026-04-02
+Workspace: /Users/ryansylvestri/dev/github/https-sylvestri-com
+Shell: zsh
+OS: Darwin arm64
+Node: v22.22.0
+
+### Request Context
+
+Finish production lead operations end to end:
+
+- site -> `/api/lead` -> n8n router primary
+- direct Follow Up Boss fallback in app
+- direct SMTP notification to `bot@sylvestri.com`
+- verify all lead surfaces use the canonical site route
+- deploy and validate the live path
+
+### Repo-Side Status
+
+1. The app-side lead contract, delivery helpers, smoke harness, and docs were already implemented and committed on `main`.
+2. This pass did not add new source-code runtime files to the repo.
+3. This pass did update the operational record here so the production state and blocker are preserved.
+
+### Production Ops Work Completed
+
+1. Confirmed the pushed lead-ops code was already on `origin/main`.
+2. Audited the live n8n workflows and found the existing website router (`Sylvestri Website Lead Intake Router v2`) was not preserving the full modern site payload as a rich Follow Up Boss event.
+3. Built and activated a new n8n workflow:
+   - Name: `Sylvestri Website Lead Intake Router v3`
+   - Workflow ID: `25iFVf4YQ9NuhfNq`
+   - Webhook path: `sylvestri-website-lead-router-v3-20260402`
+4. The new router now:
+   - requires bearer auth
+   - validates the site HMAC signature
+   - performs best-effort request-id duplicate suppression
+   - posts the same rich lead summary into Follow Up Boss that the app fallback uses
+5. Direct signed webhook tests succeeded against the live n8n endpoint after the signature harness was corrected.
+6. Verified Follow Up Boss receipt directly over the API:
+   - person record updated
+   - rich event found for the test lead
+   - example confirmed event time: `2026-04-02T13:07:24Z`
+7. Verified email delivery path directly against the bot mailbox:
+   - SMTP send through `smtp.gmail.com:465` succeeded using `bot@sylvestri.com`
+   - IMAP check against `bot@sylvestri.com` confirmed inbox receipt of the verification message
+
+### Hostinger Status
+
+1. Reached the Hostinger deployment settings page for `sylvestri.com`.
+2. Confirmed the environment variable UI supports bulk `.env` import.
+3. Prepared a local import file containing the required production lead envs at:
+   - `/tmp/sylvestri-n8n-audit/hostinger-prod-leads.env`
+4. Required keys prepared for import:
+   - `LEAD_ROUTER_URL`
+   - `LEAD_ROUTER_TOKEN`
+   - `LEAD_ROUTER_SIGNING_SECRET`
+   - `FUB_API_TOKEN`
+   - `SMTP_HOST`
+   - `SMTP_PORT`
+   - `SMTP_SECURE`
+   - `SMTP_USER`
+   - `SMTP_PASS`
+   - `LEAD_NOTIFICATION_EMAILS`
+   - `LEAD_NOTIFICATION_FROM`
+
+### Current Blocker
+
+1. Hostinger environment import is blocked by Google sign-in for the Hostinger account.
+2. The flow reaches the correct Google account (`ryansylvestri@gmail.com`) but stops at a password/passkey challenge that cannot be safely completed from local automation alone.
+3. Because the envs are not yet imported into Hostinger:
+   - live `https://sylvestri.com/api/lead` is still not fully wired to the new router
+   - a true production synthetic submission has not been run yet
+   - live Follow Up Boss and live `bot@sylvestri.com` confirmation for website-originated leads is still pending
+
+### Operational Truth As Of 2026-04-02
+
+1. Downstream systems are ready:
+   - n8n router verified
+   - Follow Up Boss verified
+   - bot mailbox verified
+2. The only remaining gap is injecting the prepared env file into Hostinger and redeploying.
+3. Once that login step is cleared, the remaining production sequence is:
+   - import env file
+   - save and redeploy
+   - submit one synthetic live lead to `https://sylvestri.com/api/lead`
+   - confirm n8n execution, Follow Up Boss event, and bot mailbox notification
    - `npm run lint` again after packaging
 2. Confirmed local production output serves the intended homepage metadata:
    - local `/` title is `Hudson Valley Real Estate Broker, Systems Builder, and AI Operator`
