@@ -1,0 +1,220 @@
+{
+  "name": "Daily Sylvestri Articles Publisher",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "5 5 * * *"
+            }
+          ]
+        }
+      },
+      "id": "sylvestri-schedule",
+      "name": "Daily 5:05am ET",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst dayOfYear = Math.floor((Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - Date.UTC(now.getUTCFullYear(), 0, 0)) / 86400000);\nconst dateToken = now.toISOString().slice(0, 10).replace(/-/g, '');\nconst topics = [\n  { topic: 'How to choose the best real estate agent in Fishkill without getting sold a script', keyword: 'best real estate agent Fishkill NY', category: 'authority', tags: ['fishkill', 'real-estate-agent', 'local-authority'], cta: 'Invite readers to start on sylvestri.com for a direct conversation.' },\n  { topic: 'What serious Hudson Valley sellers should ask before they list a home', keyword: 'sell my house Hudson Valley', category: 'seller-strategy', tags: ['hudson-valley', 'sell-my-house', 'seller-strategy'], cta: 'Point seller traffic toward the Sylvestri intake flow and the seller lane.' },\n  { topic: 'What buyers actually need to know before they start touring Hudson Valley homes', keyword: 'buy a home Hudson Valley', category: 'buyer-strategy', tags: ['buy-a-home', 'hudson-valley', 'buyers'], cta: 'Route buyers into the right next step instead of keeping them in research mode.' },\n  { topic: 'Why local trust beats generic real estate marketing when someone asks who the best agent is', keyword: 'best agent in the area', category: 'brand-trust', tags: ['best-agent', 'trust', 'local-brand'], cta: 'Reinforce why local credibility compounds across the brand network.' },\n  { topic: 'Beacon, Fishkill, and Cold Spring are not interchangeable markets', keyword: 'Beacon Fishkill Cold Spring real estate', category: 'town-guides', tags: ['beacon', 'fishkill', 'cold-spring'], cta: 'Tell readers to choose the lane that actually matches their town and timing.' },\n  { topic: 'How a Hudson Valley homeowner should think about timing before asking what their home is worth', keyword: 'what is my home worth Hudson Valley', category: 'home-valuation', tags: ['home-worth', 'valuation', 'homeowners'], cta: 'Move valuation traffic into a real conversation instead of an anonymous estimate chase.' },\n  { topic: 'What makes a real estate operator credible in 2026: local knowledge, systems, and response speed', keyword: 'Ryan Sylvestri real estate', category: 'personal-brand', tags: ['ryan-sylvestri', 'systems', 'local-knowledge'], cta: 'Tie personal brand trust back to fast execution and direct guidance.' },\n  { topic: 'How to read the Hudson Valley market without pretending anyone can predict it perfectly', keyword: 'Hudson Valley market update', category: 'market-intelligence', tags: ['market-update', 'hudson-valley', 'buyers-and-sellers'], cta: 'Offer a practical next step for readers who want context applied to their own move.' },\n  { topic: 'Why motivated sellers need clarity, not pressure, when they decide to move', keyword: 'sell my house fast Hudson Valley', category: 'motivated-sellers', tags: ['motivated-sellers', 'sell-fast', 'clarity'], cta: 'Direct readers toward a calm seller conversation on sylvestri.com.' },\n  { topic: 'How Ryan uses a network of sites instead of one overloaded website', keyword: 'real estate brand ecosystem', category: 'ecosystem', tags: ['brand-ecosystem', 'real-estate-websites', 'routing'], cta: 'Explain how each domain owns a different part of the funnel.' }\n];\nconst selected = topics[dayOfYear % topics.length];\nreturn [{ json: { ...selected, dateIso: now.toISOString(), dateToken, section: 'articles', sourceBlog: 'sylvestri.com', sourceChannel: 'n8n-daily-articles', author: 'Ryan Sylvestri', siteUrl: 'https://sylvestri.com' } }];"
+      },
+      "id": "sylvestri-topic",
+      "name": "Select Topic and Idempotency Seed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "={{ JSON.stringify({\"Authorization\": \"Bearer \" + $env.OPENAI_API_KEY, \"Content-Type\": \"application/json\"}) }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4.1-mini\",\n  \"temperature\": 0.8,\n  \"max_tokens\": 2600,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You write high-conviction real-estate articles for Ryan Sylvestri. Return valid JSON only. Never invent statistics, closed-sale numbers, or MLS data. Stay fair-housing-safe.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a first-person markdown article for sylvestri.com. Topic: {{$json.topic}}. Primary keyword: {{$json.keyword}}. Category: {{$json.category}}. Include Hudson Valley specifics and practical advice. Use H2 and H3 structure. Write 850-1200 words. End with a direct CTA: {{$json.cta}} Return JSON with keys title, slug, excerpt, content, tags. The slug should be concise and keyword-aware. Tags must be an array of 3-6 lowercase strings.\"\n    }\n  ]\n}"
+      },
+      "id": "sylvestri-openai",
+      "name": "OpenAI Draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const topic = $items('Select Topic and Idempotency Seed', 0, 0)[0].json;\nconst response = $input.first().json;\nconst raw = response?.choices?.[0]?.message?.content;\nif (!raw) {\n  throw new Error('Missing OpenAI content payload.');\n}\nlet parsed;\ntry {\n  parsed = JSON.parse(raw);\n} catch (error) {\n  throw new Error('OpenAI payload was not valid JSON.');\n}\nconst title = String(parsed.title || '').trim();\nconst excerpt = String(parsed.excerpt || '').trim();\nconst content = String(parsed.content || '').trim();\nif (!title || !excerpt || !content) {\n  throw new Error('OpenAI payload missing title, excerpt, or content.');\n}\nconst slugBase = String(parsed.slug || title)\n  .toLowerCase()\n  .replace(/[^a-z0-9]+/g, '-')\n  .replace(/(^-|-$)/g, '');\nconst finalSlug = `${slugBase}-${topic.dateToken}`;\nconst tags = Array.isArray(parsed.tags) && parsed.tags.length\n  ? parsed.tags.map((tag) => String(tag).trim().toLowerCase()).filter(Boolean)\n  : topic.tags;\nconst publishBody = {\n  section: 'articles',\n  sourceBlog: topic.sourceBlog,\n  sourceChannel: topic.sourceChannel,\n  dryRun: true,\n  requestId: `${topic.sourceBlog}-${finalSlug}`,\n  idempotencyKey: `${topic.sourceBlog}-${finalSlug}`,\n  frontmatter: {\n    title,\n    slug: finalSlug,\n    section: 'articles',\n    category: topic.category,\n    tags,\n    description: excerpt,\n    summary: excerpt,\n    access: 'public',\n    status: 'published',\n    publishedAt: topic.dateIso,\n    updatedAt: topic.dateIso,\n    author: topic.author,\n    seoTitle: title,\n    seoDescription: excerpt,\n    publishWindow: '05:05 America/New_York',\n    sourceChannel: topic.sourceChannel,\n    sourceBlog: topic.sourceBlog,\n    slugBase,\n    assetRefs: []\n  },\n  content\n};\nreturn [{ json: { publishBody } }];"
+      },
+      "id": "sylvestri-payload",
+      "name": "Validate and Prepare Publish Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sylvestri.com/api/ops/content/publish",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\"Content-Type\":\"application/json\"}",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json.publishBody) }}"
+      },
+      "id": "sylvestri-dry-run",
+      "name": "Dry Run Publish",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1190,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sylvestri.com/api/ops/content/publish",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\"Content-Type\":\"application/json\"}",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ ...$items('Validate and Prepare Publish Payload', 0, 0)[0].json.publishBody, dryRun: false }) }}"
+      },
+      "id": "sylvestri-publish",
+      "name": "Publish Article",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sylvestri.com/api/seo/push",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\"Content-Type\":\"application/json\"}",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ urls: [$json.routePath], sitemapPaths: ['/sitemap.xml', '/sitemap-content.xml'] }) }}"
+      },
+      "id": "sylvestri-seo",
+      "name": "Push SEO Signals",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1690,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 5:05am ET": {
+      "main": [
+        [
+          {
+            "node": "Select Topic and Idempotency Seed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Topic and Idempotency Seed": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Draft": {
+      "main": [
+        [
+          {
+            "node": "Validate and Prepare Publish Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate and Prepare Publish Payload": {
+      "main": [
+        [
+          {
+            "node": "Dry Run Publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dry Run Publish": {
+      "main": [
+        [
+          {
+            "node": "Publish Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish Article": {
+      "main": [
+        [
+          {
+            "node": "Push SEO Signals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "America/New_York",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "shared-real-estate-content-error-handler"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "forge:n8n-workflow-forge"
+    },
+    {
+      "name": "content-network"
+    },
+    {
+      "name": "sylvestri"
+    }
+  ]
+}
