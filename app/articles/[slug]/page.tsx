@@ -17,6 +17,8 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
+export const dynamicParams = true;
+
 export function generateStaticParams() {
   return getPublishedContent("articles").map((doc) => ({
     slug: doc.slugParts[doc.slugParts.length - 1],

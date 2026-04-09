@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 import { normalizeContentSlug } from "@/lib/content-engine";
@@ -190,6 +191,15 @@ export async function POST(request: Request) {
     writeContentPublishState,
   );
 
+  const routePath =
+    parsed.data.section === "docs"
+      ? `/docs/${normalizedFrontmatter.slug}`
+      : `/${parsed.data.section}/${normalizedFrontmatter.slug.split("/").at(-1)}`;
+  revalidatePath("/articles");
+  revalidatePath(routePath);
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/sitemap-content.xml");
+
   return json(
     {
       ok: true,
@@ -198,10 +208,7 @@ export async function POST(request: Request) {
       action: result.action,
       checksum: result.checksum,
       path: filePath,
-      routePath:
-        parsed.data.section === "docs"
-          ? `/docs/${normalizedFrontmatter.slug}`
-          : `/${parsed.data.section}/${normalizedFrontmatter.slug.split("/").at(-1)}`,
+      routePath,
       validation,
       commit: {
         ...commit,
