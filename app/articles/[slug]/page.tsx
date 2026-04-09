@@ -5,7 +5,6 @@ import { ContentLockState } from "@/components/content-lock-state";
 import { ContentProse } from "@/components/content-prose";
 import { SiteShell } from "@/components/site-shell";
 import {
-  getPublishedContent,
   getPublishedDocBySlug,
   getRelatedContent,
   renderContentDocument,
@@ -17,13 +16,7 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export const dynamicParams = true;
-
-export function generateStaticParams() {
-  return getPublishedContent("articles").map((doc) => ({
-    slug: doc.slugParts[doc.slugParts.length - 1],
-  }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
