@@ -792,3 +792,154 @@ Scope: production lead ops completion
   - `SMTP_SECURE`
   - `SMTP_USER`
   - `SMTP_PASS`
+
+## 2026-04-02 API / SSH Hostinger Verification
+
+### Scope
+
+- User requested that Hostinger work prefer API and SSH paths over browser-first hPanel interaction.
+
+### What Was Verified
+
+1. The stored Hostinger base URL in local credentials was stale:
+   - `https://api.hostinger.com` currently fails with Cloudflare `1016`
+   - the current official OpenAPI server is `https://developers.hostinger.com`
+2. The official Hostinger API token works against the current documented server.
+3. The live website can be queried through the public Hosting API:
+   - `GET /api/hosting/v1/websites?domain=sylvestri.com`
+   - returned `sylvestri.com` as an enabled website on order `1007876207`
+   - returned hosting username `u516072247`
+   - returned root directory `/home/u516072247/domains/sylvestri.com/public_html`
+4. The live hosting order can be queried through the public Hosting API:
+   - `GET /api/hosting/v1/orders`
+   - returned active plan `hostinger_business_v2`
+5. The current official public API surface does not expose a documented environment-variable mutation or Node app redeploy endpoint for this managed hosting website.
+   - official documented website endpoints currently expose `GET /api/hosting/v1/websites` and `POST /api/hosting/v1/websites`
+   - no documented `PATCH`, env, deployment, or redeploy path was found for managed website hosting in the published OpenAPI
+6. SSH inspection on the VPS confirmed that the older Hostinger helper noted in earlier system-state docs is not currently available as a reachable local control plane.
+   - no listener was present on `127.0.0.1:58921`
+   - `openclaw-native-shadow.service` was not present for the current VPS user context
+
+### Operational Conclusion
+
+- API-first and SSH-first verification succeeded for discovery and audit.
+- The remaining production action for `sylvestri.com` is still blocked on hPanel-managed environment variable entry and redeploy.
+- As of this checkpoint, the clean deterministic path is:
+  1. log into Hostinger hPanel
+  2. import `/tmp/sylvestri-n8n-audit/hostinger-prod-leads.env`
+  3. save and redeploy
+  4. run the synthetic production lead verification again
+
+---
+
+## Thread Update
+
+Date: 2026-04-02
+Workspace: /Users/ryansylvestri/dev/github/https-sylvestri-com
+Shell: zsh
+OS: Darwin arm64
+Node: v22.22.0
+
+### Request Context
+
+Implement the remaining repo-side work from the current state review:
+
+- operationalize lead verification
+- turn lead-magnet/autoresponder backlog into concrete code and runbooks
+- make `/kpi` more useful for weekly ops review
+- clean the legacy heading structure on `/monkeymaghees`
+- normalize root planning artifacts into tracked repo documentation
+
+### Repo Work Completed
+
+1. Added a deterministic live verification harness:
+   - `scripts/verify-live-lead.mjs`
+   - `package.json` script: `npm run lead:verify:live`
+   - `ops/hostinger/live-lead-activation.md`
+2. Expanded lead-magnet handling from a flat label list into a richer registry with:
+   - slugs
+   - summaries
+   - delivery labels
+   - preview route links
+3. Added new gated lead-magnet detail routes:
+   - `/lead-magnets/[slug]`
+   - one static page per core magnet
+4. Added deterministic autoresponder planning in app code:
+   - `lib/lead-autoresponder.ts`
+   - `POST /api/lead` now sends a structured `plan` payload to `LEAD_AUTORESPONDER_WEBHOOK_URL`
+   - API responses now include sequence and lead-magnet metadata for downstream UI/client use
+5. Improved the thank-you flow:
+   - `components/thank-you-follow-up.tsx`
+   - magnet-specific follow-up details now render from query params
+6. Upgraded `/kpi` into an ops-oriented review page:
+   - configuration status cards for GTM, GA4, Meta, Clarity, router, FUB, SMTP, and Hostinger
+   - weekly review cadence blocks
+   - optional `KPI_*_URL` env contract for dashboard deeplinks
+7. Added tracked ops docs:
+   - `ops/analytics/gtm-container-checklist.md`
+   - `ops/n8n/lead-autoresponder-sequences.md`
+   - `ops/runbooks/hrr-docs-resources-media-duplication.md`
+8. Normalized repo state:
+   - removed loose root planning docs `1.md`, `2.md`, `3.md`, and `PLAN-suggestion-1.md`
+   - moved the still-useful HRR duplication plan into `ops/runbooks/`
+   - updated `HANDOFF.md` so it reflects current repo state instead of the March-only snapshot
+9. Cleaned the legacy static heading outline in:
+   - `public/monkeymaghees/index.html`
+   - changed gallery and agent-card headings to `h3`
+   - wrapped primary content in `<main>`
+   - added an explicit nav landmark label
+
+### Verification
+
+1. `npm run lint` passed.
+2. `npm run build` passed.
+3. `npm run lead:smoke` passed after the lead/autoresponder changes.
+4. `node ./scripts/verify-live-lead.mjs --help` passed.
+5. Live production verification against `https://sylvestri.com/api/lead` returned:
+   - `status: 202`
+   - `message: Lead captured in the site layer. Set LEAD_ROUTER_URL or FUB_API_TOKEN to forward submissions.`
+   - `requestId: 19ce57e8-239f-4a7e-9ab1-43b07582e688`
+
+### Operational Truth After This Pass
+
+1. Repo-side execution is in good shape:
+   - lead magnet routing is more concrete
+   - autoresponder planning is now deterministic in code
+   - KPI and ops docs are materially improved
+   - monkeymaghees heading cleanup is complete
+2. Production lead activation is still blocked outside the repo.
+3. The live 202 response confirms the Hostinger env import/redeploy step is still unfinished on the deployed site.
+
+## 2026-04-09 Daily Publisher Hardening
+
+### Goal
+- Lock down the live n8n publish surface for `sylvestri.com`.
+- Align the daily article workflow with Cloudinary hero imagery and live auth headers.
+
+### Repo Changes
+- Added:
+  - `ops/hostinger/runtime-env-loader.cjs`
+  - `ops/hostinger/.hostinger-runtime.env.example`
+- Updated:
+  - `ops/hostinger/package-upload.sh`
+  - `ops/n8n/forge/daily-sylvestri-articles/WORKFLOW.json`
+
+### Live Runtime Changes
+- Patched the active Hostinger runtime in:
+  - `/home/u516072247/domains/sylvestri.com/nodejs`
+- Added:
+  - `.hostinger-runtime-loader.cjs`
+  - `.hostinger-runtime.env`
+- Recycled the live `sylvestri.com` worker processes so the auth env loaded into the running app.
+
+### n8n
+- Added the required envs to the live n8n secrets file and recreated the containers.
+- Imported the refreshed workflow and activated:
+  - `zXzgo8eow6szvcgb` - `Daily Sylvestri Articles Publisher`
+- Confirmed the prior workflow id is inactive:
+  - `LMfFjIrKQZgZoyso`
+
+### Verification
+- `POST https://sylvestri.com/api/ops/content/publish` without auth -> `401`
+- Same route with valid headers and invalid payload -> `400`
+- Live n8n export confirms the new workflow id is active

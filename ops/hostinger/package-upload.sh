@@ -41,6 +41,14 @@ if [[ -d "content" && ! -d "$STAGING_DIR/content" ]]; then
 fi
 
 cp package.json "$STAGING_DIR/package.json"
+cp ops/hostinger/runtime-env-loader.cjs "$STAGING_DIR/.hostinger-runtime-loader.cjs"
+
+if ! grep -q ".hostinger-runtime-loader.cjs" "$STAGING_DIR/server.js"; then
+  TMP_SERVER="$(mktemp)"
+  printf "require('./.hostinger-runtime-loader.cjs')\n" > "$TMP_SERVER"
+  cat "$STAGING_DIR/server.js" >> "$TMP_SERVER"
+  mv "$TMP_SERVER" "$STAGING_DIR/server.js"
+fi
 
 mkdir -p "$DIST_DIR"
 tar -czf "$ARTIFACT_PATH" -C "$STAGING_DIR" .
