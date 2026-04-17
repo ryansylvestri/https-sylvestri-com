@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { ThankYouFollowUp } from "@/components/thank-you-follow-up";
 import { ThankYouTracker } from "@/components/thank-you-tracker";
 import { SiteShell } from "@/components/site-shell";
 import { buildPageMetadata } from "@/lib/seo";
@@ -31,6 +32,10 @@ export default function ThankYouPage() {
             Ryan has the source context, lead type, and notes needed to route this correctly.
             If this is urgent, call directly.
           </p>
+
+          <Suspense fallback={null}>
+            <ThankYouFollowUp />
+          </Suspense>
 
           <div className="mt-8 flex flex-wrap gap-4">
             <a

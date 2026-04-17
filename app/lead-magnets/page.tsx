@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { SiteShell } from "@/components/site-shell";
-import { coreLeadMagnets } from "@/lib/lead-magnets";
+import { coreLeadMagnets, getLeadMagnetHref } from "@/lib/lead-magnets";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata = buildPageMetadata({
@@ -35,6 +37,21 @@ export default function LeadMagnetsPage() {
                 Lead magnet
               </p>
               <h2 className="mt-3 font-display text-2xl leading-tight text-brand-ink">{item.label}</h2>
+              <p className="mt-3 text-sm leading-6 text-body-ink">{item.summary}</p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link
+                  href={getLeadMagnetHref(item.slug)}
+                  className="rounded-full bg-brand-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-copper"
+                >
+                  View request page
+                </Link>
+                <Link
+                  href={item.resourceHref}
+                  className="rounded-full border border-[rgba(15,23,42,0.14)] bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition hover:border-brand-gold hover:text-brand-copper"
+                >
+                  Preview route
+                </Link>
+              </div>
             </div>
           ))}
         </div>

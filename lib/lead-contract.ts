@@ -21,6 +21,10 @@ export type LeadPayload = {
 export type LeadSubmissionResponse = {
   message?: string;
   requestId?: string;
+  sequenceKey?: string;
+  sequenceLabel?: string;
+  leadMagnetLabel?: string;
+  leadMagnetResourceHref?: string;
 };
 
 export const ADDRESS_REQUIRED_LEAD_TYPES = new Set(["home-valuation", "seller-distress"]);

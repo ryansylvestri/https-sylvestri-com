@@ -34,6 +34,11 @@ npm run dev
 ## Environment
 - Copy `.env.example` to your runtime env file and fill in:
   - `NEXT_PUBLIC_SITE_URL`
+  - `NEXT_PUBLIC_GTM_ID`
+  - `NEXT_PUBLIC_GA4_ID`
+  - `NEXT_PUBLIC_META_PIXEL_ID`
+  - `NEXT_PUBLIC_CLARITY_ID`
+  - optional `KPI_*_URL` dashboard links for `/kpi`
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
@@ -95,12 +100,18 @@ npm run dev
   - Cloudinary URL helper
 - `ops/n8n/`
   - daily content templates plus the lead-intake router runbook
+- `ops/analytics/`
+  - GTM event mapping and verification checklist
 - `ops/hostinger/`
   - packaging script and deploy notes
+- `ops/runbooks/`
+  - tracked operational runbooks moved out of loose root planning files
 - `ops/state/`
   - idempotency state for content and PDF publish operations
 - `scripts/lead-smoke.mjs`
   - deterministic local smoke harness for `/api/lead`, router failover, and SMTP preview
+- `scripts/verify-live-lead.mjs`
+  - synthetic live submission harness for post-deploy verification
 
 ## Cloudinary Signed Upload API
 - Endpoints:
@@ -160,6 +171,15 @@ export NVM_DIR="$HOME/.nvm"
 nvm use
 npm ci
 npm run lead:smoke
+```
+
+### Deterministic Live Verification
+```bash
+cd /Users/ryansylvestri/dev/github/https-sylvestri-com
+export NVM_DIR="$HOME/.nvm"
+. "$NVM_DIR/nvm.sh"
+nvm use
+npm run lead:verify:live -- --base-url https://sylvestri.com
 ```
 
 ### Deterministic Local Upload Test

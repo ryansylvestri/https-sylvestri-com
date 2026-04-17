@@ -1,12 +1,34 @@
 # Session Handoff — sylvestri.com SEO & Guide Expansion
 
-**Last updated:** 2026-03-26
-**Last commit:** `0622bc7` (feat: add Google Search Console verification meta tag)
+**Last updated:** 2026-04-02
+**Last synced commit:** `c7c665a` (document lead ops production checkpoint)
 **Branch:** `main`
 **Repo local path:** `/Users/ryansylvestri/dev/github/https-sylvestri-com`
 **Sandbox mirror:** `/sessions/zealous-blissful-wozniak/mnt/https-sylvestri-com`
 
 ---
+
+## Latest State (2026-04-02)
+
+- `main` is aligned with `origin/main`; local quality gates pass (`npm run lint`, `npm run build`).
+- Repo-side follow-up work now includes:
+  - lead-magnet detail pages under `/lead-magnets/[slug]`
+  - deterministic autoresponder sequence planning in the app payload sent to `LEAD_AUTORESPONDER_WEBHOOK_URL`
+  - a synthetic live submission harness at `npm run lead:verify:live -- --base-url https://sylvestri.com`
+  - a more operational `/kpi` page with configuration status cards and weekly cadence
+  - tracked ops runbooks in `ops/analytics/`, `ops/hostinger/`, `ops/n8n/`, and `ops/runbooks/`
+  - cleaned heading structure for the legacy `/monkeymaghees` static page
+- A synthetic live submission on 2026-04-02 still returned:
+  - `202 Accepted`
+  - `Lead captured in the site layer. Set LEAD_ROUTER_URL or FUB_API_TOKEN to forward submissions.`
+  - request id `19ce57e8-239f-4a7e-9ab1-43b07582e688`
+- Remaining external blockers are still outside the repo:
+  - Hostinger hPanel env import + redeploy
+  - GTM container publish
+  - live n8n autoresponder workflow deployment
+  - live dashboard URLs or system credentials for `/kpi`
+
+Historical notes from the March build-out remain below.
 
 ## What's Done (ALL COMPLETE)
 

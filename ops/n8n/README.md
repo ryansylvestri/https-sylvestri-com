@@ -20,6 +20,7 @@ This repo ships two `n8n` contract families:
 Runbook:
 
 - `ops/n8n/lead-intake-router.md`
+- `ops/n8n/lead-autoresponder-sequences.md`
 
 ## Workflow pattern
 
@@ -53,3 +54,4 @@ Runbook:
 
 - `ops/n8n/daily-content-publisher.json`
 - `ops/n8n/daily-pdf-publisher.json`
+- `ops/n8n/lead-autoresponder-sequences.md`

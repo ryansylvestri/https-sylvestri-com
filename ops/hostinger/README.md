@@ -18,3 +18,10 @@ nvm use
 npm ci
 npm run hostinger:package
 ```
+
+## Live Lead Activation
+
+- Post-deploy live verification runbook:
+  - `ops/hostinger/live-lead-activation.md`
+- Synthetic submission harness:
+  - `npm run lead:verify:live -- --base-url https://sylvestri.com`

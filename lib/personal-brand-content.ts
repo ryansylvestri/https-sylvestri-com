@@ -86,7 +86,8 @@ export const personalMedia = {
   headshot: "ryan-sylvestri/site-draft/ryan-headshot-remax",
   portrait: "ryan-sylvestri/site-draft/ryan-portrait-01",
   systemsLogo: "ryan-sylvestri/site-draft/sylvestri-systems-logo",
-  sign: "ryan-sylvestri/site-draft/remax-sign",
+  // remax-sign retired 2026-04-17 per owner request; slot repointed to headshot
+  sign: "ryan-sylvestri/site-draft/ryan-headshot-remax",
   ambient: "samples/waves",
   radial: "samples/radial_02",
 };

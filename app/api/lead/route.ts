@@ -2,6 +2,7 @@ import { createHmac, randomUUID } from "node:crypto";
 
 import { NextResponse } from "next/server";
 
+import { buildLeadAutoresponderPlan } from "@/lib/lead-autoresponder";
 import {
   leadTypeRequiresPropertyAddress,
   normalizeLeadSourceToken,
@@ -108,7 +109,10 @@ function signPayload(payload: NormalizedLead, secret?: string) {
   return createHmac("sha256", secret).update(JSON.stringify(payload)).digest("hex");
 }
 
-async function triggerAutoresponder(lead: NormalizedLead) {
+async function triggerAutoresponder(
+  lead: NormalizedLead,
+  plan: ReturnType<typeof buildLeadAutoresponderPlan>,
+) {
   const autoresponderUrl = process.env.LEAD_AUTORESPONDER_WEBHOOK_URL;
   if (!autoresponderUrl) return;
 
@@ -128,6 +132,9 @@ async function triggerAutoresponder(lead: NormalizedLead) {
         source: lead.source,
         campaign: lead.campaign,
         sourcePath: lead.sourcePath,
+        consentEmail: lead.consentEmail,
+        consentSms: lead.consentSms,
+        plan,
       }),
     });
   } catch (error) {
@@ -135,10 +142,13 @@ async function triggerAutoresponder(lead: NormalizedLead) {
   }
 }
 
-async function triggerLeadNotifications(lead: NormalizedLead) {
+async function triggerLeadNotifications(
+  lead: NormalizedLead,
+  plan: ReturnType<typeof buildLeadAutoresponderPlan>,
+) {
   const [notificationResult, autoresponderResult] = await Promise.allSettled([
     sendLeadNotificationEmail(lead),
-    triggerAutoresponder(lead),
+    triggerAutoresponder(lead, plan),
   ]);
 
   if (notificationResult.status === "rejected") {
@@ -185,6 +195,7 @@ export async function POST(request: Request) {
   const leadRouterToken = process.env.LEAD_ROUTER_TOKEN;
   const leadRouterSigningSecret = process.env.LEAD_ROUTER_SIGNING_SECRET;
   const signature = signPayload(normalizedLead, leadRouterSigningSecret);
+  const autoresponderPlan = buildLeadAutoresponderPlan(normalizedLead);
 
   let deliveryMessage =
     "Lead captured in the site layer. Set LEAD_ROUTER_URL or FUB_API_TOKEN to forward submissions.";
@@ -239,12 +250,16 @@ export async function POST(request: Request) {
     console.info("[lead-intake] accepted without router", normalizedLead);
   }
 
-  await triggerLeadNotifications(normalizedLead);
+  await triggerLeadNotifications(normalizedLead, autoresponderPlan);
 
   return NextResponse.json(
     {
       message: deliveryMessage,
       requestId: normalizedLead.requestId,
+      sequenceKey: autoresponderPlan.sequenceKey,
+      sequenceLabel: autoresponderPlan.sequenceLabel,
+      leadMagnetLabel: autoresponderPlan.magnet?.label || "",
+      leadMagnetResourceHref: autoresponderPlan.primaryCta.href,
     },
     { status: deliveryStatus },
   );

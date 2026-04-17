@@ -1,4 +1,5 @@
 import { SiteShell } from "@/components/site-shell";
+import { getKpiDashboardCards, getWeeklyCadence } from "@/lib/kpi-dashboard";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata = buildPageMetadata({
@@ -20,6 +21,9 @@ const checklist = [
 ];
 
 export default function KpiPage() {
+  const dashboardCards = getKpiDashboardCards();
+  const reviewCadence = getWeeklyCadence();
+
   return (
     <SiteShell>
       <section className="mx-auto max-w-5xl px-6 py-20">
@@ -34,6 +38,41 @@ export default function KpiPage() {
           source attribution before scaling traffic.
         </p>
 
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
+          {dashboardCards.map((card) => (
+            <div
+              key={card.title}
+              className="rounded-[1.5rem] border border-[rgba(15,23,42,0.08)] bg-white/88 p-6"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <h2 className="font-display text-2xl leading-tight text-brand-ink">{card.title}</h2>
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${
+                    card.status === "configured"
+                      ? "bg-[rgba(6,95,70,0.12)] text-emerald-700"
+                      : "bg-[rgba(180,83,9,0.12)] text-amber-700"
+                  }`}
+                >
+                  {card.status}
+                </span>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-body-ink">{card.helper}</p>
+              {card.href ? (
+                <a
+                  href={card.href}
+                  className="mt-4 inline-flex rounded-full border border-[rgba(15,23,42,0.14)] bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition hover:border-brand-gold hover:text-brand-copper"
+                >
+                  {card.actionLabel || "Open dashboard"}
+                </a>
+              ) : (
+                <p className="mt-4 text-xs text-muted-ink">
+                  Add the matching `KPI_*` dashboard URL env to turn this card into a direct ops link.
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+
         <div className="mt-10 rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/88 p-8">
           <h2 className="font-display text-3xl text-brand-ink">Weekly checklist</h2>
           <ul className="mt-5 space-y-3">
@@ -44,6 +83,24 @@ export default function KpiPage() {
               </li>
             ))}
           </ul>
+        </div>
+
+        <div className="mt-10 rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/88 p-8">
+          <h2 className="font-display text-3xl text-brand-ink">Review cadence</h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {reviewCadence.map((item) => (
+              <div
+                key={item.day}
+                className="rounded-[1.4rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(255,248,239,0.72)] p-5"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-copper">
+                  {item.day}
+                </p>
+                <h3 className="mt-2 text-lg font-semibold text-brand-ink">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-body-ink">{item.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </SiteShell>

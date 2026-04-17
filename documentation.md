@@ -943,3 +943,29 @@ Implement the remaining repo-side work from the current state review:
 - `POST https://sylvestri.com/api/ops/content/publish` without auth -> `401`
 - Same route with valid headers and invalid payload -> `400`
 - Live n8n export confirms the new workflow id is active
+
+## 2026-04-09 VPS Fallback Deployment
+
+### Trigger
+- Public `sylvestri.com` Hostinger edge was returning `503` again on:
+  - `/`
+  - `/articles/publishing-engine-v1`
+  - `/articles/get-more-from-hudson-valley-home-valuation`
+
+### Deployment Action
+- Synced the current fixed repo state to the VPS runtime path:
+  - `/srv/sylvestri-systems/site`
+- Preserved the existing lead-router envs and merged in:
+  - `HOSTINGER_N8N_WEBHOOK_TOKEN`
+  - `N8N_SOURCE_ID`
+- Rebuilt on the VPS with Node 22 and restarted:
+  - `sylvestri-systems-site.service`
+
+### Verification
+- `curl --resolve sylvestri.com:443:31.97.138.190 https://sylvestri.com/articles/publishing-engine-v1` -> `200`
+- `POST --resolve sylvestri.com:443:31.97.138.190 https://sylvestri.com/api/ops/content/publish` without auth -> `401`
+- Same route with valid auth and invalid payload -> `400`
+
+### Current Truth
+- The fixed app is deployed and healthy on the VPS-controlled runtime.
+- The public Hostinger-managed edge is still the failing component; the VPS copy is the clean fallback once DNS is cut over.

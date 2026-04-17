@@ -391,7 +391,7 @@
             padding: 1.2rem;
             z-index: 3;
         }
-        .gallery-label h4 {
+        .gallery-label h3 {
             color: white;
             font-size: 0.95rem;
             margin-bottom: 0.2rem;
@@ -538,7 +538,7 @@
             transition: border-color 0.3s;
         }
         .agent-card:hover { border-color: var(--remax-red); }
-        .agent-card h4 {
+        .agent-card h3 {
             color: var(--remax-white);
             font-size: 1.3rem;
             margin-bottom: 0.3rem;
@@ -843,7 +843,7 @@
 <body>
 
     <!-- ===== NAVBAR ===== -->
-    <nav class="navbar">
+    <nav class="navbar" aria-label="Primary">
         <div class="navbar-brand">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/REMAX_logo.svg/200px-REMAX_logo.svg.png" alt="RE/MAX" onerror="this.style.display='none'">
             <span>Town & Country</span>
@@ -857,6 +857,8 @@
             <li><a href="#cta" class="nav-cta">Get Started</a></li>
         </ul>
     </nav>
+
+    <main id="main-content">
 
     <!-- ===== HERO ===== -->
     <section id="hero">
@@ -987,97 +989,97 @@
         <div class="gallery-grid">
             <!-- Exterior — storefront with Monkey Maghees sign (FEATURED) -->
             <div class="gallery-item featured fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_900,h_500,c_fill,g_auto/7730434D-1431-4082-B21F-8A05B351CCC6_et3nxv')">
-                <div class="gallery-label"><h4>Monkey Maghees Storefront</h4><p>40 Vassar Rd, Poughkeepsie</p></div>
+                <div class="gallery-label"><h3>Monkey Maghees Storefront</h3><p>40 Vassar Rd, Poughkeepsie</p></div>
             </div>
             <!-- Aerial drone shot (FEATURED) -->
             <div class="gallery-item featured fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_900,h_500,c_fill,g_auto/8E909C33-744F-4AB0-B100-657A1C79071A_1_105_c_wzxrwz')">
-                <div class="gallery-label"><h4>Aerial View — Strip Mall</h4><p>Premium commercial complex</p></div>
+                <div class="gallery-label"><h3>Aerial View — Strip Mall</h3><p>Premium commercial complex</p></div>
             </div>
             <!-- Bar counter wide angle -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/A3D30193-5B21-42EF-8525-4F608E3260AA_4_5005_c_fcwxce')">
-                <div class="gallery-label"><h4>The Bar</h4><p>Full-service bar with ceiling fan</p></div>
+                <div class="gallery-label"><h3>The Bar</h3><p>Full-service bar with ceiling fan</p></div>
             </div>
             <!-- Bar taps and tin ceiling -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/C487A34C-10F7-4656-A705-F3906DBF641B_4_5005_c_rascyk')">
-                <div class="gallery-label"><h4>Bar Taps & Tin Ceiling</h4><p>Classic bar atmosphere</p></div>
+                <div class="gallery-label"><h3>Bar Taps & Tin Ceiling</h3><p>Classic bar atmosphere</p></div>
             </div>
             <!-- Bar with bottles on shelves -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/E74839C3-B149-4703-9948-2518367140CA_4_5005_c_azanxn')">
-                <div class="gallery-label"><h4>Bar Counter & Bottles</h4><p>Fully stocked and ready</p></div>
+                <div class="gallery-label"><h3>Bar Counter & Bottles</h3><p>Fully stocked and ready</p></div>
             </div>
             <!-- Entrance looking out -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/F63EA068-F8B0-4F82-93F0-981389B40C38_4_5005_c_gznna9')">
-                <div class="gallery-label"><h4>Entrance & Bar</h4><p>Welcoming front of house</p></div>
+                <div class="gallery-label"><h3>Entrance & Bar</h3><p>Welcoming front of house</p></div>
             </div>
             <!-- Pool table 1 -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/518BFA37-E99C-4D6C-A8A7-B29B3D467AEF_4_5005_c_qzahbl')">
-                <div class="gallery-label"><h4>Pool Tables</h4><p>Two tables, rustic wood walls</p></div>
+                <div class="gallery-label"><h3>Pool Tables</h3><p>Two tables, rustic wood walls</p></div>
             </div>
             <!-- Pool table 2 wide -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/28823ABE-BC07-4A42-82D7-21D7B76034FC_4_5005_c_oyz3hd')">
-                <div class="gallery-label"><h4>Game Room</h4><p>Pool, darts & more</p></div>
+                <div class="gallery-label"><h3>Game Room</h3><p>Pool, darts & more</p></div>
             </div>
             <!-- Pool perspective -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/8641E95B-833F-4270-B3AE-75A76596F6D0_4_5005_c_kph7kv')">
-                <div class="gallery-label"><h4>Pool Area Perspective</h4><p>Spacious game area</p></div>
+                <div class="gallery-label"><h3>Pool Area Perspective</h3><p>Spacious game area</p></div>
             </div>
             <!-- Party signs area -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/F6B48B60-0C49-4F97-930A-525A365F34A1_4_5005_c_or9bev')">
-                <div class="gallery-label"><h4>Event & Party Space</h4><p>Host any kind of party</p></div>
+                <div class="gallery-label"><h3>Event & Party Space</h3><p>Host any kind of party</p></div>
             </div>
             <!-- Exterior strip mall -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/MonkeyMaghees_Reel_1_v2hka1')">
-                <div class="gallery-label"><h4>Shopping Plaza</h4><p>Next to Dunkin' & more</p></div>
+                <div class="gallery-label"><h3>Shopping Plaza</h3><p>Next to Dunkin' & more</p></div>
             </div>
             <!-- Hallway/restroom area -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/A2A34802-3EA8-419E-93EE-758F01A774DD_4_5005_c_ytdnod')">
-                <div class="gallery-label"><h4>Interior Details</h4><p>Well-maintained throughout</p></div>
+                <div class="gallery-label"><h3>Interior Details</h3><p>Well-maintained throughout</p></div>
             </div>
             <!-- Remaining venue photos -->
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/D20F357F-0696-4EAF-8D22-0C59DB1CEBBF_4_5005_c_xfq6ma')">
-                <div class="gallery-label"><h4>Interior View</h4><p>Spacious layout</p></div>
+                <div class="gallery-label"><h3>Interior View</h3><p>Spacious layout</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/517742A5-F663-4B55-95E2-38AF5B6713EA_4_5005_c_fki9fq')">
-                <div class="gallery-label"><h4>Bar Seating</h4><p>Room for everyone</p></div>
+                <div class="gallery-label"><h3>Bar Seating</h3><p>Room for everyone</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/12501CF3-9732-4273-9F9D-B82E88223A1D_4_5005_c_vpzqki')">
-                <div class="gallery-label"><h4>Venue Interior</h4><p>16+ years of history</p></div>
+                <div class="gallery-label"><h3>Venue Interior</h3><p>16+ years of history</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/8816D5CD-0BC4-450E-A686-85DE237F8EE5_4_5005_c_psanuc')">
-                <div class="gallery-label"><h4>Bar Area</h4><p>Classic neighborhood pub</p></div>
+                <div class="gallery-label"><h3>Bar Area</h3><p>Classic neighborhood pub</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/3025F548-0459-4B17-B36C-692A67D55BAD_4_5005_c_bxndei')">
-                <div class="gallery-label"><h4>Seating & Decor</h4><p>Warm, inviting atmosphere</p></div>
+                <div class="gallery-label"><h3>Seating & Decor</h3><p>Warm, inviting atmosphere</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/679B1205-A76B-45E7-A43F-A9504CC247A3_4_5005_c_xeaz1x')">
-                <div class="gallery-label"><h4>Interior Details</h4><p>Character throughout</p></div>
+                <div class="gallery-label"><h3>Interior Details</h3><p>Character throughout</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/309DDB8F-9860-49C2-9DB0-F9D27D0E4820_cumtzs')">
-                <div class="gallery-label"><h4>Full Venue Shot</h4><p>Hi-res detail</p></div>
+                <div class="gallery-label"><h3>Full Venue Shot</h3><p>Hi-res detail</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/88EA74DA-2243-4E9C-A75F-514F80603F00_4_5005_c_kbmqxg')">
-                <div class="gallery-label"><h4>Additional View</h4><p>Every angle covered</p></div>
+                <div class="gallery-label"><h3>Additional View</h3><p>Every angle covered</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/71CBF027-8CCD-44F4-992A-0278BA835BF2_4_5005_c_q9vw0r')">
-                <div class="gallery-label"><h4>Venue Feature</h4><p>Built for business</p></div>
+                <div class="gallery-label"><h3>Venue Feature</h3><p>Built for business</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/29A759B4-B3DB-4469-80D9-2EC9F1BB65AB_4_5005_c_wktvxi')">
-                <div class="gallery-label"><h4>More Interior</h4><p>Turnkey condition</p></div>
+                <div class="gallery-label"><h3>More Interior</h3><p>Turnkey condition</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/4B36840E-F3FA-49F1-BE8D-AA0B673E19CE_4_5005_c_j1mulg')">
-                <div class="gallery-label"><h4>Venue Detail</h4><p>Ready for new ownership</p></div>
+                <div class="gallery-label"><h3>Venue Detail</h3><p>Ready for new ownership</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/7D6B4039-162B-455D-9867-B1CCBA7631F3_4_5005_c_rydmex')">
-                <div class="gallery-label"><h4>Interior Space</h4><p>Plenty of room</p></div>
+                <div class="gallery-label"><h3>Interior Space</h3><p>Plenty of room</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/6BFA2CAC-E41C-4BBB-BE80-E0B69436CD75_4_5005_c_glehxz')">
-                <div class="gallery-label"><h4>Bar Feature</h4><p>Established venue</p></div>
+                <div class="gallery-label"><h3>Bar Feature</h3><p>Established venue</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/1A3E4F64-9D4B-401F-B212-9DE58FACAC92_4_5005_c_seeb2p')">
-                <div class="gallery-label"><h4>Additional Area</h4><p>Well-utilized space</p></div>
+                <div class="gallery-label"><h3>Additional Area</h3><p>Well-utilized space</p></div>
             </div>
             <div class="gallery-item fade-in" style="background-image:url('https://res.cloudinary.com/dtmh3eypz/image/upload/f_auto,q_auto,w_600,h_400,c_fill,g_auto/4EC2DE0C-E8DB-41DF-8C88-68E614CD2109_4_5005_c_iltthp')">
-                <div class="gallery-label"><h4>Final View</h4><p>Come see it in person</p></div>
+                <div class="gallery-label"><h3>Final View</h3><p>Come see it in person</p></div>
             </div>
         </div>
     </section>
@@ -1146,13 +1148,13 @@
 
             <div class="agents-grid">
                 <div class="agent-card fade-in">
-                    <h4>Ryan Sylvestri</h4>
+                    <h3>Ryan Sylvestri</h3>
                     <div class="agent-title">Licensed Associate RE Broker</div>
                     <p>RE/MAX Town & Country</p>
                     <p>&#128231; <a href="mailto:ryansylvestri@gmail.com">ryansylvestri@gmail.com</a></p>
                 </div>
                 <div class="agent-card fade-in">
-                    <h4>Michael Dunstan</h4>
+                    <h3>Michael Dunstan</h3>
                     <div class="agent-title">Licensed Real Estate Salesperson</div>
                     <p>RE/MAX Town & Country</p>
                     <p>&#128222; <a href="tel:9144899325">(914) 489-9325</a></p>
@@ -1293,7 +1295,7 @@
                 <!-- Success -->
                 <div id="successMessage" class="success-message" hidden>
                     <div class="success-icon">&#10003;</div>
-                    <h2>Thank You!</h2>
+                    <h3>Thank You!</h3>
                     <p>We've received your information and will be in touch shortly with details about Monkey Maghees.</p>
                 </div>
 
@@ -1309,6 +1311,8 @@
             </div>
         </div>
     </section>
+
+    </main>
 
     <!-- ===== FOOTER ===== -->
     <footer>

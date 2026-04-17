@@ -8,6 +8,7 @@
     "start": "next start --hostname 0.0.0.0",
     "lint": "eslint",
     "lead:smoke": "node ./scripts/lead-smoke.mjs",
+    "lead:verify:live": "node ./scripts/verify-live-lead.mjs",
     "cloudinary:test-upload": "node ./scripts/test-cloudinary-signed-upload.mjs",
     "assets:worker": "node ./scripts/asset-worker.mjs",
     "plans:scaffold": "node ./scripts/scaffold-plans.mjs",

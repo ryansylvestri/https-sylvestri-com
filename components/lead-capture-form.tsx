@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { submitLead } from "@/lib/lead-client";
 import { leadTypeRequiresPropertyAddress } from "@/lib/lead-contract";
+import { getLeadMagnetByValue } from "@/lib/lead-magnets";
 import { intakeOptions } from "@/lib/site-content";
 import { pushDataLayerEvent, sourcePathToToken } from "@/lib/tracking";
 
@@ -23,6 +24,7 @@ type LeadCaptureFormProps = {
   defaultInterest?: string;
   defaultLeadType?: string;
   leadMagnetOptions?: LeadMagnetOption[];
+  defaultLeadMagnet?: string;
 };
 
 type FormState = {
@@ -54,7 +56,16 @@ const leadTypeHints: Record<string, string> = {
   other: "Tell us what you need and we will route this manually.",
 };
 
-function getInitialState(defaultLeadType: string, leadMagnetOptions?: LeadMagnetOption[]): FormState {
+function getInitialState(
+  defaultLeadType: string,
+  leadMagnetOptions?: LeadMagnetOption[],
+  defaultLeadMagnet?: string,
+): FormState {
+  const hasRequestedMagnet = Boolean(
+    defaultLeadMagnet &&
+      leadMagnetOptions?.some((option) => option.value === defaultLeadMagnet),
+  );
+
   return {
     fullName: "",
     email: "",
@@ -64,7 +75,7 @@ function getInitialState(defaultLeadType: string, leadMagnetOptions?: LeadMagnet
     market: "",
     propertyAddress: "",
     notes: "",
-    leadMagnet: leadMagnetOptions?.[0]?.value || "",
+    leadMagnet: hasRequestedMagnet ? defaultLeadMagnet || "" : leadMagnetOptions?.[0]?.value || "",
     consentEmail: true,
     consentSms: false,
     honeypot: "",
@@ -87,13 +98,14 @@ export function LeadCaptureForm({
   defaultInterest,
   defaultLeadType,
   leadMagnetOptions = [],
+  defaultLeadMagnet,
 }: LeadCaptureFormProps) {
   const router = useRouter();
   const pathname = usePathname();
   const normalizedDefaultLeadType = normalizeLeadType(defaultLeadType, defaultInterest);
 
   const [form, setForm] = useState<FormState>(() =>
-    getInitialState(normalizedDefaultLeadType, leadMagnetOptions),
+    getInitialState(normalizedDefaultLeadType, leadMagnetOptions, defaultLeadMagnet),
   );
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -163,7 +175,7 @@ export function LeadCaptureForm({
       setStatus("success");
       setMessage(payload.message || "Details received. Ryan can review the intake from here.");
       setJustSubmittedLeadType(form.leadType);
-      setJustSubmittedMagnet(form.leadMagnet);
+      setJustSubmittedMagnet(getLeadMagnetByValue(form.leadMagnet)?.label || form.leadMagnet);
 
       pushDataLayerEvent("lead_form_success", {
         source,
@@ -182,7 +194,7 @@ export function LeadCaptureForm({
         });
       }
 
-      setForm(getInitialState(normalizedDefaultLeadType, leadMagnetOptions));
+      setForm(getInitialState(normalizedDefaultLeadType, leadMagnetOptions, defaultLeadMagnet));
 
       const params = new URLSearchParams({
         source,
