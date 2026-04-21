@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "cp -r public .next/standalone/public",
     "start": "next start --hostname 0.0.0.0",
     "lint": "eslint",
     "lead:smoke": "node ./scripts/lead-smoke.mjs",
