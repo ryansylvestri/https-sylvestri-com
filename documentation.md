@@ -1115,5 +1115,12 @@ Lighthouse 13.4.1 was run against the clean packaged standalone server with mobi
 ### Release Status
 
 - Repository implementation and all local release gates pass.
-- Production deployment was intentionally not performed.
-- Before deployment, obtain the exact managed Hostinger artifact/log surface or explicitly approve the verified VPS deployment path, restore or replace the approved portrait assets if portraits are required, preserve a rollback artifact, and repeat the route and Lighthouse smoke tests against production.
+- Production release commit `f350604` was published to `main` through Hostinger's connected GitHub deployment.
+- Preserved rollback points:
+  - Git tag `pre-editorial-revamp-20260730`
+  - `dist/hostinger/sylvestri-hostinger-package.tgz`
+- The first production smoke test exposed a Hostinger-only multi-worker MDX failure:
+  - `Failed to load external module next-mdx-remote-.../rsc: Error: open EEXIST`
+  - affected the article detail route and sitemap
+- Added `transpilePackages` for the MDX/content runtime so these dependencies are bundled instead of opened through Turbopack's external-module wrapper.
+- Restore or replace the approved portrait assets separately if portraits are required; no generated likeness is used.

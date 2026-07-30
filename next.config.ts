@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  // Hostinger starts multiple workers against one extracted standalone tree.
+  // Bundle the MDX runtime so workers do not race while opening Turbopack's
+  // external-module wrapper (`open EEXIST` in managed runtime logs).
+  transpilePackages: ["next-mdx-remote", "@mdx-js/mdx", "gray-matter", "zod"],
   async redirects() {
     return [
       {
