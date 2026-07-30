@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: guide.title,
     description: guide.description,
     path: `/guides/${guide.slug}`,
+    noIndex: !guide.reviewedAt,
   });
 }
 
@@ -69,14 +70,17 @@ export default async function GuidePage({ params }: PageProps) {
 
   /* ── Hero image ── */
   const heroPublicId = getPageImage(guide.slug);
-  const heroUrl = getCloudinaryAssetUrl(heroPublicId, {
-    crop: "fill",
-    gravity: "auto",
-    width: 900,
-    height: 500,
-    quality: "auto",
-    format: "auto",
-  });
+  const heroUrl =
+    guide.slug === "inspection"
+      ? "/images/editorial-learning-inspection.webp"
+      : getCloudinaryAssetUrl(heroPublicId, {
+          crop: "fill",
+          gravity: "auto",
+          width: 900,
+          height: 500,
+          quality: "auto",
+          format: "auto",
+        });
 
   /* ── Prose sections ── */
   const sections = guideProse[guide.slug] ?? [];
@@ -91,10 +95,11 @@ export default async function GuidePage({ params }: PageProps) {
     seller: "seller",
     investor: "investor",
     lifestyle: "renter",
-    process: "seller",
-    ai: "ai-coaching",
+    process: "agent-match",
+    systems: "ai-coaching",
   };
-  const defaultLeadType = defaultLeadTypeByCategory[guide.category] || "agent-match";
+  const defaultLeadType =
+    guide.contactLeadType || defaultLeadTypeByCategory[guide.category] || "agent-match";
 
   /* ── JSON-LD ── */
   const schemas = [
@@ -109,8 +114,8 @@ export default async function GuidePage({ params }: PageProps) {
         name: siteConfig.founder,
       },
       publisher: {
-        "@type": "Organization",
-        name: siteConfig.name,
+        "@type": "Person",
+        name: "Ryan Sylvestri",
       },
     },
     buildBreadcrumbJsonLd([
@@ -139,14 +144,41 @@ export default async function GuidePage({ params }: PageProps) {
             <Image
               src={heroUrl}
               alt={guide.title}
-              width={900}
-              height={500}
+              width={guide.slug === "inspection" ? 1448 : 900}
+              height={guide.slug === "inspection" ? 1086 : 500}
+              sizes="(max-width: 1024px) 100vw, 44vw"
               className="h-auto w-full object-cover"
               priority
+              fetchPriority="high"
             />
           </div>
         )}
       </PageHero>
+      <nav aria-label="Breadcrumb" className="site-container py-5 text-xs text-muted-ink">
+        <Link href="/" className="hover:text-brand-copper">Home</Link>{" "}
+        <span aria-hidden="true">/</span>{" "}
+        <Link href="/guides" className="hover:text-brand-copper">Guides</Link>{" "}
+        <span aria-hidden="true">/</span>{" "}
+        <span aria-current="page">{guide.title}</span>
+      </nav>
+      <div className="site-container border-y border-[rgba(20,32,51,0.14)] py-4 text-xs leading-6 text-muted-ink">
+        {guide.reviewedAt ? `Last reviewed ${new Date(guide.reviewedAt).toLocaleDateString("en-US")}. ` : "Editorial review date pending. "}
+        Educational information only. Verify time-sensitive facts and consult the appropriate licensed professional for your situation.
+      </div>
+      {guide.sources?.length ? (
+        <aside className="site-container py-6" aria-labelledby="guide-sources">
+          <h2 id="guide-sources" className="eyebrow">Reviewed sources</h2>
+          <ul className="mt-4 flex flex-col gap-3 text-sm sm:flex-row sm:flex-wrap">
+            {guide.sources.map((source) => (
+              <li key={source.url}>
+                <a href={source.url} target="_blank" rel="noreferrer" className="font-semibold text-brand-ink underline decoration-brand-copper underline-offset-4">
+                  {source.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      ) : null}
 
       {/* ── Article prose ── */}
       {sections.length > 0 && (
@@ -206,32 +238,11 @@ export default async function GuidePage({ params }: PageProps) {
                   campaign={guide.slug}
                   defaultLeadType={defaultLeadType}
                   leadMagnetOptions={getLeadMagnetsForLane(defaultLeadType)}
+                  defaultLeadMagnet={guide.defaultLeadMagnet}
                 />
               </div>
             </RevealSection>
           </div>
-        </section>
-      )}
-
-      {/* ── Related landing page ── */}
-      {guide.relatedLanding && (
-        <section className="mx-auto max-w-7xl px-6 py-10">
-          <RevealSection>
-            <div className="rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-brand-cream p-8 text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-ink">
-                Related landing page
-              </p>
-              <p className="mt-3 text-base leading-7 text-body-ink">
-                Ready for a more specific offer and next step?
-              </p>
-              <Link
-                href={`/landing/${guide.relatedLanding}`}
-                className="mt-4 inline-block rounded-full bg-brand-ink px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-gold hover:text-brand-ink"
-              >
-                Open the landing page
-              </Link>
-            </div>
-          </RevealSection>
         </section>
       )}
 

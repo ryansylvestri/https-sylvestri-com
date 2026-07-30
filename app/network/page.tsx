@@ -10,6 +10,7 @@ export const metadata = buildPageMetadata({
   description:
     "Brand, domain, media, CRM, and intake-routing architecture for the sylvestri.com ecosystem.",
   path: "/network",
+  noIndex: true,
 });
 
 const systemBlocks = [

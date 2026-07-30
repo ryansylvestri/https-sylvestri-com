@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { GoogleReviewsPanel } from "@/components/google-reviews-panel";
 import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { RevealSection } from "@/components/reveal-section";
@@ -57,6 +56,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${page.title} | Landing Page`,
     description: page.description,
     path: `/landing/${page.slug}`,
+    noIndex: true,
   });
 }
 
@@ -93,12 +93,7 @@ export default async function LandingPage({ params }: PageProps) {
       "@context": "https://schema.org",
       "@type": "Service",
       serviceType: page.title,
-      provider: {
-        "@type": "Organization",
-        name: siteConfig.name,
-        telephone: siteConfig.phone,
-        email: siteConfig.email,
-      },
+      provider: { "@type": "Person", name: "Ryan Sylvestri" },
       areaServed: [...siteConfig.neighborhoods, ...siteConfig.regions],
       description: page.description,
       url: `${siteConfig.siteUrl}/landing/${page.slug}`,
@@ -295,7 +290,6 @@ export default async function LandingPage({ params }: PageProps) {
         </section>
       ) : null}
 
-      <GoogleReviewsPanel />
     </SiteShell>
   );
 }

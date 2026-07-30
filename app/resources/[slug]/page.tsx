@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 import { ContentLockState } from "@/components/content-lock-state";
 import { ContentProse } from "@/components/content-prose";
 import { JsonLd } from "@/components/json-ld";
-import { MotivatedSellerForm } from "@/components/motivated-seller-form";
 import { RevealSection } from "@/components/reveal-section";
 import { SiteShell } from "@/components/site-shell";
 import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
@@ -52,6 +51,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${page.title} | Resource Guide`,
     description: page.metaDescription,
     path: `/resources/${page.slug}`,
+    noIndex: true,
   });
 }
 
@@ -91,12 +91,7 @@ export default async function ResourcePage({ params }: PageProps) {
     "@type": "Article",
     headline: page.heroHeadline,
     description: page.metaDescription,
-    author: {
-      "@type": "RealEstateAgent",
-      name: siteConfig.founder,
-      telephone: siteConfig.phone,
-      email: siteConfig.email,
-    },
+    author: { "@type": "Person", name: "Ryan Sylvestri" },
     url: `${siteConfig.siteUrl}/resources/${page.slug}`,
   };
   const breadcrumbSchema = buildBreadcrumbJsonLd([
@@ -105,8 +100,6 @@ export default async function ResourcePage({ params }: PageProps) {
     { name: page.title, path: `/resources/${page.slug}` },
   ]);
   const faqSchema = page.faq.length > 0 ? buildFaqJsonLd(page.faq) : null;
-
-  const related = page.relatedSlugs.map((itemSlug) => getResourcePage(itemSlug)).filter(Boolean);
 
   const heroPublicId = getPageImage(page.slug);
   const heroUrl = getCloudinaryAssetUrl(heroPublicId, {
@@ -146,22 +139,9 @@ export default async function ResourcePage({ params }: PageProps) {
             {page.heroHeadline}
           </h1>
           <p className="max-w-3xl text-xl leading-9 text-body-ink">{page.heroSubheadline}</p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link
-              href={`/landing/${page.linkedLandingSlug}`}
-              className="rounded-full bg-brand-ink px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-copper"
-            >
-              Get Help With This
-            </Link>
-            <a
-              href={siteConfig.phoneHref}
-              data-track-event="cta_click_call"
-              data-track-label={`resource-call-${page.slug}`}
-              className="rounded-full border border-[rgba(15,23,42,0.12)] bg-white/70 px-6 py-3 text-sm font-semibold text-brand-ink transition hover:border-brand-gold"
-            >
-              Call {siteConfig.phone}
-            </a>
-          </div>
+          <p className="border-l-2 border-brand-copper pl-4 text-sm leading-7 text-muted-ink">
+            Legacy resource pending source and claims review. It is retained at this URL but withheld from public discovery.
+          </p>
         </div>
       </section>
 
@@ -211,43 +191,6 @@ export default async function ResourcePage({ params }: PageProps) {
         </section>
       ) : null}
 
-      <section className="mx-auto max-w-4xl px-6 py-16">
-        <div className="rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/90 p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)] md:p-12">
-          <h2 className="font-display text-3xl text-brand-ink">{page.ctaHeadline}</h2>
-          <p className="mt-3 text-lg leading-8 text-body-ink">{page.ctaBody}</p>
-          <div className="mt-8">
-            <MotivatedSellerForm
-              sourceSlug={page.slug}
-              ctaLabel="Get My Free Consultation"
-              variant="embedded"
-            />
-          </div>
-        </div>
-      </section>
-
-      {related.length > 0 ? (
-        <section className="mx-auto max-w-4xl px-6 py-16">
-          <h2 className="font-display text-2xl text-brand-ink">Related Resources</h2>
-          <div className="mt-6 grid gap-6 md:grid-cols-2">
-            {related.map((item) => (
-              item ? (
-                <Link
-                  key={item.slug}
-                  href={`/resources/${item.slug}`}
-                  className="group rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/80 p-6 transition hover:border-brand-gold"
-                >
-                  <h3 className="font-display text-lg text-brand-ink transition group-hover:text-brand-copper">
-                    {item.heroHeadline}
-                  </h3>
-                  <p className="mt-2 text-sm text-body-ink">
-                    {item.heroSubheadline.slice(0, 120)}…
-                  </p>
-                </Link>
-              ) : null
-            ))}
-          </div>
-        </section>
-      ) : null}
     </SiteShell>
   );
 }

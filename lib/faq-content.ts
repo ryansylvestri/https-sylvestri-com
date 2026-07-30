@@ -206,27 +206,27 @@ export const categoryFaqs: CategoryFaqs = {
   inspection: [
     {
       q: "Do I need a home inspection in New York?",
-      a: "While not legally required, a home inspection is strongly recommended. It identifies potential issues with the structure, systems, and safety of the property before you finalize the purchase. Skipping it can lead to costly surprises after closing.",
+      a: "Whether an inspection is required and what rights apply depends on the transaction, financing, and contract. A buyer should discuss the inspection contingency and deadlines with the attorney and lender, then decide what professional review is appropriate for the property.",
     },
     {
       q: "What does a home inspection cover?",
-      a: "A standard inspection covers the roof, foundation, structure, electrical, plumbing, HVAC, insulation, windows, doors, and visible signs of water damage or pest activity. Specialized inspections for radon, mold, lead paint, or termites are separate and recommended.",
+      a: "The New York Department of State describes a home inspection as observation and a written report about systems and components of a residential building. The signed agreement should identify the actual scope, limitations, exclusions, and report format.",
     },
     {
-      q: "How much does a home inspection cost in the Hudson Valley?",
-      a: "A standard home inspection in the Hudson Valley typically costs $400–700 depending on the size and age of the property. Additional tests like radon, water quality, and septic inspection add $100–300 each. This is money well spent for the protection it provides.",
+      q: "How do I compare inspection proposals?",
+      a: "Ask each provider for current pricing, licensing or professional status, insurance, written scope, sample report, timing, and the cost of any separate tests. Compare the services included rather than relying on an old regional price range.",
     },
     {
       q: "Should I attend the home inspection?",
-      a: "Yes, whenever possible. Being present lets you ask questions in real time, see issues firsthand, and learn about the home's systems and maintenance needs. Plan to spend 2–4 hours on site depending on the property size.",
+      a: "Ask the inspector whether and when attendance is permitted. If you attend, follow safety instructions and use the time to understand observations and report terminology rather than interrupting the inspection sequence.",
     },
     {
       q: "What happens if the inspection reveals problems?",
-      a: "You can negotiate repairs or credits with the seller, accept the property as-is, or walk away if the contract allows. Your agent and attorney help you determine which issues are deal-breakers versus normal maintenance items for the age and type of property.",
+      a: "Ask the inspector to clarify the observation and obtain further evaluation when recommended. Contract rights, deadlines, repair requests, credits, and the decision to proceed should be reviewed with your attorney using the actual contract and evidence.",
     },
     {
       q: "Should I get a radon test?",
-      a: "Yes, especially in the Hudson Valley where elevated radon levels are common due to the local geology. Radon is a colorless, odorless gas that can cause health issues with prolonged exposure. Mitigation systems are effective and typically cost $800–1,500 to install.",
+      a: "New York State Health recommends testing when buying a home and explains how to use qualified testing professionals and approved laboratories. Review the current state guidance and discuss the testing plan and timing with the appropriate professionals.",
     },
   ],
 

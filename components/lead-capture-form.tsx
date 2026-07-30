@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import { submitLead } from "@/lib/lead-client";
@@ -24,7 +25,7 @@ type LeadCaptureFormProps = {
   defaultInterest?: string;
   defaultLeadType?: string;
   leadMagnetOptions?: LeadMagnetOption[];
-  defaultLeadMagnet?: string;
+  defaultLeadMagnet?: string | null;
 };
 
 type FormState = {
@@ -59,7 +60,7 @@ const leadTypeHints: Record<string, string> = {
 function getInitialState(
   defaultLeadType: string,
   leadMagnetOptions?: LeadMagnetOption[],
-  defaultLeadMagnet?: string,
+  defaultLeadMagnet?: string | null,
 ): FormState {
   const hasRequestedMagnet = Boolean(
     defaultLeadMagnet &&
@@ -75,8 +76,13 @@ function getInitialState(
     market: "",
     propertyAddress: "",
     notes: "",
-    leadMagnet: hasRequestedMagnet ? defaultLeadMagnet || "" : leadMagnetOptions?.[0]?.value || "",
-    consentEmail: true,
+    leadMagnet:
+      defaultLeadMagnet === null
+        ? ""
+        : hasRequestedMagnet
+          ? defaultLeadMagnet || ""
+          : leadMagnetOptions?.[0]?.value || "",
+    consentEmail: false,
     consentSms: false,
     honeypot: "",
   };
@@ -115,8 +121,8 @@ export function LeadCaptureForm({
   const wrapperClassName = useMemo(
     () =>
       compact
-        ? "mesh-panel glow-outline rounded-[1.75rem] border border-[rgba(15,23,42,0.08)] bg-white/92 p-6"
-        : "mesh-panel glow-outline rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/92 p-8 shadow-[0_18px_50px_rgba(15,23,42,0.08)]",
+        ? "border border-[rgba(20,32,51,0.18)] bg-[#fffdf9] p-6"
+        : "border border-[rgba(20,32,51,0.18)] bg-[#fffdf9] p-7 md:p-8",
     [compact],
   );
 
@@ -212,18 +218,14 @@ export function LeadCaptureForm({
 
   return (
     <div className={wrapperClassName}>
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,_rgba(217,166,90,0.14),_transparent)]" />
-      <div className="relative space-y-3">
-        <div className="inline-flex rounded-full border border-[rgba(183,90,36,0.18)] bg-[rgba(255,248,239,0.88)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-copper">
-          Structured intake
-        </div>
-        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-copper">
+      <div className="space-y-3">
+        <p className="eyebrow">
           {title}
         </p>
         <p className="text-base leading-7 text-body-ink">{description}</p>
       </div>
 
-      <form className="relative mt-6 grid gap-4" onSubmit={handleSubmit}>
+      <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
         <input
           tabIndex={-1}
           autoComplete="off"
@@ -242,7 +244,8 @@ export function LeadCaptureForm({
               name="fullName"
               value={form.fullName}
               onChange={(event) => setForm((current) => ({ ...current, fullName: event.target.value }))}
-              className="rounded-2xl border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 outline-none transition focus:border-brand-copper"
+              autoComplete="name"
+              className="min-h-12 border border-[rgba(20,32,51,0.26)] bg-white px-4"
             />
           </label>
           <label className="grid gap-2 text-sm font-medium text-brand-ink">
@@ -253,7 +256,8 @@ export function LeadCaptureForm({
               type="email"
               value={form.email}
               onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
-              className="rounded-2xl border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 outline-none transition focus:border-brand-copper"
+              autoComplete="email"
+              className="min-h-12 border border-[rgba(20,32,51,0.26)] bg-white px-4"
             />
           </label>
         </div>
@@ -265,16 +269,17 @@ export function LeadCaptureForm({
               name="phone"
               value={form.phone}
               onChange={(event) => setForm((current) => ({ ...current, phone: event.target.value }))}
-              className="rounded-2xl border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 outline-none transition focus:border-brand-copper"
+              autoComplete="tel"
+              className="min-h-12 border border-[rgba(20,32,51,0.26)] bg-white px-4"
             />
           </label>
           <label className="grid gap-2 text-sm font-medium text-brand-ink">
-            Lead type
+            What is this about?
             <select
               name="leadType"
               value={form.leadType}
               onChange={(event) => setForm((current) => ({ ...current, leadType: event.target.value }))}
-              className="rounded-2xl border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 outline-none transition focus:border-brand-copper"
+              className="min-h-12 border border-[rgba(20,32,51,0.26)] bg-white px-4"
             >
               {intakeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -285,7 +290,7 @@ export function LeadCaptureForm({
           </label>
         </div>
 
-        <div className="rounded-[1.2rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(255,248,239,0.86)] px-4 py-3 text-sm leading-6 text-body-ink">
+        <div className="border-l-2 border-brand-copper bg-[#f4ede3] px-4 py-3 text-sm leading-6 text-body-ink">
           {helperText}
         </div>
 
@@ -300,7 +305,8 @@ export function LeadCaptureForm({
                 setForm((current) => ({ ...current, propertyAddress: event.target.value }))
               }
               placeholder="123 Main St, Fishkill, NY"
-              className="rounded-2xl border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 outline-none transition focus:border-brand-copper"
+              autoComplete="street-address"
+              className="min-h-12 border border-[rgba(20,32,51,0.26)] bg-white px-4"
             />
           </label>
         ) : null}
@@ -313,7 +319,7 @@ export function LeadCaptureForm({
               value={form.timeline}
               onChange={(event) => setForm((current) => ({ ...current, timeline: event.target.value }))}
               placeholder="ASAP, 30-60 days, researching, etc."
-              className="rounded-2xl border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 outline-none transition focus:border-brand-copper"
+              className="min-h-12 border border-[rgba(20,32,51,0.26)] bg-white px-4"
             />
           </label>
           <label className="grid gap-2 text-sm font-medium text-brand-ink">
@@ -323,22 +329,23 @@ export function LeadCaptureForm({
               value={form.market}
               onChange={(event) => setForm((current) => ({ ...current, market: event.target.value }))}
               placeholder="Beacon, Fishkill, Cold Spring, etc."
-              className="rounded-2xl border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 outline-none transition focus:border-brand-copper"
+              className="min-h-12 border border-[rgba(20,32,51,0.26)] bg-white px-4"
             />
           </label>
         </div>
 
         {leadMagnetOptions.length > 0 ? (
           <label className="grid gap-2 text-sm font-medium text-brand-ink">
-            Requested lead magnet
+            Requested resource
             <select
               name="leadMagnet"
               value={form.leadMagnet}
               onChange={(event) =>
                 setForm((current) => ({ ...current, leadMagnet: event.target.value }))
               }
-              className="rounded-2xl border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 outline-none transition focus:border-brand-copper"
+              className="min-h-12 border border-[rgba(20,32,51,0.26)] bg-white px-4"
             >
+              <option value="">No resource selected</option>
               {leadMagnetOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -355,39 +362,45 @@ export function LeadCaptureForm({
             rows={compact ? 4 : 5}
             value={form.notes}
             onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))}
-            placeholder="Tell us what you're trying to do, what kind of property or move you have in mind, and anything that would help us route this correctly."
-            className="rounded-[1.5rem] border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 outline-none transition focus:border-brand-copper"
+            placeholder="What are you trying to do, and which details would help Ryan understand the question?"
+            className="border border-[rgba(20,32,51,0.26)] bg-white px-4 py-3"
           />
         </label>
 
-        <label className="flex items-start gap-3 rounded-[1.2rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(255,248,239,0.72)] px-4 py-3 text-sm text-body-ink">
+        <label className="flex items-start gap-3 border-t border-[rgba(20,32,51,0.14)] pt-4 text-sm text-body-ink">
           <input
             type="checkbox"
             checked={form.consentEmail}
             onChange={(event) =>
               setForm((current) => ({ ...current, consentEmail: event.target.checked }))
             }
-            className="mt-1"
+            className="mt-1 h-4 w-4 shrink-0 accent-[#b65a2a]"
           />
-          <span>I agree to receive email follow-up about this request.</span>
+          <span>
+            I agree to receive email follow-up about this request. See the{" "}
+            <Link href="/privacy-policy" className="underline underline-offset-2">Privacy Policy</Link>.
+          </span>
         </label>
 
-        <label className="flex items-start gap-3 rounded-[1.2rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(255,248,239,0.72)] px-4 py-3 text-sm text-body-ink">
+        <label className="flex items-start gap-3 text-sm text-body-ink">
           <input
             type="checkbox"
             checked={form.consentSms}
             onChange={(event) =>
               setForm((current) => ({ ...current, consentSms: event.target.checked }))
             }
-            className="mt-1"
+            className="mt-1 h-4 w-4 shrink-0 accent-[#b65a2a]"
           />
-          <span>I agree to receive SMS updates (optional).</span>
+          <span>
+            I agree to receive SMS follow-up about this request (optional). Message and data rates may apply. See the{" "}
+            <Link href="/privacy-policy" className="underline underline-offset-2">Privacy Policy</Link>.
+          </span>
         </label>
 
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="rounded-full bg-[linear-gradient(135deg,_#142033,_#21415e_60%,_#b75a24)] px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(15,23,42,0.16)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+          className="button-primary disabled:cursor-not-allowed disabled:opacity-60"
         >
           {status === "submitting" ? "Submitting..." : submitLabel}
         </button>

@@ -5,16 +5,19 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static",
+    "postbuild": "mkdir -p .next/standalone/public .next/standalone/.next/static && cp -R public/. .next/standalone/public/ && cp -R .next/static/. .next/standalone/.next/static/",
     "start": "next start --hostname 0.0.0.0",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "validate:content": "node ./scripts/validate-content.mjs",
     "lead:smoke": "node ./scripts/lead-smoke.mjs",
     "lead:verify:live": "node ./scripts/verify-live-lead.mjs",
     "cloudinary:test-upload": "node ./scripts/test-cloudinary-signed-upload.mjs",
     "assets:worker": "node ./scripts/asset-worker.mjs",
     "plans:scaffold": "node ./scripts/scaffold-plans.mjs",
     "audit:sitemap": "node ./scripts/audit-sitemap.mjs",
-    "hostinger:verify": "npm run lint && npm run build",
+    "audit:routes": "node ./scripts/audit-sitemap.mjs",
+    "hostinger:verify": "npm run lint && npm run typecheck && npm run validate:content && npm run build",
     "hostinger:package": "bash ./ops/hostinger/package-upload.sh"
   },
   "engines": {
@@ -22,6 +25,7 @@
     "npm": ">=10"
   },
   "dependencies": {
+    "@mdx-js/mdx": "^3.1.1",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.100.1",
     "@types/nodemailer": "^7.0.11",
@@ -34,7 +38,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "stripe": "^21.0.1",
-    "three": "^0.183.2"
+    "three": "^0.183.2",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

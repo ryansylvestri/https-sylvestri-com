@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: magnet.label,
     description: magnet.summary,
     path: getLeadMagnetHref(magnet.slug),
+    noIndex: true,
   });
 }
 

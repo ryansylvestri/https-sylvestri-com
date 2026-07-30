@@ -11,6 +11,7 @@ export const metadata = buildPageMetadata({
   description:
     "In-depth landing pages for buyers, sellers, investors, and homeowners navigating complex situations in the Hudson Valley.",
   path: "/landing",
+  noIndex: true,
 });
 
 export default function LandingIndexPage() {

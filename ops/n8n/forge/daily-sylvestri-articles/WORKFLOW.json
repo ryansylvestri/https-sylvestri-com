@@ -1,5 +1,6 @@
 {
-  "name": "Daily Sylvestri Articles Publisher",
+  "name": "Daily Sylvestri Editorial Draft",
+  "active": false,
   "nodes": [
     {
       "parameters": {
@@ -12,27 +13,21 @@
           ]
         }
       },
-      "id": "sylvestri-schedule",
+      "id": "schedule",
       "name": "Daily 5:05am ET",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [
-        220,
-        300
-      ]
+      "position": [-760, 0]
     },
     {
       "parameters": {
-        "jsCode": "const now = new Date();\nconst dayOfYear = Math.floor((Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - Date.UTC(now.getUTCFullYear(), 0, 0)) / 86400000);\nconst dateToken = now.toISOString().slice(0, 10).replace(/-/g, '');\nconst topics = [\n  { topic: 'How to choose the best real estate agent in Fishkill without getting sold a script', keyword: 'best real estate agent Fishkill NY', category: 'authority', tags: ['fishkill', 'real-estate-agent', 'local-authority'], cta: 'Invite readers to start on sylvestri.com for a direct conversation.', imagePublicId: 'ChatGPT_Image_Jan_13_2026_08_45_52_AM_b11gfe' },\n  { topic: 'What serious Hudson Valley sellers should ask before they list a home', keyword: 'sell my house Hudson Valley', category: 'seller-strategy', tags: ['hudson-valley', 'sell-my-house', 'seller-strategy'], cta: 'Point seller traffic toward the Sylvestri intake flow and the seller lane.', imagePublicId: 'ChatGPT_Image_Dec_24_2025_01_55_52_AM_qf1h9i' },\n  { topic: 'What buyers actually need to know before they start touring Hudson Valley homes', keyword: 'buy a home Hudson Valley', category: 'buyer-strategy', tags: ['buy-a-home', 'hudson-valley', 'buyers'], cta: 'Route buyers into the right next step instead of keeping them in research mode.', imagePublicId: 'ChatGPT_Image_Dec_30_2025_06_11_37_AM_omsdj3' },\n  { topic: 'Why local trust beats generic real estate marketing when someone asks who the best agent is', keyword: 'best agent in the area', category: 'brand-trust', tags: ['best-agent', 'trust', 'local-brand'], cta: 'Reinforce why local credibility compounds across the brand network.', imagePublicId: 'ChatGPT_Image_Jan_13_2026_07_59_22_AM_hzhkcy' },\n  { topic: 'Beacon, Fishkill, and Cold Spring are not interchangeable markets', keyword: 'Beacon Fishkill Cold Spring real estate', category: 'town-guides', tags: ['beacon', 'fishkill', 'cold-spring'], cta: 'Tell readers to choose the lane that actually matches their town and timing.', imagePublicId: 'ChatGPT_Image_Dec_31_2025_04_40_55_PM_rt4um6' },\n  { topic: 'How a Hudson Valley homeowner should think about timing before asking what their home is worth', keyword: 'what is my home worth Hudson Valley', category: 'home-valuation', tags: ['home-worth', 'valuation', 'homeowners'], cta: 'Move valuation traffic into a real conversation instead of an anonymous estimate chase.', imagePublicId: 'ChatGPT_Image_Dec_24_2025_12_41_18_AM_yehgwy' },\n  { topic: 'What makes a real estate operator credible in 2026: local knowledge, systems, and response speed', keyword: 'Ryan Sylvestri real estate', category: 'personal-brand', tags: ['ryan-sylvestri', 'systems', 'local-knowledge'], cta: 'Tie personal brand trust back to fast execution and direct guidance.', imagePublicId: 'ChatGPT_Image_Jan_13_2026_08_50_54_AM_onotpu' },\n  { topic: 'How to read the Hudson Valley market without pretending anyone can predict it perfectly', keyword: 'Hudson Valley market update', category: 'market-intelligence', tags: ['market-update', 'hudson-valley', 'buyers-and-sellers'], cta: 'Offer a practical next step for readers who want context applied to their own move.', imagePublicId: 'ChatGPT_Image_Jan_2_2026_08_15_43_AM_c2djfb' },\n  { topic: 'Why motivated sellers need clarity, not pressure, when they decide to move', keyword: 'sell my house fast Hudson Valley', category: 'motivated-sellers', tags: ['motivated-sellers', 'sell-fast', 'clarity'], cta: 'Direct readers toward a calm seller conversation on sylvestri.com.', imagePublicId: 'ChatGPT_Image_Jan_14_2026_05_29_48_AM_a7msrt' },\n  { topic: 'How Ryan uses a network of sites instead of one overloaded website', keyword: 'real estate brand ecosystem', category: 'ecosystem', tags: ['brand-ecosystem', 'real-estate-websites', 'routing'], cta: 'Explain how each domain owns a different part of the funnel.', imagePublicId: 'Gemini_Generated_Image_9tsnza9tsnza9tsn_jsi8re' }\n];\nconst selected = topics[dayOfYear % topics.length];\nreturn [{ json: { ...selected, dateIso: now.toISOString(), dateToken, section: 'articles', sourceBlog: 'sylvestri.com', sourceChannel: 'n8n-daily-articles', author: 'Ryan Sylvestri', siteUrl: 'https://sylvestri.com' } }];"
+        "jsCode": "const now = new Date();\nconst dateToken = now.toISOString().slice(0, 10).replace(/-/g, '');\nreturn [{ json: {\n  topic: 'Prepare one useful Hudson Valley real estate, homeownership, AI, tool, experiment, or story draft for editorial review',\n  dateIso: now.toISOString(),\n  dateToken,\n  sourceBlog: 'sylvestri.com',\n  sourceChannel: 'n8n-daily-editorial-draft',\n  author: 'Ryan Sylvestri',\n  imagePublicId: 'Gemini_Generated_Image_9tsnza9tsnza9tsn_jsi8re'\n} }];"
       },
-      "id": "sylvestri-topic",
-      "name": "Select Topic and Idempotency Seed",
+      "id": "topic",
+      "name": "Prepare Draft Brief",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        460,
-        300
-      ]
+      "position": [-540, 0]
     },
     {
       "parameters": {
@@ -43,29 +38,23 @@
         "jsonHeaders": "={{ JSON.stringify({\"Authorization\": \"Bearer \" + $env.OPENAI_API_KEY, \"Content-Type\": \"application/json\"}) }}",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"gpt-4.1-mini\",\n  \"temperature\": 0.8,\n  \"max_tokens\": 2600,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You write high-conviction real-estate articles for Ryan Sylvestri. Return valid JSON only. Never invent statistics, closed-sale numbers, or MLS data. Stay fair-housing-safe.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a first-person markdown article for sylvestri.com. Topic: {{$json.topic}}. Primary keyword: {{$json.keyword}}. Category: {{$json.category}}. Include Hudson Valley specifics and practical advice. Use H2 and H3 structure. Write 850-1200 words. End with a direct CTA: {{$json.cta}} Return JSON with keys title, slug, excerpt, content, tags. The slug should be concise and keyword-aware. Tags must be an array of 3-6 lowercase strings.\"\n    }\n  ]\n}"
+        "jsonBody": "={\n  \"model\": \"gpt-4.1-mini\",\n  \"temperature\": 0.5,\n  \"max_tokens\": 2800,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Create an editorial draft, never a publication-ready claim set. Return valid JSON only. Do not invent statistics, transactions, credentials, testimonials, sources, market facts, or neighborhood characterizations. Mark factual claims that need sourcing with [SOURCE NEEDED].\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{$json.topic}}. Return title, slug, excerpt, content, category, contentKind, tags, whyItMatters, and sources. contentKind must be news, guide, tutorial, experiment, idea, or story. sources must be an array of objects with title, url, and primary. Use 700-1100 words with H2/H3 structure.\"\n    }\n  ]\n}"
       },
-      "id": "sylvestri-openai",
+      "id": "draft",
       "name": "OpenAI Draft",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        700,
-        300
-      ]
+      "position": [-320, 0]
     },
     {
       "parameters": {
-        "jsCode": "const topic = $items('Select Topic and Idempotency Seed', 0, 0)[0].json;\nconst response = $input.first().json;\nconst raw = response?.choices?.[0]?.message?.content;\nif (!raw) {\n  throw new Error('Missing OpenAI content payload.');\n}\nlet parsed;\ntry {\n  parsed = JSON.parse(raw);\n} catch (error) {\n  throw new Error('OpenAI payload was not valid JSON.');\n}\nconst title = String(parsed.title || '').trim();\nconst excerpt = String(parsed.excerpt || '').trim();\nconst content = String(parsed.content || '').trim();\nif (!title || !excerpt || !content) {\n  throw new Error('OpenAI payload missing title, excerpt, or content.');\n}\nconst slugBase = String(parsed.slug || title)\n  .toLowerCase()\n  .replace(/[^a-z0-9]+/g, '-')\n  .replace(/(^-|-$)/g, '');\nconst finalSlug = `${slugBase}-${topic.dateToken}`;\nconst tags = Array.isArray(parsed.tags) && parsed.tags.length\n  ? parsed.tags.map((tag) => String(tag).trim().toLowerCase()).filter(Boolean)\n  : topic.tags;\nconst seoImage = `https://res.cloudinary.com/dtmh3eypz/image/upload/c_fill,g_auto,w_1200,h_630/f_auto/q_auto/${topic.imagePublicId}`;\nconst publishBody = {\n  section: 'articles',\n  sourceBlog: topic.sourceBlog,\n  sourceChannel: topic.sourceChannel,\n  dryRun: true,\n  requestId: `${topic.sourceBlog}-${finalSlug}`,\n  idempotencyKey: `${topic.sourceBlog}-${finalSlug}`,\n  frontmatter: {\n    title,\n    slug: finalSlug,\n    section: 'articles',\n    category: topic.category,\n    tags,\n    description: excerpt,\n    summary: excerpt,\n    access: 'public',\n    status: 'published',\n    publishedAt: topic.dateIso,\n    updatedAt: topic.dateIso,\n    author: topic.author,\n    seoTitle: title,\n    seoDescription: excerpt,\n    seoImage,\n    publishWindow: '05:05 America/New_York',\n    sourceChannel: topic.sourceChannel,\n    sourceBlog: topic.sourceBlog,\n    slugBase,\n    assetIds: [topic.imagePublicId],\n    assetRefs: [`image:${topic.imagePublicId}`]\n  },\n  content\n};\nreturn [{ json: { publishBody } }];"
+        "jsCode": "const brief = $items('Prepare Draft Brief', 0, 0)[0].json;\nconst raw = $input.first().json?.choices?.[0]?.message?.content;\nif (!raw) throw new Error('Missing draft payload.');\nlet draft;\ntry { draft = JSON.parse(raw); } catch { throw new Error('Draft payload was not valid JSON.'); }\nconst title = String(draft.title || '').trim();\nconst excerpt = String(draft.excerpt || '').trim();\nconst content = String(draft.content || '').trim();\nconst contentKind = String(draft.contentKind || 'story').trim();\nif (!title || !excerpt || content.length < 600) throw new Error('Draft is missing required content.');\nif (!['news','guide','tutorial','experiment','idea','story'].includes(contentKind)) throw new Error('Invalid contentKind.');\nconst slugBase = String(draft.slug || title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');\nconst slug = `${slugBase}-${brief.dateToken}`;\nconst tags = Array.isArray(draft.tags) && draft.tags.length >= 2 ? draft.tags.map(String) : ['editorial-draft', contentKind];\nconst sources = Array.isArray(draft.sources) ? draft.sources.filter((item) => item && item.title && item.url).map((item) => ({ title: String(item.title), url: String(item.url), primary: item.primary === true })) : [];\nconst image = `https://res.cloudinary.com/dtmh3eypz/image/upload/c_fill,g_auto,w_1600,h_900/f_auto/q_auto/${brief.imagePublicId}`;\nconst frontmatter = {\n  title, slug, section: 'articles', contentKind,\n  category: String(draft.category || 'editorial-draft'), tags,\n  description: excerpt, summary: excerpt, access: 'public',\n  status: 'draft', reviewState: 'draft',\n  publishedAt: brief.dateIso, updatedAt: brief.dateIso,\n  author: brief.author,\n  featuredImage: { src: image, alt: `Editorial image for ${title}` },\n  sources,\n  ...(contentKind === 'news' ? { whyItMatters: String(draft.whyItMatters || 'Editorial review must establish why this reported change matters.') } : {}),\n  sourceChannel: brief.sourceChannel, sourceBlog: brief.sourceBlog, slugBase,\n  assetIds: [brief.imagePublicId], assetRefs: [`image:${brief.imagePublicId}`]\n};\nconst quote = (value) => JSON.stringify(value);\nconst yaml = [\n  `title: ${quote(frontmatter.title)}`, `slug: ${quote(frontmatter.slug)}`, `section: ${quote(frontmatter.section)}`,\n  `contentKind: ${quote(frontmatter.contentKind)}`, `category: ${quote(frontmatter.category)}`, `tags: ${JSON.stringify(frontmatter.tags)}`,\n  `description: ${quote(frontmatter.description)}`, `summary: ${quote(frontmatter.summary)}`, `access: ${quote(frontmatter.access)}`,\n  `status: ${quote(frontmatter.status)}`, `reviewState: ${quote(frontmatter.reviewState)}`,\n  `publishedAt: ${quote(frontmatter.publishedAt)}`, `updatedAt: ${quote(frontmatter.updatedAt)}`, `author: ${quote(frontmatter.author)}`,\n  `featuredImage: ${JSON.stringify(frontmatter.featuredImage)}`, `sources: ${JSON.stringify(frontmatter.sources)}`,\n  ...(frontmatter.whyItMatters ? [`whyItMatters: ${quote(frontmatter.whyItMatters)}`] : []),\n  `sourceChannel: ${quote(frontmatter.sourceChannel)}`, `sourceBlog: ${quote(frontmatter.sourceBlog)}`, `slugBase: ${quote(frontmatter.slugBase)}`,\n  `assetIds: ${JSON.stringify(frontmatter.assetIds)}`, `assetRefs: ${JSON.stringify(frontmatter.assetRefs)}`\n].join('\\n');\nconst publishBody = { section: 'articles', sourceBlog: brief.sourceBlog, sourceChannel: brief.sourceChannel, dryRun: true, requestId: `${brief.sourceBlog}-${slug}`, idempotencyKey: `${brief.sourceBlog}-${slug}`, frontmatter, content };\nreturn [{ json: { publishBody, mdx: `---\\n${yaml}\\n---\\n\\n${content}\\n`, filePath: `content/articles/${slug}.mdx`, slug } }];"
       },
-      "id": "sylvestri-payload",
-      "name": "Validate and Prepare Publish Payload",
+      "id": "validate",
+      "name": "Validate and Prepare Draft",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        940,
-        300
-      ]
+      "position": [-100, 0]
     },
     {
       "parameters": {
@@ -73,148 +62,77 @@
         "url": "https://sylvestri.com/api/ops/content/publish",
         "sendHeaders": true,
         "specifyHeaders": "json",
-        "jsonHeaders": "={{ (() => { const headers = {\"Content-Type\": \"application/json\"}; if ($env.HOSTINGER_N8N_WEBHOOK_TOKEN) headers[\"x-hostinger-n8n-webhook-token\"] = $env.HOSTINGER_N8N_WEBHOOK_TOKEN; if ($env.N8N_SOURCE_ID) headers[\"x-n8n-source-id\"] = $env.N8N_SOURCE_ID; return JSON.stringify(headers); })() }}",
+        "jsonHeaders": "={{ JSON.stringify({\"Content-Type\":\"application/json\",\"x-hostinger-n8n-webhook-token\":$env.HOSTINGER_N8N_WEBHOOK_TOKEN,\"x-n8n-source-id\":$env.N8N_SOURCE_ID}) }}",
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
         "body": "={{ JSON.stringify($json.publishBody) }}"
       },
-      "id": "sylvestri-dry-run",
-      "name": "Dry Run Publish",
+      "id": "dry-run",
+      "name": "Validate Draft Against Site",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        1190,
-        300
-      ]
+      "position": [120, 0]
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://sylvestri.com/api/ops/content/publish",
-        "sendHeaders": true,
-        "specifyHeaders": "json",
-        "jsonHeaders": "={{ (() => { const headers = {\"Content-Type\": \"application/json\"}; if ($env.HOSTINGER_N8N_WEBHOOK_TOKEN) headers[\"x-hostinger-n8n-webhook-token\"] = $env.HOSTINGER_N8N_WEBHOOK_TOKEN; if ($env.N8N_SOURCE_ID) headers[\"x-n8n-source-id\"] = $env.N8N_SOURCE_ID; return JSON.stringify(headers); })() }}",
-        "sendBody": true,
-        "contentType": "raw",
-        "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({ ...$items('Validate and Prepare Publish Payload', 0, 0)[0].json.publishBody, dryRun: false }) }}"
+        "resource": "file",
+        "operation": "create",
+        "owner": "ryansylvestri",
+        "repository": "https-sylvestri-com",
+        "filePath": "={{ $items('Validate and Prepare Draft', 0, 0)[0].json.filePath }}",
+        "fileContent": "={{ $items('Validate and Prepare Draft', 0, 0)[0].json.mdx }}",
+        "commitMessage": "={{ 'content(draft): stage ' + $items('Validate and Prepare Draft', 0, 0)[0].json.slug }}",
+        "branch": "content-staging"
       },
-      "id": "sylvestri-publish",
-      "name": "Publish Article",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1440,
-        300
-      ]
+      "id": "stage",
+      "name": "Stage Draft on GitHub",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [340, 0],
+      "credentials": {
+        "githubApi": {
+          "id": "CONFIGURE_GITHUB_CREDENTIAL",
+          "name": "Sylvestri content staging"
+        }
+      }
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://sylvestri.com/api/seo/push",
-        "sendHeaders": true,
-        "specifyHeaders": "json",
-        "jsonHeaders": "={{ (() => { const headers = {\"Content-Type\": \"application/json\"}; if ($env.HOSTINGER_N8N_WEBHOOK_TOKEN) headers[\"x-hostinger-n8n-webhook-token\"] = $env.HOSTINGER_N8N_WEBHOOK_TOKEN; if ($env.N8N_SOURCE_ID) headers[\"x-n8n-source-id\"] = $env.N8N_SOURCE_ID; return JSON.stringify(headers); })() }}",
-        "sendBody": true,
-        "contentType": "raw",
-        "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({ urls: [$json.routePath], sitemapPaths: ['/sitemap.xml', '/sitemap-content.xml'] }) }}"
+        "resource": "pullRequest",
+        "operation": "create",
+        "owner": "ryansylvestri",
+        "repository": "https-sylvestri-com",
+        "title": "={{ 'Editorial review: ' + $items('Validate and Prepare Draft', 0, 0)[0].json.slug }}",
+        "body": "Automated draft only. Validate sources, claims, image rights, metadata, internal links, and tone. Set reviewState to approved and status to published only after human approval.",
+        "base": "main",
+        "head": "content-staging"
       },
-      "id": "sylvestri-seo",
-      "name": "Push SEO Signals",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1690,
-        300
-      ]
+      "id": "pr",
+      "name": "Open Human Review PR",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [560, 0],
+      "credentials": {
+        "githubApi": {
+          "id": "CONFIGURE_GITHUB_CREDENTIAL",
+          "name": "Sylvestri content staging"
+        }
+      }
     }
   ],
   "connections": {
-    "Daily 5:05am ET": {
-      "main": [
-        [
-          {
-            "node": "Select Topic and Idempotency Seed",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Select Topic and Idempotency Seed": {
-      "main": [
-        [
-          {
-            "node": "OpenAI Draft",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Draft": {
-      "main": [
-        [
-          {
-            "node": "Validate and Prepare Publish Payload",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Validate and Prepare Publish Payload": {
-      "main": [
-        [
-          {
-            "node": "Dry Run Publish",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Dry Run Publish": {
-      "main": [
-        [
-          {
-            "node": "Publish Article",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Publish Article": {
-      "main": [
-        [
-          {
-            "node": "Push SEO Signals",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    }
+    "Daily 5:05am ET": { "main": [[{ "node": "Prepare Draft Brief", "type": "main", "index": 0 }]] },
+    "Prepare Draft Brief": { "main": [[{ "node": "OpenAI Draft", "type": "main", "index": 0 }]] },
+    "OpenAI Draft": { "main": [[{ "node": "Validate and Prepare Draft", "type": "main", "index": 0 }]] },
+    "Validate and Prepare Draft": { "main": [[{ "node": "Validate Draft Against Site", "type": "main", "index": 0 }]] },
+    "Validate Draft Against Site": { "main": [[{ "node": "Stage Draft on GitHub", "type": "main", "index": 0 }]] },
+    "Stage Draft on GitHub": { "main": [[{ "node": "Open Human Review PR", "type": "main", "index": 0 }]] }
   },
   "settings": {
     "timezone": "America/New_York",
     "saveManualExecutions": true,
     "callerPolicy": "workflowsFromSameOwner",
     "errorWorkflow": "shared-real-estate-content-error-handler"
-  },
-  "staticData": null,
-  "tags": [
-    {
-      "name": "forge:n8n-workflow-forge"
-    },
-    {
-      "name": "content-network"
-    },
-    {
-      "name": "sylvestri"
-    }
-  ]
+  }
 }

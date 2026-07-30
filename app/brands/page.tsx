@@ -11,6 +11,7 @@ export const metadata = buildPageMetadata({
   description:
     "Brand and domain map for sylvestri.com, its feeder voices, and the systems infrastructure supporting the Hudson Valley real estate stack.",
   path: "/brands",
+  noIndex: true,
 });
 
 export default function BrandsPage() {

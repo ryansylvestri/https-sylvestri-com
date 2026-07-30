@@ -145,16 +145,16 @@ export const guideProse: Record<string, GuideSection[]> = {
 
   inspection: [
     {
-      heading: "What a Standard Home Inspection Covers",
-      body: "A standard home inspection evaluates the structural components, roof, electrical system, plumbing, HVAC, insulation, ventilation, foundation, and visible signs of water intrusion. It does not include testing for radon, mold, lead paint, asbestos, or wood-destroying insects unless those are added as separate line items. In the Hudson Valley, you should always add radon testing and wood-destroying insect inspection to the standard scope. The inspection typically takes 2–4 hours depending on the size of the home, and the buyer should attend in person.",
+      heading: "Start with the inspector and the written scope",
+      body: "New York regulates people who perform residential home inspections for compensation, with specific exemptions for professionals working within another regulated scope. Before booking, verify the professional's current status and ask for the written inspection agreement. The New York Department of State describes a home inspection as observation and a written report about systems and components of a residential building; the agreement should explain what this particular inspection includes, excludes, and cannot determine from visible conditions.",
     },
     {
-      heading: "Septic and Well Testing",
-      body: "Many Hudson Valley homes outside of municipal water and sewer districts rely on private wells and septic systems. A well water test checks for coliform bacteria, nitrates, and pH levels. Some lenders require a flow test to confirm the well can sustain household demand. Septic inspection typically involves pumping the tank and visually assessing the system condition, with a dye test or camera scope if the inspector suspects issues. These tests are not optional — they protect you from five-figure repair bills after closing.",
+      heading: "Separate the general inspection from additional testing",
+      body: "A general inspection is not the same as every property-specific test. Ask which separate professionals or laboratory services may be appropriate for the home's age, systems, site, water source, and known history. New York health guidance maintains current information for radon and private wells. When a home has a private well, septic system, fuel storage, suspected environmental concern, or another specialized system, confirm the scope, sampling method, laboratory, and report with the qualified provider and your attorney or lender.",
     },
     {
-      heading: "Negotiating After the Inspection Report",
-      body: "The inspection report is a tool, not a wish list. Focus your repair requests on safety issues, structural deficiencies, and systems that are at or near end-of-life. Cosmetic items and normal wear are not negotiation leverage in most transactions. Your attorney handles the formal request, and the seller can agree, counter, or refuse. In a competitive market, aggressive repair demands can risk the deal. In a balanced or buyer-favorable market, there is more room to negotiate credits or repairs.",
+      heading: "Turn observations into questions and decisions",
+      body: "Read the report carefully and distinguish an observed condition from a diagnosis, estimate, or prediction. Ask the inspector to clarify the report, and obtain further evaluation from the appropriate qualified professional when the report recommends it. Contract rights, deadlines, repair requests, credits, and decisions about proceeding depend on the actual contract and legal advice. Keep the report, photographs, estimates, attorney guidance, and unresolved questions together so the next decision is based on evidence.",
     },
   ],
 

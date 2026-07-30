@@ -3,12 +3,8 @@ import { Fraunces, Manrope } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 
-import { JsonLd } from "@/components/json-ld";
 import { TrackingClient } from "@/components/tracking-client";
 import { TrackingScripts } from "@/components/tracking-scripts";
-import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
-import { personalMedia } from "@/lib/personal-brand-content";
-import { localBusinessSchema } from "@/lib/schema";
 import { siteConfig } from "@/lib/site-content";
 
 const fraunces = Fraunces({
@@ -28,7 +24,7 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description:
-    "Ryan Sylvestri's personal brand hub for Hudson Valley real estate, systems thinking, applied AI, and clearer routing for buyers, sellers, investors, renters, and complex homeowner situations.",
+    "Practical Hudson Valley real estate guidance, homeowner resources, useful technology, and ideas from Ryan Sylvestri.",
   applicationName: siteConfig.name,
   alternates: {
     canonical: "/",
@@ -36,40 +32,19 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${siteConfig.name} | ${siteConfig.title}`,
     description:
-      "Hudson Valley real estate guidance, personal-brand trust, applied systems thinking, and clearer routing into the right next step.",
+      "Practical Hudson Valley real estate guidance, homeowner resources, useful technology, and ideas.",
     type: "website",
     url: siteConfig.siteUrl,
     siteName: siteConfig.name,
     locale: "en_US",
-    images: [
-      {
-        url: getCloudinaryAssetUrl(personalMedia.sign, {
-          crop: "fill",
-          gravity: "auto",
-          width: 1200,
-          height: 630,
-          format: "jpg",
-        }),
-        width: 1200,
-        height: 630,
-        alt: "Ryan Sylvestri serving the Hudson Valley.",
-      },
-    ],
+    images: [{ url: "/api/social-card?title=Ryan%20Sylvestri&category=Hudson%20Valley", width: 1200, height: 630, alt: "Ryan Sylvestri — Hudson Valley field notes" }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${siteConfig.name} | ${siteConfig.title}`,
     description:
-      "Hudson Valley real estate guidance, home values, relocation support, applied AI, and cleaner local lead routing.",
-    images: [
-      getCloudinaryAssetUrl(personalMedia.sign, {
-        crop: "fill",
-        gravity: "auto",
-        width: 1200,
-        height: 630,
-        format: "jpg",
-      }),
-    ],
+      "Practical Hudson Valley real estate guidance, homeowner resources, useful technology, and ideas.",
+    images: ["/api/social-card?title=Ryan%20Sylvestri&category=Hudson%20Valley"],
   },
   category: "real estate",
   verification: {
@@ -97,7 +72,6 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <TrackingClient />
         </Suspense>
-        <JsonLd data={localBusinessSchema} />
         {children}
       </body>
     </html>

@@ -1,14 +1,14 @@
 import { RoutePageTemplate } from "@/components/route-page-template";
-import { routePages } from "@/lib/personal-brand-content";
+import { editorialCorePages } from "@/lib/editorial-core-pages";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata = buildPageMetadata({
-  title: "Renters",
+  title: "Renting and Relocating in the Hudson Valley",
   description:
-    "Ryan Sylvestri's renter and relocation lane for timing, geography, urgency, and future-buyer routing.",
+    "A practical process for organizing a rental or relocation search across the Hudson Valley.",
   path: "/renters",
 });
 
 export default function RentersPage() {
-  return <RoutePageTemplate page={routePages.renters} />;
+  return <RoutePageTemplate page={editorialCorePages.renters} />;
 }

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { siteConfig } from "@/lib/site-content";
+import { noIndexRoutePrefixes } from "@/lib/canonical-routes";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -8,9 +9,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/login", "/account", "/auth/", "/api/", "/kpi", "/thank-you"],
+        disallow: ["/api/", ...noIndexRoutePrefixes],
       },
     ],
-    sitemap: [`${siteConfig.siteUrl}/sitemap.xml`, `${siteConfig.siteUrl}/sitemap-content.xml`],
+    sitemap: `${siteConfig.siteUrl}/sitemap.xml`,
   };
 }

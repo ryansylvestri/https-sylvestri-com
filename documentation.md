@@ -969,3 +969,151 @@ Implement the remaining repo-side work from the current state review:
 ### Current Truth
 - The fixed app is deployed and healthy on the VPS-controlled runtime.
 - The public Hostinger-managed edge is still the failing component; the VPS copy is the clean fallback once DNS is cut over.
+
+---
+
+## 2026-07-30 Editorial Site Revamp
+
+### Baseline
+
+- Created branch `feat/editorial-site-revamp` from clean commit `3bec5ff`.
+- Verified macOS arm64, Node 22, npm/package-lock, Next.js 16 standalone output.
+- Production sitemap exposed 210 URLs before the migration.
+- Production article-detail routes returned HTTP 500 with error digest `1784003719`; the article index returned 200.
+- The repository build and repository standalone server rendered the same MDX article successfully, isolating the failure to deployed artifact/runtime/content drift.
+- Baseline lint failure was limited to the intentional CommonJS Hostinger runtime loader.
+- Mobile review found horizontal overflow, an oversized first viewport, a persistent chat obstruction, and duplicate forms caused by the global shell form.
+
+### Architecture Migration
+
+- Replaced the public shell with typed editorial navigation:
+  - keyboard-operable desktop dropdowns
+  - Escape, click-outside, and focus-return behavior
+  - expandable mobile groups with 44px minimum targets
+- Removed the shell-level form, exit-intent capture, chat launcher, public brand-stack footer, rating/review links, and unverified public contact/brokerage details.
+- Added the approved public route registry and noindex route-prefix registry.
+- Added `/markets`.
+- Added one-hop permanent redirects for `/story`, `/lead-magnets`, and each approved lead-magnet destination.
+- Added Privacy Policy, Terms of Use, and Accessibility pages.
+
+### Design Implementation
+
+- Rebuilt the homepage in the approved editorial order:
+  1. hero
+  2. real-estate paths
+  3. learning paths
+  4. AI and ideas
+  5. latest stories
+  6. About Ryan
+  7. newsletter
+  8. compact contact CTA
+- Applied the field-guide visual system: cream paper, deep navy type, copper rules, Fraunces/Manrope, open bands, restrained imagery, thin dividers, and minimal cards.
+- Rebuilt buyer, seller, investor, and renter pages with one H1, a practical process, related education, one contextual CTA, and no more than one form.
+- Rebuilt `/ai` as an editorial hub, `/about` as a verified biography/editorial-purpose page, and `/intake` as Contact Ryan.
+- Generated four non-person editorial images through the OAuth-backed built-in image tool, then converted the approved outputs to WebP:
+  - Hudson Valley editorial hero
+  - Hudson Valley home
+  - home-inspection editorial image
+  - AI and ideas editorial image
+- Reduced the four-image public payload from about 10 MB of PNG files to 957 KB of WebP files.
+- The two configured approved Cloudinary portrait IDs currently return 404. Removed those broken public references and used a landscape treatment instead; no synthetic Ryan likeness was created.
+
+### Content Engine and Publishing Repair
+
+- Replaced the lazy MDX compiler import with a statically traced import.
+- Added direct `@mdx-js/mdx` and `zod` dependencies and explicit standalone tracing for content/compiler dependencies.
+- Extended content metadata with:
+  - `contentKind`
+  - `featuredImage.src` and `featuredImage.alt`
+  - `reviewState`
+  - `reviewedAt`
+  - `sources`
+  - conditional `whyItMatters`
+- Published content now requires `reviewState: approved`; news requires `whyItMatters` and a primary source; guides require `reviewedAt`.
+- Added `npm run validate:content`, which parses frontmatter, validates required fields and dates, rejects duplicate slugs/titles, and compiles every MDX file.
+- Converted content writes to same-directory atomic temporary write, fsync, and rename.
+- The automated content API rejects approved or published payloads.
+- Replaced the daily n8n workflow with an inactive draft workflow:
+  - generate draft
+  - validate against the site contract
+  - commit MDX to `content-staging`
+  - open a human-review pull request
+  - no direct publish or SEO push node
+
+### SEO, Trust, Forms, and Accessibility
+
+- Removed global LocalBusiness/aggregate-rating structured data.
+- Scoped home schema to Person and WebSite, service schema to core service pages, Article/NewsArticle to editorial pages, breadcrumbs to detail routes, and FAQ schema only where visible FAQs render.
+- Added code-native 1200x630 social cards with page-specific titles/categories.
+- Added article image, source, Why It Matters, related-content, Copy Link, and native Share treatments.
+- Made email and SMS consent unchecked by default and linked the Privacy Policy beside both consent statements.
+- Preserved `/api/lead`, analytics, source path, campaign, and source-token attribution.
+- Set `/guides/inspection` to buyer context with no preselected seller resource.
+- Added visible breadcrumbs, reduced-motion behavior, focus states, stable image dimensions, route/global error pages, and horizontal-overflow guards.
+- Rebuilt sitemap and robots output from the approved canonical registry.
+- Retained campaign routes but marked them noindex; legacy resources are withheld from the resource index and marked noindex pending review.
+
+### Runtime Evidence Captured
+
+- Read-only VPS check on the configured `vps` SSH target:
+  - `sylvestri-systems-site.service`: active
+  - Node: `v22.22.0`
+  - deployed build ID: `TjkubOrT8pDoa2FrhKhAQGIT`
+  - deployed content inventory: one article, one doc, one resource
+  - recent service journal contained no match for digest `1784003719`
+- The synced VPS runtime contains no Git metadata, so a deployed commit SHA could not be recovered there.
+- The managed Hostinger artifact/log surface is not exposed through the configured SSH target or documented Hostinger API. Exact Hostinger artifact extraction remains a release blocker rather than an assumed result.
+
+### QA
+
+- `npm run validate:content`: passed for all three MDX files.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed with the narrow CommonJS loader override.
+- `npm run build`: passed; Next generated 213 routes and the approved article detail route.
+- Copied `.next/standalone` into a fresh temporary directory and started it using only the packaged `node_modules`.
+- Final packaged-artifact audit:
+  - 18 canonical URLs returned valid pages
+  - 34 internal links passed
+  - seven legacy redirects returned one-hop HTTP 308 responses to HTTP 200 destinations
+  - the articles index and every published article detail route returned HTTP 200 without exception text
+  - eight form-sensitive routes contained the expected form counts and exactly one H1
+- Responsive browser QA:
+  - 390px: no horizontal overflow, no broken images, compact header, contextual mobile menu
+  - 768px: no horizontal overflow
+  - 1440px: no horizontal overflow and the priority hero image completed
+  - 200%-zoom equivalent: no horizontal overflow
+- Navigation keyboard QA passed for Escape close and focus return on desktop dropdowns and the mobile menu.
+- Inspection form QA passed: buyer context, no preselected seller resource, unchecked consent, linked privacy policy, and polite live status.
+
+### Lighthouse
+
+Lighthouse 13.4.1 was run against the clean packaged standalone server with mobile defaults.
+
+| Route | Performance | Accessibility | Best Practices | SEO |
+| --- | ---: | ---: | ---: | ---: |
+| Home | 91 | 93 | 100 | 100 |
+| Buyers | 95 | 93 | 100 | 100 |
+| Sellers | 95 | 93 | 100 | 100 |
+| Inspection guide | 95 | 93 | 100 | 100 |
+| Articles index | 97 | 92 | 100 | 100 |
+| Published article | 93 | 92 | 100 | 100 |
+| AI hub | 97 | 92 | 100 | 100 |
+| Contact | 97 | 93 | 100 | 100 |
+
+### Fidelity Ledger
+
+- Mobile concept: preserved the compact name/menu header, editorial H1, stacked actions, paper background, navy/copper palette, and landscape image treatment.
+- Desktop concept: preserved the open two-column hero, field-note masthead, large Fraunces display type, restrained controls, captioned landscape frame, thin rules, and wide whitespace.
+- Deliberate implementation differences:
+  - real semantic navigation and lead destinations replace concept-only controls
+  - type scales tighten responsively to prevent 390px and 200%-zoom overflow
+  - no portrait appears while the approved Cloudinary IDs are unavailable
+- Captures:
+  - `.codex/visualizations/2026/07/30/019fb3e1-4278-7591-ad7b-7f32b25688f3/sylvestri-home-mobile-390.png`
+  - `.codex/visualizations/2026/07/30/019fb3e1-4278-7591-ad7b-7f32b25688f3/sylvestri-home-desktop-1440.png`
+
+### Release Status
+
+- Repository implementation and all local release gates pass.
+- Production deployment was intentionally not performed.
+- Before deployment, obtain the exact managed Hostinger artifact/log surface or explicitly approve the verified VPS deployment path, restore or replace the approved portrait assets if portraits are required, preserve a rollback artifact, and repeat the route and Lighthouse smoke tests against production.

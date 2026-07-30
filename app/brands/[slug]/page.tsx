@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: brand.name,
     description: brand.summary,
     path: `/brands/${brand.slug}`,
+    noIndex: true,
   });
 }
 

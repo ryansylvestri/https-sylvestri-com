@@ -5,23 +5,39 @@ import path from "node:path";
 import { cache } from "react";
 
 import matter from "gray-matter";
+import { compileMDX } from "next-mdx-remote/rsc";
 import { z } from "zod";
 
 const CONTENT_ROOT = path.join(process.cwd(), "content");
+
+const sourceSchema = z.object({
+  title: z.string().min(1),
+  url: z.string().url(),
+  primary: z.boolean().default(false),
+});
 
 export const contentFrontmatterSchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
   section: z.enum(["docs", "resources", "articles"]),
+  contentKind: z.enum(["news", "guide", "tutorial", "experiment", "idea", "story"]),
   category: z.string().min(1),
   tags: z.array(z.string().min(1)),
   description: z.string().min(1),
   summary: z.string().min(1),
   access: z.enum(["public", "free", "pro"]),
   status: z.enum(["published", "draft"]),
+  reviewState: z.enum(["draft", "in_review", "approved"]),
   publishedAt: z.string().datetime({ offset: true }).or(z.string().date()),
   updatedAt: z.string().datetime({ offset: true }).or(z.string().date()),
+  reviewedAt: z.string().datetime({ offset: true }).or(z.string().date()).optional(),
   author: z.string().min(1),
+  featuredImage: z.object({
+    src: z.string().url(),
+    alt: z.string().min(1),
+  }),
+  sources: z.array(sourceSchema).default([]),
+  whyItMatters: z.string().min(1).optional(),
   assetIds: z.array(z.string().min(1)).optional(),
   seoTitle: z.string().min(1).optional(),
   seoDescription: z.string().min(1).optional(),
@@ -32,6 +48,37 @@ export const contentFrontmatterSchema = z.object({
   slugBase: z.string().min(1).optional(),
   assetRefs: z.array(z.string().min(1)).optional(),
   legacyUrl: z.string().min(1).optional(),
+}).superRefine((frontmatter, context) => {
+  if (frontmatter.status === "published" && frontmatter.reviewState !== "approved") {
+    context.addIssue({
+      code: "custom",
+      path: ["reviewState"],
+      message: "Published content must have reviewState set to approved.",
+    });
+  }
+  if (frontmatter.contentKind === "guide" && !frontmatter.reviewedAt) {
+    context.addIssue({
+      code: "custom",
+      path: ["reviewedAt"],
+      message: "Guides require a reviewedAt date.",
+    });
+  }
+  if (frontmatter.contentKind === "news") {
+    if (!frontmatter.whyItMatters) {
+      context.addIssue({
+        code: "custom",
+        path: ["whyItMatters"],
+        message: "News requires a whyItMatters summary.",
+      });
+    }
+    if (!frontmatter.sources.some((source) => source.primary)) {
+      context.addIssue({
+        code: "custom",
+        path: ["sources"],
+        message: "News requires at least one primary source.",
+      });
+    }
+  }
 });
 
 export type ContentSection = z.infer<typeof contentFrontmatterSchema>["section"];
@@ -196,7 +243,7 @@ function byPublishedDateDescending(left: ContentDocument, right: ContentDocument
 
 export function getPublishedContent(section: ContentSection): ContentDocument[] {
   return [...getContentIndex()[section]]
-    .filter((doc) => doc.status === "published")
+    .filter((doc) => doc.status === "published" && doc.reviewState === "approved")
     .sort(byPublishedDateDescending);
 }
 
@@ -226,7 +273,6 @@ export function getRelatedContent(doc: ContentDocument, limit = 3): ContentDocum
 }
 
 export async function renderContentDocument(doc: ContentDocument) {
-  const { compileMDX } = await import("next-mdx-remote/rsc");
   return compileMDX<ContentFrontmatter>({
     source: doc.body,
     options: { parseFrontmatter: false },

@@ -65,6 +65,19 @@ export async function POST(request: Request) {
     sourceBlog: parsed.data.sourceBlog ?? parsed.data.frontmatter.sourceBlog,
     sourceChannel: parsed.data.sourceChannel ?? parsed.data.frontmatter.sourceChannel,
   };
+  if (
+    normalizedFrontmatter.status !== "draft"
+    || normalizedFrontmatter.reviewState === "approved"
+  ) {
+    return json(
+      {
+        ok: false,
+        message:
+          "Automated content intake may stage drafts only. Publication requires an approved review in the content-staging pull request.",
+      },
+      422,
+    );
+  }
   const filePath = getContentFilePathFromSlug(parsed.data.section, normalizedFrontmatter.slug);
   const checksum = computeContentChecksum(normalizedFrontmatter, parsed.data.content);
   const requestId = resolveRequestId(parsed.data.requestId, parsed.data.idempotencyKey, checksum);

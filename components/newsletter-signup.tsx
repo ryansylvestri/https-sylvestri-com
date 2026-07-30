@@ -1,20 +1,16 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FormEvent, useState } from "react";
 
 import { submitLead } from "@/lib/lead-client";
 import { pushDataLayerEvent, sourcePathToToken } from "@/lib/tracking";
 
-type NewsletterSignupProps = {
-  source: string;
-  campaign: string;
-};
-
-export function NewsletterSignup({ source, campaign }: NewsletterSignupProps) {
+export function NewsletterSignup({ source, campaign }: { source: string; campaign: string }) {
   const pathname = usePathname();
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [consentEmail, setConsentEmail] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -26,7 +22,13 @@ export function NewsletterSignup({ source, campaign }: NewsletterSignupProps) {
 
     if (honeypot.trim()) {
       setStatus("success");
-      setMessage("Subscribed. You will get market and systems updates.");
+      setMessage("You’re subscribed.");
+      return;
+    }
+
+    if (!consentEmail) {
+      setStatus("error");
+      setMessage("Please confirm that you want to receive email updates.");
       return;
     }
 
@@ -37,9 +39,8 @@ export function NewsletterSignup({ source, campaign }: NewsletterSignupProps) {
         sourcePath: pathname,
         leadType: "newsletter",
       });
-
       const payload = await submitLead({
-        fullName,
+        fullName: "Newsletter subscriber",
         email,
         leadType: "newsletter",
         source,
@@ -47,93 +48,76 @@ export function NewsletterSignup({ source, campaign }: NewsletterSignupProps) {
         sourcePath: pathname,
         sourceToken: sourcePathToToken(pathname),
         submittedAt: new Date().toISOString(),
-        consentEmail: true,
+        consentEmail,
         consentSms: false,
-        notes: "Newsletter signup",
+        notes: "Editorial newsletter signup",
         honeypot,
       });
-
-      pushDataLayerEvent("lead_form_success", {
-        source,
-        campaign,
-        sourcePath: pathname,
-        leadType: "newsletter",
-      });
-
       setStatus("success");
-      setMessage(payload.message || "Subscribed. You will get market and systems updates.");
-      setFullName("");
+      setMessage(payload.message || "You’re subscribed.");
       setEmail("");
-      setHoneypot("");
+      setConsentEmail(false);
     } catch (error) {
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Signup failed.");
+      setMessage(error instanceof Error ? error.message : "Signup failed. Please try again.");
     }
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-10">
-      <div className="rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/88 p-7 shadow-[0_16px_45px_rgba(15,23,42,0.06)]">
-        <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand-copper">
-              Newsletter
-            </p>
-            <h2 className="mt-3 font-display text-3xl leading-tight text-brand-ink">
-              Monthly Hudson Valley market + systems brief
-            </h2>
-            <p className="mt-3 text-base leading-7 text-body-ink">
-              Subscribe for practical market updates, local pattern shifts, and short operator notes
-              on what is actually changing.
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="grid gap-3">
+    <section className="editorial-section bg-[#f4ede3]">
+      <div className="site-container grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+        <div>
+          <p className="eyebrow">Newsletter</p>
+          <h2 className="section-title mt-4">Useful updates, not inbox clutter.</h2>
+          <p className="section-copy mt-5">
+            Get new Hudson Valley guides, market updates, AI notes, tools, and stories from Ryan.
+          </p>
+        </div>
+        <form onSubmit={handleSubmit} className="border-t-2 border-brand-copper pt-6">
+          <label htmlFor="newsletter-email" className="text-sm font-bold text-brand-ink">Email address</label>
+          <div className="mt-2 flex flex-col gap-3 sm:flex-row">
             <input
-              tabIndex={-1}
-              autoComplete="off"
-              name="website"
-              value={honeypot}
-              onChange={(event) => setHoneypot(event.target.value)}
-              className="hidden"
-              aria-hidden
-            />
-            <input
-              required
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
-              placeholder="Full name"
-              className="rounded-2xl border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 text-sm outline-none transition focus:border-brand-copper"
-            />
-            <input
+              id="newsletter-email"
               required
               type="email"
+              autoComplete="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="Email address"
-              className="rounded-2xl border border-[rgba(15,23,42,0.12)] bg-brand-cream px-4 py-3 text-sm outline-none transition focus:border-brand-copper"
+              className="min-h-12 min-w-0 flex-1 border border-[rgba(20,32,51,0.28)] bg-[#fffdf9] px-4 text-base"
             />
-            <button
-              type="submit"
-              disabled={status === "loading"}
-              className="rounded-full bg-brand-ink px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-copper disabled:opacity-60"
-            >
-              {status === "loading" ? "Subscribing..." : "Subscribe"}
+            <button type="submit" disabled={status === "loading"} className="button-primary shrink-0 disabled:opacity-60">
+              {status === "loading" ? "Subscribing…" : "Subscribe"}
             </button>
-          </form>
-        </div>
-
-        {message ? (
-          <p
-            className={`mt-4 rounded-[1rem] border px-4 py-3 text-sm ${
-              status === "error"
-                ? "border-red-200 bg-red-50 text-red-700"
-                : "border-[rgba(15,23,42,0.08)] bg-[rgba(255,248,239,0.86)] text-body-ink"
-            }`}
-          >
-            {message}
-          </p>
-        ) : null}
+          </div>
+          <label className="mt-4 flex items-start gap-3 text-xs leading-5 text-body-ink">
+            <input
+              type="checkbox"
+              checked={consentEmail}
+              onChange={(event) => setConsentEmail(event.target.checked)}
+              className="mt-1 h-4 w-4 shrink-0 accent-[#b65a2a]"
+            />
+            <span>
+              I agree to receive email updates. I can unsubscribe at any time. See the{" "}
+              <Link href="/privacy-policy" className="underline underline-offset-2">Privacy Policy</Link>.
+            </span>
+          </label>
+          <input
+            tabIndex={-1}
+            autoComplete="off"
+            name="website"
+            value={honeypot}
+            onChange={(event) => setHoneypot(event.target.value)}
+            className="hidden"
+            aria-hidden="true"
+          />
+          <div aria-live="polite" role="status">
+            {message ? (
+              <p className={`mt-4 text-sm ${status === "error" ? "text-red-700" : "text-brand-forest"}`}>
+                {message}
+              </p>
+            ) : null}
+          </div>
+        </form>
       </div>
     </section>
   );

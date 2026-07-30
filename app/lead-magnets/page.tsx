@@ -10,6 +10,7 @@ export const metadata = buildPageMetadata({
   description:
     "Request the five core Hudson Valley buyer, seller, investor, relocation, and divorce/seller guides.",
   path: "/lead-magnets",
+  noIndex: true,
 });
 
 export default function LeadMagnetsPage() {

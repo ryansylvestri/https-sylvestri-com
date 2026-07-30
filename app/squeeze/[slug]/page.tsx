@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { GoogleReviewsPanel } from "@/components/google-reviews-panel";
 import { JsonLd } from "@/components/json-ld";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { RevealSection } from "@/components/reveal-section";
@@ -51,6 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${page.title} | Squeeze Page`,
     description: page.subheadline,
     path: `/squeeze/${page.slug}`,
+    noIndex: true,
   });
 }
 
@@ -194,7 +194,6 @@ export default async function SqueezePage({ params }: PageProps) {
           ) : null}
         </div>
       </main>
-      <GoogleReviewsPanel />
     </>
   );
 }

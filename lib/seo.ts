@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 
 import type { ContentDocument } from "@/lib/content-engine";
-import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
-import { personalMedia } from "@/lib/personal-brand-content";
 import { siteConfig } from "@/lib/site-content";
 
 type PageMetadataInput = {
@@ -10,62 +8,46 @@ type PageMetadataInput = {
   description: string;
   path: string;
   image?: string;
+  imageAlt?: string;
   keywords?: string[];
   noIndex?: boolean;
   openGraphType?: "website" | "article";
+  publishedTime?: string;
+  modifiedTime?: string;
+  authors?: string[];
+  category?: string;
 };
 
-type BreadcrumbItem = {
-  name: string;
-  path: string;
-};
+type BreadcrumbItem = { name: string; path: string };
 
 export function absoluteUrl(pathname: string): string {
-  if (/^https?:\/\//i.test(pathname)) {
-    return pathname;
-  }
-
-  const normalizedPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
-  return new URL(normalizedPath, siteConfig.siteUrl).toString();
+  if (/^https?:\/\//i.test(pathname)) return pathname;
+  return new URL(pathname.startsWith("/") ? pathname : `/${pathname}`, siteConfig.siteUrl).toString();
 }
 
-export function getDefaultSeoImage(): string {
-  return getCloudinaryAssetUrl(personalMedia.sign, {
-    crop: "fill",
-    gravity: "auto",
-    width: 1200,
-    height: 630,
-    format: "jpg",
-  });
+export function buildSocialCardUrl(title: string, category = "Field Notes"): string {
+  const query = new URLSearchParams({ title, category });
+  return absoluteUrl(`/api/social-card?${query.toString()}`);
+}
+
+export function getDefaultSeoImage(title = "Ryan Sylvestri", category = "Hudson Valley"): string {
+  return buildSocialCardUrl(title, category);
 }
 
 export function buildPageMetadata(input: PageMetadataInput): Metadata {
-  const image = input.image || getDefaultSeoImage();
   const canonicalPath = input.path.startsWith("/") ? input.path : `/${input.path}`;
-  const robots = input.noIndex
-    ? {
-        index: false,
-        follow: false,
-        nocache: true,
-        googleBot: {
-          index: false,
-          follow: false,
-          noimageindex: true,
-        },
-      }
-    : {
-        index: true,
-        follow: true,
-      };
+  const image = input.image || buildSocialCardUrl(input.title, input.category);
+  const imageAlt = input.imageAlt || `${input.title} — Ryan Sylvestri`;
 
   return {
     title: input.title,
     description: input.description,
     keywords: input.keywords,
-    alternates: {
-      canonical: canonicalPath,
-    },
-    robots,
+    authors: input.authors?.map((name) => ({ name })),
+    alternates: { canonical: absoluteUrl(canonicalPath) },
+    robots: input.noIndex
+      ? { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false, noimageindex: true } }
+      : { index: true, follow: true },
     openGraph: {
       type: input.openGraphType ?? "website",
       url: absoluteUrl(canonicalPath),
@@ -73,32 +55,39 @@ export function buildPageMetadata(input: PageMetadataInput): Metadata {
       description: input.description,
       siteName: siteConfig.name,
       locale: "en_US",
-      images: [
-        {
-          url: image,
-          width: 1200,
-          height: 630,
-          alt: input.title,
-        },
-      ],
+      images: [{ url: image, width: 1200, height: 630, alt: imageAlt }],
+      ...(input.openGraphType === "article"
+        ? {
+            publishedTime: input.publishedTime,
+            modifiedTime: input.modifiedTime,
+            authors: input.authors,
+            section: input.category,
+          }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: input.title,
       description: input.description,
-      images: [image],
+      images: [{ url: image, alt: imageAlt }],
     },
   };
 }
 
-export function buildContentMetadata(doc: ContentDocument): Metadata {
+export function buildContentMetadata(doc: ContentDocument, noIndex = false): Metadata {
   return buildPageMetadata({
     title: doc.seoTitle ?? doc.title,
     description: doc.seoDescription ?? doc.description,
     path: doc.routePath,
-    image: doc.seoImage,
+    image: doc.seoImage ?? doc.featuredImage.src,
+    imageAlt: doc.featuredImage.alt,
     keywords: doc.tags,
     openGraphType: "article",
+    publishedTime: doc.publishedAt,
+    modifiedTime: doc.updatedAt,
+    authors: [doc.author],
+    category: doc.category,
+    noIndex,
   });
 }
 
@@ -122,42 +111,26 @@ export function buildFaqJsonLd(faqs: Array<{ q: string; a: string }>) {
     mainEntity: faqs.map((item) => ({
       "@type": "Question",
       name: item.q,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.a,
-      },
+      acceptedAnswer: { "@type": "Answer", text: item.a },
     })),
   };
 }
 
 export function buildContentJsonLd(doc: ContentDocument) {
-  const schemaType =
-    doc.section === "articles"
-      ? "BlogPosting"
-      : doc.section === "resources"
-        ? "Article"
-        : "TechArticle";
-
+  const isNews = doc.contentKind === "news";
   return {
     "@context": "https://schema.org",
-    "@type": schemaType,
+    "@type": isNews ? "NewsArticle" : "Article",
     headline: doc.seoTitle ?? doc.title,
     description: doc.seoDescription ?? doc.description,
-    image: [doc.seoImage || getDefaultSeoImage()],
+    image: [{ url: doc.featuredImage.src, caption: doc.featuredImage.alt }],
     url: absoluteUrl(doc.routePath),
     mainEntityOfPage: absoluteUrl(doc.routePath),
     articleSection: doc.category,
     keywords: doc.tags.join(", "),
     datePublished: doc.publishedAt,
     dateModified: doc.updatedAt,
-    author: {
-      "@type": "Person",
-      name: doc.author,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: siteConfig.name,
-      url: siteConfig.siteUrl,
-    },
+    author: { "@type": "Person", name: doc.author, url: absoluteUrl("/about") },
+    publisher: { "@type": "Person", name: "Ryan Sylvestri", url: absoluteUrl("/about") },
   };
 }

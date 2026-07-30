@@ -1,455 +1,260 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { GoogleReviewsPanel } from "@/components/google-reviews-panel";
-import { ImmersiveStage } from "@/components/immersive-stage";
 import { JsonLd } from "@/components/json-ld";
-import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { NewsletterSignup } from "@/components/newsletter-signup";
-import { RevealSection } from "@/components/reveal-section";
-import { PageHero, SectionHeading, SiteShell } from "@/components/site-shell";
-import { TestimonialsSection } from "@/components/testimonials-section";
-import { TrustStrip } from "@/components/trust-strip";
-import { getCloudinaryAssetUrl } from "@/lib/cloudinary";
-import { coreLeadMagnets } from "@/lib/lead-magnets";
-import {
-  audienceRoutes,
-  brandEcosystem,
-  credibilityPills,
-  operatingPrinciples,
-  personalMedia,
-  personalSiteConfig,
-  selectedStories,
-  storyMilestones,
-} from "@/lib/personal-brand-content";
+import { SectionHeading, SiteShell } from "@/components/site-shell";
+import { getPublishedContent } from "@/lib/content-engine";
 import { buildPageMetadata } from "@/lib/seo";
-import { localBusinessSchema } from "@/lib/schema";
-import { siteConfig } from "@/lib/site-content";
 
 export const metadata = buildPageMetadata({
-  title: "Hudson Valley Real Estate Broker, Systems Builder, and AI Operator",
+  title: "Hudson Valley Real Estate Guidance, Technology, and Ideas",
   description:
-    "Ryan Sylvestri's personal brand hub for Hudson Valley real estate, systems thinking, and applied AI, with clear routes for buyers, sellers, investors, renters, and future coaching clients.",
+    "Practical Hudson Valley real estate resources, homeowner guides, market insights, AI news, tools, experiments, and stories from Ryan Sylvestri.",
   path: "/",
 });
 
-export const revalidate = 300;
-
-const firstMinuteAnswers = [
-  {
-    title: "Who Ryan is",
-    detail:
-      "A Hudson Valley real-estate broker with a systems-minded, property-level lens shaped by technical training and real field experience.",
-  },
-  {
-    title: "What Ryan does",
-    detail:
-      "Helps buyers, sellers, investors, renters, and relocation clients move with clearer strategy, then gives the AI and systems side its own lane.",
-  },
-  {
-    title: "Why Ryan is credible",
-    detail:
-      "Brokerage experience, ABR and PSA designations, RE/MAX backing, contractor-adjacent property experience, and operator-grade follow-up thinking.",
-  },
-  {
-    title: "Where to go next",
-    detail:
-      "Choose your lane, use the shared intake, and get routed into the strongest next step instead of one generic contact page.",
-  },
+const realEstatePaths = [
+  { label: "Buy", href: "/buyers", copy: "Plan the search, financing, offer, inspection, and closing." },
+  { label: "Sell", href: "/sellers", copy: "Prepare the property and make informed pricing and launch decisions." },
+  { label: "Invest", href: "/investors", copy: "Evaluate goals, assumptions, property condition, and risk." },
+  { label: "Rent & Relocate", href: "/renters", copy: "Organize a move and learn the Hudson Valley landscape." },
 ];
 
-const homeSchema = [
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: personalSiteConfig.name,
-    url: personalSiteConfig.siteUrl,
-    description:
-      "Personal hub for Ryan Sylvestri: Hudson Valley real estate, systems thinking, applied AI, and direct audience routing.",
-    publisher: { "@id": localBusinessSchema["@id"] },
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: personalSiteConfig.founderName,
-    telephone: personalSiteConfig.phone,
-    email: personalSiteConfig.email,
-    jobTitle: "Licensed Associate Real Estate Broker",
-    worksFor: { "@id": localBusinessSchema["@id"] },
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "584 Route 9",
-      addressLocality: "Fishkill",
-      addressRegion: "NY",
-      postalCode: "12524",
-      addressCountry: "US",
-    },
-    sameAs: siteConfig.sameAs,
-  },
+const learningPaths = [
+  { label: "Buyer guides", href: "/guides#buyer-guides" },
+  { label: "Seller guides", href: "/guides#seller-guides" },
+  { label: "Homeownership", href: "/guides#homeownership" },
+  { label: "Property maintenance", href: "/guides#property-maintenance" },
+  { label: "Market updates", href: "/guides#market-updates" },
+];
+
+const aiPaths = [
+  { label: "AI News", href: "/ai#ai-news", copy: "What changed, what is confirmed, and why it matters." },
+  { label: "Tools & Tutorials", href: "/ai#tools-tutorials", copy: "Practical walkthroughs for useful technology." },
+  { label: "Experiments & Builds", href: "/ai#experiments-builds", copy: "Working notes from things being tested and built." },
+  { label: "Useful Ideas", href: "/ai#useful-ideas", copy: "Clear concepts worth carrying into real work." },
 ];
 
 export default function HomePage() {
-  const featuredMarkets = siteConfig.neighborhoods.slice(0, 6);
-  const featuredStats = siteConfig.stats.slice(0, 4);
-  const headshotUrl = getCloudinaryAssetUrl(personalMedia.headshot, {
-    crop: "fill",
-    gravity: "face",
-    width: 900,
-    height: 900,
-  });
-  const portraitUrl = getCloudinaryAssetUrl(personalMedia.portrait, {
-    crop: "fill",
-    gravity: "auto",
-    width: 1200,
-    height: 900,
-  });
-  const systemsLogoUrl = getCloudinaryAssetUrl(personalMedia.systemsLogo, {
-    crop: "fit",
-    width: 900,
-    height: 900,
-  });
-  const signUrl = getCloudinaryAssetUrl(personalMedia.sign, {
-    crop: "fill",
-    gravity: "auto",
-    width: 1400,
-    height: 960,
-  });
-  const ambientUrl = getCloudinaryAssetUrl(personalMedia.ambient, {
-    crop: "fill",
-    width: 1400,
-    height: 1400,
-  });
+  const articles = getPublishedContent("articles").slice(0, 3);
+  const heroImage = "/images/hudson-valley-editorial-hero.webp";
+  const realEstateImage = "/images/hudson-valley-editorial-home.webp";
+  const learnImage = "/images/editorial-learning-inspection.webp";
+  const aiImage = "/images/editorial-ai-ideas.webp";
+
+  const schemas = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Ryan Sylvestri",
+      url: "https://sylvestri.com",
+      description: "Hudson Valley real estate guidance, useful technology, and ideas.",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: "Ryan Sylvestri",
+      url: "https://sylvestri.com/about",
+      knowsAbout: ["Hudson Valley real estate", "Property ownership", "Applied technology"],
+    },
+  ];
 
   return (
     <SiteShell>
-      <JsonLd data={homeSchema} />
+      <JsonLd data={schemas} />
 
-      <PageHero
-        eyebrow="sylvestri.com"
-        title="One personal brand with clearer paths for buyers, sellers, investors, renters, and AI clients."
-        description="This site is built to route people fast. Buyers get clarity, sellers get valuation and launch strategy, investors get cleaner underwriting, renters get relocation help, and AI clients get the systems lane."
-        primaryCta={{ href: "/intake", label: "Start here" }}
-        secondaryCta={{ href: "/story", label: "Read the story" }}
-      >
-        <ImmersiveStage
-          eyebrow="Personal brand hub"
-          title="Not another generic agent page."
-          detail="This is Ryan's front door: the human brand, the real-estate conversion engine, and the systems lane in one place."
-          portraitUrl={headshotUrl}
-          orbitLabels={["Buyers", "Sellers", "Investors", "AI / Systems"]}
-        />
-      </PageHero>
-
-      <section className="mx-auto max-w-7xl px-6 pb-8">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {firstMinuteAnswers.map((item, i) => (
-            <RevealSection key={item.title} delay={i * 100} direction="scale">
-              <div className="mesh-panel rounded-[1.8rem] border border-[rgba(15,23,42,0.08)] bg-white/88 p-6 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-copper">
-                  {item.title}
-                </p>
-                <p className="mt-4 text-base leading-7 text-body-ink">{item.detail}</p>
-              </div>
-            </RevealSection>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 pb-8">
-        <div className="mesh-panel glow-outline rounded-[2.25rem] border border-[rgba(15,23,42,0.08)] bg-white/88 px-6 py-7 lg:px-8 lg:py-8">
-          <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
-            <div className="space-y-5">
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-copper">
-                Market footprint
-              </p>
-              <h2 className="font-display text-4xl leading-tight text-brand-ink md:text-5xl">
-                Local Hudson Valley trust, with a cleaner route after the first click.
-              </h2>
-              <p className="max-w-2xl text-base leading-8 text-body-ink">
-                Ryan&apos;s name is the front door, but the site still does the real work: market
-                focus, intent capture, audience routing, and the next step that actually matches
-                the visitor.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {featuredMarkets.map((market) => (
-                  <span
-                    key={market}
-                    className="rounded-full border border-[rgba(15,23,42,0.08)] bg-[rgba(255,248,239,0.92)] px-4 py-2 text-sm font-semibold text-brand-ink"
-                  >
-                    {market}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {featuredStats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="mesh-panel rounded-[1.65rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(255,252,247,0.94)] p-5 shadow-[0_18px_40px_rgba(15,23,42,0.05)]"
-                >
-                  <div className="text-3xl font-semibold tracking-[-0.04em] text-brand-ink md:text-4xl">
-                    {stat.value}
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-body-ink">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 py-18">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {credibilityPills.map((pill) => (
-            <div
-              key={pill}
-              className="mesh-panel rounded-[1.6rem] border border-[rgba(15,23,42,0.08)] bg-white/84 px-5 py-4 text-sm font-medium leading-6 text-brand-ink shadow-[0_16px_40px_rgba(15,23,42,0.06)]"
-            >
-              {pill}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <TrustStrip />
-
-      <section id="paths" className="mx-auto max-w-7xl px-6 py-18">
-        <RevealSection>
-          <SectionHeading
-            eyebrow="Choose your lane"
-            title="The homepage should route people fast."
-            description="Each audience gets one clear promise, one path, and one next step. That keeps the personal brand broad without turning the site into a mess."
-          />
-        </RevealSection>
-        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-5">
-          {audienceRoutes.map((route, index) => (
-            <RevealSection key={route.href} delay={index * 100} direction="scale">
-            <Link
-              href={route.href}
-              className="group mesh-panel relative block rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/84 p-7 transition hover:-translate-y-1 hover:border-brand-gold hover:shadow-[0_24px_60px_rgba(15,23,42,0.08)]"
-            >
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-copper via-brand-gold to-brand-ink opacity-80" />
-              <div className="absolute right-5 top-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-ink">
-                0{index + 1}
-              </div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-copper">
-                {route.label}
-              </p>
-              <h2 className="mt-4 font-display text-3xl leading-tight text-brand-ink">
-                {route.title}
-              </h2>
-              <p className="mt-4 text-base leading-7 text-body-ink">{route.promise}</p>
-              <p className="mt-4 text-sm leading-6 text-muted-ink">{route.detail}</p>
-              <p className="mt-6 text-sm font-semibold text-brand-ink transition group-hover:text-brand-copper">
-                Explore this lane
-              </p>
-            </Link>
-            </RevealSection>
-          ))}
-        </div>
-      </section>
-
-      <section className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(255,252,247,0.82)] px-6 py-18 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
-        {ambientUrl ? (
-          <Image
-            src={ambientUrl}
-            alt=""
-            aria-hidden
-            width={512}
-            height={512}
-            className="pointer-events-none absolute right-[-14rem] top-[-8rem] h-[32rem] w-[32rem] opacity-10"
-          />
-        ) : null}
-        <div className="relative z-10 grid gap-10 lg:grid-cols-[0.92fr_1.08fr]">
-          <div className="overflow-hidden rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(20,32,51,0.94)] shadow-[0_24px_60px_rgba(15,23,42,0.18)]">
-            {portraitUrl ? (
-              <Image
-                src={portraitUrl}
-                alt={personalSiteConfig.founderName}
-                width={1200}
-                height={900}
-                className="h-full min-h-[28rem] w-full object-cover"
-              />
-            ) : null}
-          </div>
+      <section className="border-b border-[rgba(20,32,51,0.16)] py-12 md:py-16 lg:py-24">
+        <div className="site-container grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
           <div>
-            <SectionHeading
-              eyebrow="Why this works"
-              title="Ryan&apos;s background gives the site a different point of view."
-              description="The strongest trust signals are already there: technical depth, property reality, brokerage experience, and a more deliberate operator lens."
-            />
-            <div className="mt-10 grid gap-4">
-              {storyMilestones.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-[1.7rem] border border-[rgba(15,23,42,0.08)] bg-white/80 p-6"
-                >
-                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-copper">
-                    {item.phase}
-                  </p>
-                  <h3 className="mt-3 font-display text-3xl leading-tight text-brand-ink">
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 text-base leading-7 text-body-ink">{item.detail}</p>
-                </div>
-              ))}
+            <p className="eyebrow">Hudson Valley field notes</p>
+            <h1 className="page-title mt-5">
+              Real estate guidance, useful technology, and ideas worth sharing.
+            </h1>
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-body-ink md:text-xl md:leading-9">
+              Explore practical Hudson Valley real estate resources, homeowner guides, market
+              insights, AI news, tools, experiments and stories from Ryan Sylvestri.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link href="#real-estate" className="button-primary w-full sm:w-auto">Explore Real Estate</Link>
+              <Link href="/articles" className="button-secondary w-full sm:w-auto">Read the Latest</Link>
             </div>
           </div>
+          <figure className="relative border border-[rgba(20,32,51,0.18)] bg-[#eee6da] p-3">
+            <Image
+              src={heroImage}
+              alt="A Hudson Valley landscape framed by trees and open sky"
+              width={1400}
+              height={980}
+              priority
+              sizes="(max-width: 1024px) 100vw, 45vw"
+              className="aspect-[10/7] h-auto w-full object-cover"
+            />
+            <figcaption className="mt-3 flex items-center justify-between gap-4 px-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-ink">
+              <span>Hudson Valley, New York</span>
+              <span>Field guide No. 01</span>
+            </figcaption>
+          </figure>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-18">
-        <SectionHeading
-          eyebrow="Brand stack"
-          title="Each brand property should do one job well."
-          description="The point is not to create random domains. It is to give each lane a clear role so the personal brand, the real-estate conversion engine, and the systems story reinforce each other."
-        />
-        <div className="mt-10 grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
-          {brandEcosystem.map((brand) => (
-            <div
-              key={brand.domain}
-              className="rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/85 p-8 shadow-[0_18px_50px_rgba(15,23,42,0.06)]"
-            >
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-copper">
-                {brand.status}
-              </p>
-              <h2 className="mt-3 font-display text-4xl leading-tight text-brand-ink">
-                {brand.title}
-              </h2>
-              <p className="mt-2 text-sm font-semibold uppercase tracking-[0.24em] text-muted-ink">
-                {brand.domain}
-              </p>
-              <p className="mt-5 text-base leading-8 text-body-ink">{brand.summary}</p>
-              <Link
-                href={brand.href}
-                className="mt-6 inline-flex rounded-full border border-[rgba(15,23,42,0.12)] px-5 py-3 text-sm font-semibold text-brand-ink transition hover:border-brand-gold hover:text-brand-copper"
-              >
-                Open this lane
+      <section id="real-estate" className="editorial-section scroll-mt-24">
+        <div className="site-container">
+          <SectionHeading
+            eyebrow="Real Estate"
+            title="Guidance for every move."
+            description="Resources for buyers, sellers, investors, renters, and homeowners across the Hudson Valley."
+          />
+          <div className="mt-12 grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+            <Image
+              src={realEstateImage}
+              alt="A Hudson Valley home and surrounding landscape"
+              width={1100}
+              height={760}
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              className="aspect-[4/3] w-full border border-[rgba(20,32,51,0.16)] object-cover"
+            />
+            <div className="grid gap-x-8 gap-y-10 sm:grid-cols-2">
+              {realEstatePaths.map((item, index) => (
+                <Link key={item.href} href={item.href} className="editorial-card group">
+                  <span className="text-xs font-bold text-muted-ink">0{index + 1}</span>
+                  <h3 className="mt-3 font-display text-3xl text-brand-ink group-hover:text-brand-copper">{item.label}</h3>
+                  <p className="mt-3 text-sm leading-7 text-body-ink">{item.copy}</p>
+                  <span className="mt-5 inline-block text-xs font-bold uppercase tracking-[0.15em] text-brand-copper">Explore →</span>
+                </Link>
+              ))}
+              <Link href="/markets" className="sm:col-span-2 border-t border-[rgba(20,32,51,0.18)] pt-5 text-sm font-bold text-brand-ink hover:text-brand-copper">
+                Explore Hudson Valley markets →
               </Link>
             </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 py-18">
-        <div className="grid gap-10 lg:grid-cols-2">
-          <div className="mesh-panel overflow-hidden rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-[rgba(20,32,51,0.96)] p-8 text-white shadow-[0_24px_70px_rgba(15,23,42,0.16)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">
-              Core operating principle
-            </p>
-            <h2 className="mt-4 font-display text-5xl leading-tight">
-              Real estate stays revenue-close, and the systems side amplifies it.
-            </h2>
-            <p className="mt-5 text-base leading-8 text-white/74">
-              The site should make it obvious that Ryan helps people buy, sell, invest, rent, and
-              relocate in the Hudson Valley while still giving the operator, automation, and AI
-              work a defined place to live.
-            </p>
-            <div className="mt-8 grid gap-3">
-              {operatingPrinciples.map((principle) => (
-                <div
-                  key={principle}
-                  className="rounded-[1.25rem] border border-white/10 bg-white/6 px-4 py-3 text-sm leading-6 text-white/78"
-                >
-                  {principle}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid gap-6">
-            <div className="mesh-panel overflow-hidden rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/80 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
-              {signUrl ? (
-                <Image
-                  src={signUrl}
-                  alt="Ryan Sylvestri real-estate branding"
-                  width={1400}
-                  height={960}
-                  className="h-[15rem] w-full object-cover"
-                />
-              ) : null}
-              <div className="p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-copper">
-                  Real-estate lane
-                </p>
-                <h3 className="mt-3 font-display text-3xl leading-tight text-brand-ink">
-                  Buyer clarity, seller certainty, and local trust.
-                </h3>
-                <p className="mt-3 text-base leading-7 text-body-ink">
-                  This is the client-facing engine: buyers, sellers, investors, renters, and all
-                  the real-estate offers that need clean intake and stronger follow-up.
-                </p>
-              </div>
-            </div>
-
-            <div className="mesh-panel overflow-hidden rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-white/80 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
-              {systemsLogoUrl ? (
-                <Image
-                  src={systemsLogoUrl}
-                  alt="Sylvestri Systems"
-                  width={900}
-                  height={900}
-                  className="h-[15rem] w-full object-cover"
-                />
-              ) : null}
-              <div className="p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-copper">
-                  Systems lane
-                </p>
-                <h3 className="mt-3 font-display text-3xl leading-tight text-brand-ink">
-                  Automation, AI workflows, and leverage.
-                </h3>
-                <p className="mt-3 text-base leading-7 text-body-ink">
-                  This is where the operator side can grow into media, products, and implementation
-                  without diluting the main real-estate conversion path.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-18">
-        <div className="grid gap-10 lg:grid-cols-[1fr_0.92fr]">
+      <section className="editorial-section bg-[#f4ede3]">
+        <div className="site-container grid gap-12 lg:grid-cols-[1fr_0.9fr] lg:items-center">
           <div>
             <SectionHeading
-              eyebrow="Stories to build out"
-              title="These are the narrative blocks worth expanding next."
-              description="These story cards can grow into deeper content, media, or dedicated pages as the brand keeps compounding."
+              eyebrow="Learn"
+              title="Practical answers for owning and moving."
+              description="Straightforward guides for the decisions that come before, during, and after a real estate move."
             />
-            <div className="mt-10 grid gap-4">
-              {selectedStories.map((story) => (
-                <div
-                  key={story.title}
-                  className="mesh-panel rounded-[1.7rem] border border-[rgba(15,23,42,0.08)] bg-white/84 p-6"
-                >
-                  <h3 className="font-display text-3xl leading-tight text-brand-ink">
-                    {story.title}
-                  </h3>
-                  <p className="mt-3 text-base leading-7 text-body-ink">{story.detail}</p>
-                </div>
+            <ol className="mt-10 border-t border-[rgba(20,32,51,0.18)]">
+              {learningPaths.map((item, index) => (
+                <li key={item.href} className="border-b border-[rgba(20,32,51,0.18)]">
+                  <Link href={item.href} className="group flex min-h-16 items-center gap-5 py-3">
+                    <span className="text-xs font-bold text-brand-copper">0{index + 1}</span>
+                    <span className="font-display text-xl text-brand-ink group-hover:text-brand-copper">{item.label}</span>
+                    <span aria-hidden="true" className="ml-auto text-brand-copper">→</span>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
+          <Image
+            src={learnImage}
+            alt="Home inspection details being reviewed"
+            width={1100}
+            height={760}
+            sizes="(max-width: 1024px) 100vw, 42vw"
+            className="aspect-[4/3] w-full border border-[rgba(20,32,51,0.16)] object-cover"
+          />
+        </div>
+      </section>
 
-          <div className="lg:sticky lg:top-28 lg:self-start">
-            <LeadCaptureForm
-              title="Start here"
-              description="Tell Ryan what you are trying to do and where you are getting stuck. The shared intake will carry the source context and route the next step correctly."
-              submitLabel="Send my details"
-              source="homepage"
-              campaign="sylvestri-home"
-              defaultLeadType="agent-match"
-              leadMagnetOptions={coreLeadMagnets}
+      <section className="editorial-section">
+        <div className="site-container">
+          <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-end">
+            <SectionHeading
+              eyebrow="AI & Ideas"
+              title="AI, tools, experiments, and useful ideas."
+              description="Plain-English reporting, practical tutorials, and things worth trying."
             />
+            <Image
+              src={aiImage}
+              alt="A restrained abstract illustration representing technology and connected ideas"
+              width={1100}
+              height={760}
+              sizes="(max-width: 1024px) 100vw, 42vw"
+              className="aspect-[16/9] w-full border border-[rgba(20,32,51,0.16)] object-cover"
+            />
+          </div>
+          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {aiPaths.map((item, index) => (
+              <Link key={item.href} href={item.href} className="editorial-card group">
+                <span className="text-xs font-bold text-muted-ink">0{index + 1}</span>
+                <h3 className="mt-3 font-display text-2xl text-brand-ink group-hover:text-brand-copper">{item.label}</h3>
+                <p className="mt-3 text-sm leading-7 text-body-ink">{item.copy}</p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      <GoogleReviewsPanel />
-      <TestimonialsSection />
-      <NewsletterSignup source="homepage-newsletter" campaign="sylvestri-newsletter-home" />
+      <section className="editorial-section bg-[#172338] text-white">
+        <div className="site-container">
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="eyebrow text-[#e19b73]">Stories</p>
+              <h2 className="section-title mt-4 text-white">Latest stories and updates.</h2>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-[#d7dce3]">
+                Recent reporting, guides, experiments, and personal stories.
+              </p>
+            </div>
+            <Link href="/articles" className="button-secondary border-white text-white hover:border-[#e19b73] hover:text-[#e19b73]">
+              View all stories
+            </Link>
+          </div>
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            {articles.length ? articles.map((article) => (
+              <article key={article.slug} className="border-t border-[#e19b73] pt-5">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#e19b73]">{article.category}</p>
+                <h3 className="mt-4 font-display text-2xl leading-tight text-white">
+                  <Link href={article.routePath} className="hover:text-[#e19b73]">{article.title}</Link>
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-[#c8ced8]">{article.summary}</p>
+              </article>
+            )) : (
+              <p className="text-[#d7dce3]">New stories are being reviewed for publication.</p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="editorial-section">
+        <div className="site-container grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
+          <Image
+            src={realEstateImage}
+            alt="A Hudson Valley home framed by mature trees"
+            width={1536}
+            height={1024}
+            sizes="(max-width: 1024px) 100vw, 34vw"
+            className="aspect-[4/3] w-full border border-[rgba(20,32,51,0.16)] object-cover"
+          />
+          <div>
+            <p className="eyebrow">About</p>
+            <h2 className="section-title mt-4">About Ryan.</h2>
+            <p className="section-copy mt-5">
+              Ryan Sylvestri shares practical Hudson Valley real estate guidance, useful technology,
+              and lessons from hands-on work.
+            </p>
+            <Link href="/about" className="button-secondary mt-8">Read more about Ryan</Link>
+          </div>
+        </div>
+      </section>
+
+      <NewsletterSignup source="homepage" campaign="editorial-newsletter" />
+
+      <section className="border-t border-[rgba(20,32,51,0.18)] bg-[#e8ddd0] py-14">
+        <div className="site-container flex flex-col gap-7 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="eyebrow">Contact</p>
+            <h2 className="mt-3 font-display text-3xl text-brand-ink md:text-4xl">Have a question or a move to plan?</h2>
+            <p className="mt-3 text-base leading-7 text-body-ink">Tell Ryan what you’re working through and get a clear next step.</p>
+          </div>
+          <Link href="/intake" className="button-primary shrink-0">Contact Ryan</Link>
+        </div>
+      </section>
     </SiteShell>
   );
 }

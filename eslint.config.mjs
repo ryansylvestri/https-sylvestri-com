@@ -14,6 +14,12 @@ const eslintConfig = defineConfig([
     "dist/**",
     "next-env.d.ts",
   ]),
+  {
+    files: ["ops/hostinger/runtime-env-loader.cjs"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

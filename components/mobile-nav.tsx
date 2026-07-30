@@ -3,12 +3,17 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { personalSiteConfig } from "@/lib/personal-brand-content";
+import {
+  editorialNavigation,
+  isNavigationGroup,
+  type NavigationItem,
+} from "@/lib/editorial-navigation";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState<string | null>("Real Estate");
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -17,110 +22,126 @@ export function MobileNav() {
 
   useEffect(() => {
     if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+      if (event.key !== "Tab" || !panelRef.current) return;
+
+      const focusable = Array.from(
+        panelRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
     };
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [open, close]);
 
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open]);
+  }, [close, open]);
 
   return (
     <div className="lg:hidden">
       <button
         ref={buttonRef}
         type="button"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        aria-controls="mobile-nav-panel"
-        aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-        className="relative z-50 flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(15,23,42,0.12)] bg-white/70 transition hover:border-brand-gold"
+        aria-controls="mobile-navigation"
+        aria-label={open ? "Close navigation" : "Open navigation"}
+        className="focus-ring flex min-h-11 min-w-11 items-center justify-center border border-[rgba(20,32,51,0.22)] bg-transparent text-brand-ink"
       >
-        <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          aria-hidden="true"
-          className="text-brand-ink"
-        >
-          {open ? (
-            <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          ) : (
-            <>
-              <path d="M3 5h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-              <path d="M3 10h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-              <path d="M3 15h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </>
-          )}
-        </svg>
+        <span aria-hidden="true" className="text-xl leading-none">{open ? "×" : "☰"}</span>
       </button>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-40 bg-[rgba(15,23,42,0.4)] backdrop-blur-sm"
+      {open ? (
+        <button
+          type="button"
+          aria-label="Close navigation"
           onClick={close}
-          aria-hidden="true"
+          className="fixed inset-0 z-40 cursor-default bg-[rgba(20,32,51,0.34)]"
         />
-      )}
+      ) : null}
 
       <nav
         ref={panelRef}
-        id="mobile-nav-panel"
-        role="dialog"
-        aria-modal={open}
+        id="mobile-navigation"
         aria-label="Mobile navigation"
-        className={`fixed inset-y-0 right-0 z-40 w-[min(20rem,85vw)] transform bg-[rgba(255,252,247,0.98)] shadow-[-8px_0_40px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-transform duration-300 ease-out ${
+        aria-hidden={!open}
+        className={`fixed inset-y-0 right-0 z-50 w-[min(23rem,92vw)] overflow-y-auto bg-[#fffdf9] px-6 pb-10 pt-6 shadow-[-12px_0_40px_rgba(20,32,51,0.16)] transition-transform ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex h-full flex-col overflow-y-auto px-6 pb-8 pt-20">
-          <div className="grid gap-1">
-            {personalSiteConfig.navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={close}
-                className="rounded-2xl px-4 py-3 text-lg font-semibold text-brand-ink transition hover:bg-[rgba(217,166,90,0.12)] hover:text-brand-copper"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-auto space-y-3 pt-8">
-            <a
-              href={personalSiteConfig.phoneHref}
-              aria-label={`Call Ryan at ${personalSiteConfig.phone}`}
-              data-track-event="cta_click_call"
-              data-track-label="mobile-nav-call"
-              className="block rounded-full border border-[rgba(15,23,42,0.12)] bg-white/70 px-4 py-3 text-center text-sm font-semibold text-brand-ink transition hover:border-brand-gold"
-            >
-              Call {personalSiteConfig.phone}
-            </a>
-            <Link
-              href="/intake"
-              onClick={close}
-              data-track-event="cta_click_start_here"
-              data-track-label="mobile-nav-start-here"
-              className="block rounded-full bg-brand-ink px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.16)] transition hover:bg-brand-copper"
-            >
-              Start Here
-            </Link>
-          </div>
+        <div className="mb-7 flex items-center justify-between border-b border-[rgba(20,32,51,0.14)] pb-5">
+          <span className="font-display text-xl text-brand-ink">Explore</span>
+          <button
+            type="button"
+            onClick={close}
+            className="focus-ring flex min-h-11 min-w-11 items-center justify-center text-2xl text-brand-ink"
+            aria-label="Close navigation"
+          >
+            ×
+          </button>
         </div>
+
+        <div>
+          {editorialNavigation.map((item: NavigationItem) => {
+            if (!isNavigationGroup(item)) {
+              return (
+                <Link key={item.href} href={item.href} onClick={close} className="mobile-nav-link">
+                  {item.label}
+                </Link>
+              );
+            }
+
+            const isExpanded = expanded === item.label;
+            const id = `mobile-group-${item.label.toLowerCase().replace(/[^a-z]+/g, "-")}`;
+            return (
+              <div key={item.label} className="border-b border-[rgba(20,32,51,0.1)]">
+                <button
+                  type="button"
+                  aria-expanded={isExpanded}
+                  aria-controls={id}
+                  onClick={() => setExpanded(isExpanded ? null : item.label)}
+                  className="mobile-nav-link flex w-full items-center justify-between text-left"
+                >
+                  {item.label}
+                  <span aria-hidden="true">{isExpanded ? "−" : "+"}</span>
+                </button>
+                {isExpanded ? (
+                  <div id={id} className="pb-3 pl-3">
+                    {item.items.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={close}
+                        className="flex min-h-11 items-center border-l border-brand-copper px-4 text-sm font-semibold text-body-ink"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+
+        <Link href="/intake" onClick={close} className="button-primary mt-8 flex min-h-11 items-center justify-center">
+          Contact Ryan
+        </Link>
       </nav>
     </div>
   );

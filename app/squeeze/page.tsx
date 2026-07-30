@@ -11,6 +11,7 @@ export const metadata = buildPageMetadata({
   description:
     "Quick-start squeeze pages for Hudson Valley buyers, sellers, investors, and homeowners who need a fast first conversion.",
   path: "/squeeze",
+  noIndex: true,
 });
 
 export default function SqueezeIndexPage() {

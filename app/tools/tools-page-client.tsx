@@ -51,6 +51,10 @@ export function ToolsPageClient() {
         <h1 className="mt-4 font-display text-5xl leading-tight text-brand-ink md:text-6xl">
           Mortgage, affordability, and net-proceeds calculators
         </h1>
+        <p className="mt-6 max-w-3xl text-base leading-8 text-body-ink">
+          Change the assumptions to explore a scenario. These estimates are educational only and
+          do not include every tax, fee, insurance cost, loan term, or property-specific expense.
+        </p>
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-6 px-6 pb-20 lg:grid-cols-3">
@@ -99,6 +103,10 @@ export function ToolsPageClient() {
             Estimated monthly principal + interest:{" "}
             <strong className="text-brand-ink">{currency(mortgagePayment)}</strong>
           </p>
+          <p className="mt-3 text-xs leading-6 text-muted-ink">
+            Formula: fixed-rate principal and interest using the entered price, down payment,
+            annual interest rate, and term. Taxes, insurance, mortgage insurance, and fees are excluded.
+          </p>
         </article>
 
         <article className="rounded-[1.8rem] border border-[rgba(15,23,42,0.08)] bg-white/88 p-6">
@@ -126,6 +134,10 @@ export function ToolsPageClient() {
           <p className="mt-6 text-sm text-body-ink">
             Estimated max monthly housing payment:{" "}
             <strong className="text-brand-ink">{currency(affordabilityCap)}</strong>
+          </p>
+          <p className="mt-3 text-xs leading-6 text-muted-ink">
+            Assumption: total monthly debt plus housing is limited to 36% of gross monthly income.
+            A lender may use different inputs and limits.
           </p>
         </article>
 
@@ -155,7 +167,18 @@ export function ToolsPageClient() {
             Estimated proceeds after 9% selling costs:{" "}
             <strong className="text-brand-ink">{currency(estimatedNet)}</strong>
           </p>
+          <p className="mt-3 text-xs leading-6 text-muted-ink">
+            Assumption: selling costs equal 9% of the entered sale price. Actual commissions,
+            transfer taxes, legal fees, credits, repairs, and payoff amounts vary.
+          </p>
         </article>
+      </section>
+      <section className="border-t border-[rgba(20,32,51,0.18)] bg-[#f4ede3] py-10">
+        <div className="site-container text-sm leading-7 text-body-ink">
+          <strong className="text-brand-ink">Use these outputs as a starting point, not a quote.</strong>{" "}
+          Verify financing with a qualified lender and sale proceeds with the appropriate real
+          estate, legal, tax, and financial professionals.
+        </div>
       </section>
     </SiteShell>
   );

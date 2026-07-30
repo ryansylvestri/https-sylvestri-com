@@ -7,6 +7,7 @@ export const metadata = buildPageMetadata({
   title: "Docs",
   description: "Reference docs, playbooks, and operating notes from the Sylvestri platform.",
   path: "/docs",
+  noIndex: true,
 });
 
 export default function DocsIndexPage() {

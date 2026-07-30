@@ -30,7 +30,8 @@ export default function ThankYouPage() {
           </h1>
           <p className="mt-5 text-lg leading-8 text-body-ink">
             Ryan has the source context, lead type, and notes needed to route this correctly.
-            If this is urgent, call directly.
+            Ryan has the context submitted through the form. Keep a copy of any time-sensitive
+            documents and contact the appropriate emergency or licensed professional when needed.
           </p>
 
           <Suspense fallback={null}>
@@ -38,17 +39,9 @@ export default function ThankYouPage() {
           </Suspense>
 
           <div className="mt-8 flex flex-wrap gap-4">
-            <a
-              href="tel:+18458672646"
-              data-track-event="cta_click_call"
-              data-track-label="thank-you-call"
-              className="rounded-full bg-brand-ink px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-copper"
-            >
-              Call (845) 867-2646
-            </a>
             <Link
               href="/"
-              className="rounded-full border border-[rgba(15,23,42,0.14)] bg-white px-6 py-3 text-sm font-semibold text-brand-ink transition hover:border-brand-gold hover:text-brand-copper"
+              className="button-primary"
             >
               Back to homepage
             </Link>

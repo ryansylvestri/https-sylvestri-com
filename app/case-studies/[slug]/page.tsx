@@ -24,6 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${item.title} | Case Study`,
     description: item.summary,
     path: `/case-studies/${item.slug}`,
+    noIndex: true,
   });
 }
 

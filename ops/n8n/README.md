@@ -24,14 +24,17 @@ Runbook:
 
 ## Workflow pattern
 
-1. Daily cron trigger per instance in UTC
-2. Topic selection and draft generation
-3. QA and duplicate checks
-4. `POST /api/ops/content/publish` with `dryRun=true`
-5. Optional approval branch
-6. `POST /api/ops/content/publish` with `dryRun=false`
-7. Optional PDF branch to `POST /api/ops/assets/publish-pdf`
-8. Post-deploy call to `POST /api/seo/push`
+1. Daily cron trigger
+2. Draft generation with explicit source-needed markers
+3. App-side schema, MDX, duplicate, and quality validation
+4. Commit the draft to the `content-staging` GitHub branch
+5. Open a pull request for human source, claims, image, and copy review
+6. A human reviewer changes `reviewState` to `approved` and `status` to `published`
+7. Normal tested deployment publishes the approved merge
+8. Indexing happens only after the approved deployment
+
+The automation API rejects published or approved payloads. There is no direct
+generate-to-production or generate-to-indexing path.
 
 ## Required headers
 

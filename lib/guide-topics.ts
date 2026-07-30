@@ -9,6 +9,13 @@ export type GuideTopic = {
   faqKeys: string[];
   /** Matching landing page slug for cross-link, if any */
   relatedLanding?: string;
+  /** Form context. When omitted the category default is used. */
+  contactLeadType?: string;
+  /** Explicit null prevents a resource from being preselected. */
+  defaultLeadMagnet?: string | null;
+  /** Date of the latest editorial review, when completed. */
+  reviewedAt?: string;
+  sources?: readonly { title: string; url: string }[];
 };
 
 export const guideTopics: GuideTopic[] = [
@@ -95,6 +102,23 @@ export const guideTopics: GuideTopic[] = [
       "What inspectors check, how much it costs, radon and septic testing, and how to negotiate after the report comes back.",
     category: "process",
     faqKeys: ["inspection"],
+    contactLeadType: "buyer",
+    defaultLeadMagnet: null,
+    reviewedAt: "2026-07-30",
+    sources: [
+      {
+        title: "New York Department of State: Home Inspector",
+        url: "https://dos.ny.gov/node/66086",
+      },
+      {
+        title: "New York Department of Health: Radon",
+        url: "https://www.health.ny.gov/environmental/radon/",
+      },
+      {
+        title: "New York Department of Health: Private Wells",
+        url: "https://www.health.ny.gov/environmental/water/drinking/private_wells",
+      },
+    ],
   },
   {
     slug: "negotiation",

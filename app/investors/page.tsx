@@ -1,14 +1,14 @@
 import { RoutePageTemplate } from "@/components/route-page-template";
-import { routePages } from "@/lib/personal-brand-content";
+import { editorialCorePages } from "@/lib/editorial-core-pages";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata = buildPageMetadata({
-  title: "Investors",
+  title: "Hudson Valley Property Investing",
   description:
-    "Ryan Sylvestri's investor lane for cleaner intake, better opportunity screening, and structured follow-up.",
+    "A transparent process for examining Hudson Valley property goals, assumptions, condition, and risk.",
   path: "/investors",
 });
 
 export default function InvestorsPage() {
-  return <RoutePageTemplate page={routePages.investors} />;
+  return <RoutePageTemplate page={editorialCorePages.investors} />;
 }

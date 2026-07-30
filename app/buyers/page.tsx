@@ -1,14 +1,14 @@
 import { RoutePageTemplate } from "@/components/route-page-template";
-import { routePages } from "@/lib/personal-brand-content";
+import { editorialCorePages } from "@/lib/editorial-core-pages";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata = buildPageMetadata({
-  title: "Buyers",
+  title: "Buying in the Hudson Valley",
   description:
-    "Ryan Sylvestri's buyer lane for first-time buyers, relocation clients, move-up buyers, and serious Hudson Valley searchers.",
+    "A practical Hudson Valley buying process with educational resources and a clear place to ask questions.",
   path: "/buyers",
 });
 
 export default function BuyersPage() {
-  return <RoutePageTemplate page={routePages.buyers} />;
+  return <RoutePageTemplate page={editorialCorePages.buyers} />;
 }

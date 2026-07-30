@@ -252,7 +252,27 @@ export function writeMdxDocument(
     }
   }
 
-  fs.writeFileSync(filePath, serialized, "utf8");
+  const temporaryPath = path.join(
+    path.dirname(filePath),
+    `.${path.basename(filePath)}.${process.pid}.${Date.now()}.tmp`,
+  );
+  let fileDescriptor: number | undefined;
+  try {
+    fileDescriptor = fs.openSync(temporaryPath, "wx", 0o600);
+    fs.writeFileSync(fileDescriptor, serialized, "utf8");
+    fs.fsyncSync(fileDescriptor);
+    fs.closeSync(fileDescriptor);
+    fileDescriptor = undefined;
+    fs.renameSync(temporaryPath, filePath);
+  } catch (error) {
+    if (fileDescriptor !== undefined) {
+      fs.closeSync(fileDescriptor);
+    }
+    if (fs.existsSync(temporaryPath)) {
+      fs.unlinkSync(temporaryPath);
+    }
+    throw error;
+  }
 
   return {
     action: existed ? "updated" : "created",
@@ -334,9 +354,9 @@ export function buildContentValidation(payload: ContentPublishPayload): PublishV
       message: "Body should contain at least 600 characters for publish readiness.",
     },
     {
-      name: "seo-image",
-      ok: Boolean(payload.frontmatter.seoImage),
-      message: "Each publish item should include an explicit SEO image URL.",
+      name: "featured-image",
+      ok: Boolean(payload.frontmatter.featuredImage.src && payload.frontmatter.featuredImage.alt),
+      message: "Each content item must include a featured image URL and descriptive alt text.",
     },
     {
       name: "tags",
@@ -347,6 +367,13 @@ export function buildContentValidation(payload: ContentPublishPayload): PublishV
       name: "canonical-slug",
       ok: payload.frontmatter.slug === normalizeContentSlug(payload.frontmatter.slug),
       message: "Slug must already be normalized before publish.",
+    },
+    {
+      name: "draft-review-gate",
+      ok:
+        payload.frontmatter.status === "draft"
+        && payload.frontmatter.reviewState !== "approved",
+      message: "Automation may create only draft or in-review content.",
     },
   ];
 }

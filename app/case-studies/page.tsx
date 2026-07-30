@@ -9,6 +9,7 @@ export const metadata = buildPageMetadata({
   description:
     "Three practical examples showing how Ryan handles probate, divorce, and relocation decision paths.",
   path: "/case-studies",
+  noIndex: true,
 });
 
 export default function CaseStudiesIndexPage() {

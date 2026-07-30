@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const doc = getPublishedDocBySlug("docs", slug.join("/"));
   if (!doc) return {};
 
-  return buildContentMetadata(doc);
+  return buildContentMetadata(doc, true);
 }
 
 export default async function DocDetailPage({ params }: PageProps) {
