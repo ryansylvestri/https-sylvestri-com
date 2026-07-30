@@ -15,12 +15,12 @@ export type AccessResolution =
 export async function resolveContentAccess(
   access: ContentAccess,
 ): Promise<AccessResolution> {
+  if (access === "public") {
+    return { kind: "allowed", tier: "anon" };
+  }
+
   const viewer = await getCurrentViewer();
   const tier = viewer?.tier ?? "anon";
-
-  if (access === "public") {
-    return { kind: "allowed", tier };
-  }
 
   if (access === "free") {
     if (tier === "anon") return { kind: "login_required" };

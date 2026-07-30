@@ -2,13 +2,14 @@ import "server-only";
 
 import fs from "node:fs";
 import path from "node:path";
-import { cache } from "react";
 
 import matter from "gray-matter";
 import { compileMDX } from "next-mdx-remote/rsc";
 import { z } from "zod";
 
 const CONTENT_ROOT = path.join(process.cwd(), "content");
+const CONTENT_SECTIONS: ContentSection[] = ["docs", "resources", "articles"];
+const CONTENT_PUBLISH_STATE_PATH = path.join(process.cwd(), "ops", "state", "content-publish.json");
 
 const sourceSchema = z.object({
   title: z.string().min(1),
@@ -105,6 +106,9 @@ type ParsedDocResult = {
   frontmatter: ContentFrontmatter;
   body: string;
 };
+
+let cachedContentIndex: ContentIndex | null = null;
+let cachedContentSignature = "";
 
 export function normalizeContentSlug(rawSlug: string): string {
   const slug = rawSlug
@@ -208,8 +212,7 @@ function normalizeDoc(filePath: string): ContentDocument {
 }
 
 function buildIndex(): ContentIndex {
-  const sections: ContentSection[] = ["docs", "resources", "articles"];
-  const all = sections.flatMap((section) =>
+  const all = CONTENT_SECTIONS.flatMap((section) =>
     listMdxFiles(path.join(CONTENT_ROOT, section)).map(normalizeDoc),
   );
 
@@ -235,7 +238,31 @@ function buildIndex(): ContentIndex {
   };
 }
 
-const getContentIndex = cache(buildIndex);
+function getMtimeMs(targetPath: string): number {
+  try {
+    return fs.statSync(targetPath).mtimeMs;
+  } catch {
+    return 0;
+  }
+}
+
+function getContentSignature(): string {
+  return [
+    ...CONTENT_SECTIONS.map((section) => getMtimeMs(path.join(CONTENT_ROOT, section))),
+    getMtimeMs(CONTENT_PUBLISH_STATE_PATH),
+  ].join("|");
+}
+
+function getContentIndex(): ContentIndex {
+  const signature = getContentSignature();
+  if (cachedContentIndex && cachedContentSignature === signature) {
+    return cachedContentIndex;
+  }
+
+  cachedContentIndex = buildIndex();
+  cachedContentSignature = signature;
+  return cachedContentIndex;
+}
 
 function byPublishedDateDescending(left: ContentDocument, right: ContentDocument) {
   return new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime();
