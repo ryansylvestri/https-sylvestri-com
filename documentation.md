@@ -1124,3 +1124,30 @@ Lighthouse 13.4.1 was run against the clean packaged standalone server with mobi
   - affected the article detail route and sitemap
 - Added `transpilePackages` for the MDX/content runtime so these dependencies are bundled instead of opened through Turbopack's external-module wrapper.
 - Restore or replace the approved portrait assets separately if portraits are required; no generated likeness is used.
+
+### Production Verification
+
+- Hostinger deployed fix commit `5513f03` from `main` and marked it current.
+- Production route audit passed:
+  - 18 canonical URLs
+  - 40 discovered internal links
+  - article detail and sitemap returned HTTP 200 without exception text
+  - all seven retired URL checks returned one-hop HTTP 308 redirects to HTTP 200 destinations
+- Hostinger runtime logs after the final smoke and Lighthouse requests:
+  - issues: 0
+  - errors: 0
+  - two managed Next.js workers started successfully
+- Production Lighthouse 13.4.1 results:
+
+| Route | Performance | Accessibility | Best Practices | SEO |
+| --- | ---: | ---: | ---: | ---: |
+| Home | 92 | 93 | 100 | 100 |
+| Buyers | 93 | 93 | 100 | 100 |
+| Sellers | 92 | 93 | 100 | 100 |
+| Inspection guide | 97 | 93 | 100 | 100 |
+| Articles index | 95 | 92 | 100 | 100 |
+| Published article | 93 | 92 | 100 | 100 |
+| AI hub | 99 | 92 | 96 | 100 |
+| Contact | 98 | 93 | 100 | 100 |
+
+- Hostinger's CDN returns HTTP 403 to Lighthouse's emulated crawler user agent. Production Lighthouse was therefore run with `--no-emulated-user-agent`; all other mobile audit settings were retained.
