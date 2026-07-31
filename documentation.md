@@ -1219,8 +1219,19 @@ Set up Cloudflare video delivery for sylvestri.com and use `videos/video-1.mp4` 
 - The raw `videos/` staging directory is excluded from Git and the Hostinger artifact.
 - Created rollback tag `pre-cloudflare-stream-20260731` at commit `10b1c73` before publication.
 
-### Required Cloudflare Completion
+### Production Release
 
-1. Review and commit the repo changes when approved.
-2. Deploy through the existing Hostinger pipeline.
-3. Verify `https://sylvestri.com/videos` and the embedded player in production.
+1. Committed the Stream implementation as `321a620` (`feat: add Cloudflare Stream video delivery`).
+2. Pushed `321a620` to both `feat/editorial-site-revamp` and production branch `main`.
+3. Pushed rollback tag `pre-cloudflare-stream-20260731` to GitHub.
+4. Hostinger automatically deployed `321a620` from `main` and marked the deployment completed in 1 minute 18 seconds.
+5. Production verification passed:
+   - `GET https://sylvestri.com/videos`: HTTP 200
+   - page contains the correct Cloudflare customer domain and video ID
+   - Cloudflare player reports the 10-second duration and successfully begins playback
+   - live page includes `VideoObject` structured data
+   - live sitemap includes `https://sylvestri.com/videos`
+
+### Final Status
+
+- Cloudflare Stream setup, first upload, website integration, GitHub publication, Hostinger deployment, and live playback verification are complete.
