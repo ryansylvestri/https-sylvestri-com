@@ -13,6 +13,7 @@
     "lead:smoke": "node ./scripts/lead-smoke.mjs",
     "lead:verify:live": "node ./scripts/verify-live-lead.mjs",
     "cloudinary:test-upload": "node ./scripts/test-cloudinary-signed-upload.mjs",
+    "cloudflare:stream:upload": "node ./scripts/upload-cloudflare-stream.mjs",
     "assets:worker": "node ./scripts/asset-worker.mjs",
     "plans:scaffold": "node ./scripts/scaffold-plans.mjs",
     "audit:sitemap": "node ./scripts/audit-sitemap.mjs",

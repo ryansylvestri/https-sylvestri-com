@@ -42,6 +42,7 @@ export const editorialNavigation = [
     ],
   },
   { label: "Stories", href: "/articles" },
+  { label: "Videos", href: "/videos" },
   { label: "About", href: "/about" },
 ] as const satisfies readonly NavigationItem[];
 
@@ -57,6 +58,7 @@ export const footerNavigation = {
     { label: "Guides", href: "/guides" },
     { label: "AI & Ideas", href: "/ai" },
     { label: "Stories", href: "/articles" },
+    { label: "Videos", href: "/videos" },
   ],
   About: [
     { label: "About Ryan", href: "/about" },

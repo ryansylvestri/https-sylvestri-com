@@ -25,6 +25,24 @@ npm ci
 npm run dev
 ```
 
+## Cloudflare Stream
+
+The public video page is available at `/videos`. Configure its player with:
+
+- `NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE`
+- `NEXT_PUBLIC_CLOUDFLARE_STREAM_VIDEO_ID`
+
+For repeatable CLI uploads, create a Cloudflare API token limited to Stream write access and run:
+
+```bash
+cd /Users/ryansylvestri/dev/github/https-sylvestri-com
+CLOUDFLARE_ACCOUNT_ID="your-account-id" \
+CLOUDFLARE_STREAM_API_TOKEN="your-stream-token" \
+npm run cloudflare:stream:upload -- videos/video-1.mp4
+```
+
+The upload script reports the non-secret video ID and customer code required by the site. Never commit the Stream API token.
+
 ## Hostinger
 - Managed Node app deploy runbook:
   - `ops/hostinger/README.md`
@@ -43,11 +61,15 @@ npm run dev
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
   - `NEXT_PUBLIC_CLOUDINARY_FOLDER`
+  - `NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE`
+  - `NEXT_PUBLIC_CLOUDFLARE_STREAM_VIDEO_ID`
   - `SUPABASE_SERVICE_ROLE_KEY`
   - `CLOUDINARY_CLOUD_NAME`
   - `CLOUDINARY_API_KEY`
   - `CLOUDINARY_API_SECRET`
   - `CLOUDINARY_UPLOAD_FOLDER`
+  - `CLOUDFLARE_ACCOUNT_ID`
+  - `CLOUDFLARE_STREAM_API_TOKEN`
   - `STRIPE_SECRET_KEY`
   - `STRIPE_WEBHOOK_SECRET`
   - `STRIPE_PRO_MONTHLY_PRICE_ID`

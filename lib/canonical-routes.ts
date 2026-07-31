@@ -7,6 +7,7 @@ export const canonicalPublicRoutes = [
   "/markets",
   "/guides",
   "/articles",
+  "/videos",
   "/ai",
   "/about",
   "/intake",

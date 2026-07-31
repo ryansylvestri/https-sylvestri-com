@@ -25,6 +25,9 @@ out/
 /dist/hostinger/staging/
 /dist/hostinger/*.tgz
 
+# local Cloudflare Stream upload staging
+/videos/
+
 # misc
 .DS_Store
 *.pem

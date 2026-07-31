@@ -1151,3 +1151,76 @@ Lighthouse 13.4.1 was run against the clean packaged standalone server with mobi
 | Contact | 98 | 93 | 100 | 100 |
 
 - Hostinger's CDN returns HTTP 403 to Lighthouse's emulated crawler user agent. Production Lighthouse was therefore run with `--no-emulated-user-agent`; all other mobile audit settings were retained.
+
+---
+
+## Thread Update
+
+Date: 2026-07-31
+Workspace: /Users/ryansylvestri/dev/github/https-sylvestri-com
+Shell: zsh
+OS: Darwin arm64
+Node: v22.22.3
+
+### Request
+
+Set up Cloudflare video delivery for sylvestri.com and use `videos/video-1.mp4` as the first test asset.
+
+### Audit and Architecture
+
+1. Confirmed the test asset is a valid 34,007,515-byte MP4:
+   - duration: 10.677 seconds
+   - dimensions: 1920x1080
+   - video codec: HEVC
+   - audio codec: AAC
+2. Selected Cloudflare Stream instead of raw R2 because this requirement needs managed video encoding, adaptive playback, thumbnails, and an embeddable player.
+3. Completed the one-time Wrangler OAuth login and confirmed Cloudflare account `e4368226247cadc5910afc1f23527a8c`.
+4. Initially confirmed Stream was not active and the account opened the Stream plan-selection page.
+5. After billing activation, verified the Stream video library is active with:
+   - Starter allowance: 1,000 stored minutes
+   - current usage: 0 videos and 0 stored minutes
+   - customer subdomain: `customer-imffr46gncqz7u1u.cloudflarestream.com`
+
+### Repo Implementation
+
+1. Added the responsive Cloudflare iframe player:
+   - `components/cloudflare-stream-player.tsx`
+2. Added the public video library route:
+   - `app/videos/page.tsx`
+3. Added `/videos` to primary navigation, footer navigation, the canonical route registry, and sitemap generation.
+4. Added a deterministic CLI upload script:
+   - `scripts/upload-cloudflare-stream.mjs`
+   - command: `npm run cloudflare:stream:upload -- videos/video-1.mp4`
+5. Added the Cloudflare Stream environment contract to `.env.example` and `README.md`.
+6. Preserved the original test file in the local `videos/` staging directory and ignored that directory so raw video binaries are not committed or copied into the Next.js public bundle.
+7. Added the verified public customer code as the default player subdomain while preserving an environment-variable override.
+8. Uploaded `videos/video-1.mp4` to Cloudflare Stream through the authenticated dashboard:
+   - video ID: `279ac8444511f6a6f2a72af6b4cba239`
+   - customer code: `imffr46gncqz7u1u`
+   - visibility: public playback
+9. Added the verified video ID as the default site content while preserving an environment-variable override.
+10. Added `VideoObject` structured data with the Stream thumbnail, iframe, HLS manifest, duration, and upload date.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed; Next generated 213 routes including static `/videos`.
+- Cloudflare Stream iframe: HTTP 200.
+- Cloudflare Stream HLS manifest: HTTP 200 after processing completed.
+- Cloudflare Stream thumbnail: HTTP 200.
+- Local `GET /videos`: HTTP 200 with canonical metadata, primary/mobile/footer navigation, and the live Stream iframe.
+- Browser QA confirmed the Cloudflare player loaded the 10-second asset, displayed the glacier thumbnail, and successfully began playback.
+- `npm run hostinger:package`: passed and created `dist/hostinger/sylvestri-hostinger-package.tgz`.
+- `git diff --check`: passed.
+
+### Release Safety
+
+- The raw `videos/` staging directory is excluded from Git and the Hostinger artifact.
+- Created rollback tag `pre-cloudflare-stream-20260731` at commit `10b1c73` before publication.
+
+### Required Cloudflare Completion
+
+1. Review and commit the repo changes when approved.
+2. Deploy through the existing Hostinger pipeline.
+3. Verify `https://sylvestri.com/videos` and the embedded player in production.
