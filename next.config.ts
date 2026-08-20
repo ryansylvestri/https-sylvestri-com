@@ -71,6 +71,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
+        source: "/forms/:path*",
+        destination: "https://forms-origin.sylvestri.com/forms/:path*",
+      },
+      {
         source: "/monkeymaghees",
         destination: "/monkeymaghees/index.html",
       },

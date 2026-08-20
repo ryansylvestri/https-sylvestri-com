@@ -1235,3 +1235,30 @@ Set up Cloudflare video delivery for sylvestri.com and use `videos/video-1.mp4` 
 ### Final Status
 
 - Cloudflare Stream setup, first upload, website integration, GitHub publication, Hostinger deployment, and live playback verification are complete.
+
+## 2026-08-20 — Reusable Forms Route Mount
+
+### Scope
+
+Mount the independently deployed Sylvestri forms service at the canonical
+public prefix `https://sylvestri.com/forms` without copying its implementation
+into this repository or changing the Tillson Woods production form.
+
+### Verified origin
+
+- origin: `https://forms-origin.sylvestri.com`
+- service: `sylvestri-forms.service` on the Hostinger VPS
+- upstream binding: `127.0.0.1:3035`
+- origin `/forms`: HTTP `200`
+- origin `/forms/general-inquiry-form-1`: HTTP `200`
+- TLS: valid Let's Encrypt certificate with automatic renewal
+
+### Change
+
+Added one external Next.js rewrite:
+
+`/forms/:path*` -> `https://forms-origin.sylvestri.com/forms/:path*`
+
+The prefix is preserved so the isolated service's full page, static assets,
+iframe route, embed script, and API endpoint all remain under the canonical
+`sylvestri.com/forms` namespace.
