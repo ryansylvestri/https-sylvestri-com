@@ -73,6 +73,12 @@ export default function RootLayout({
           <TrackingClient />
         </Suspense>
         {children}
+        <script
+          src="https://sylvestri-webmcp.ryansylvestri.workers.dev/v0.1.0/webmcp.js"
+          data-webmcp-site-name="Sylvestri"
+          data-webmcp-annotate-forms="true"
+          defer
+        />
       </body>
     </html>
   );
