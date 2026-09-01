@@ -1315,4 +1315,28 @@ Create and publish a comprehensive umbrella privacy policy at `https://sylvestri
 - Rendered page includes the Google Privacy Policy link, confidential-information section, SMS non-sharing language, email, phone, and mailing address.
 - Built sitemap contains `https://sylvestri.com/privacypolicy` and omits the legacy URL.
 - Footer, lead forms, and newsletter links resolve directly to `/privacypolicy`.
-- Production deployment and live verification are pending.
+- `npm run hostinger:package`: passed after applying the documented narrow environment workaround, producing `dist/hostinger/sylvestri-hostinger-package.tgz`.
+- Rebased the release onto production commits `2d00b7e` and `582ffad` so the reusable forms route and shared WebMCP runtime were preserved.
+
+### Release Safety
+
+- Created and pushed rollback tag `pre-privacy-policy-20260901` at the previous production commit `582ffad`.
+
+### Production Release
+
+1. Published release commit `93144d0` (`feat: publish comprehensive privacy policy`) to:
+   - `feat/editorial-site-revamp`
+   - `main`
+2. Hostinger picked up the `main` release and began serving the new route.
+3. Live verification passed:
+   - `GET https://sylvestri.com/privacypolicy`: HTTP 200
+   - `GET https://sylvestri.com/privacy-policy`: HTTP 308 to `/privacypolicy`
+   - canonical metadata points to `https://sylvestri.com/privacypolicy`
+   - live sitemap contains the canonical route and omits the legacy route
+   - live intake and footer links point directly to `/privacypolicy`
+   - the production page includes the effective date, Google privacy link, confidential-information boundary, SMS non-sharing language, email, telephone, and mailing address
+4. Desktop and responsive production visual checks passed after the Hostinger browser challenge cleared; typography, spacing, navigation, hero, and policy prose render correctly without visible layout breakage.
+
+### Final Status
+
+- The comprehensive privacy policy, exact Google-facing URL, backward-compatible redirect, sitemap/navigation updates, GitHub release, Hostinger deployment, and production verification are complete.
