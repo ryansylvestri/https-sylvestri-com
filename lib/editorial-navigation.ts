@@ -66,7 +66,7 @@ export const footerNavigation = {
     { label: "Resources", href: "/resources" },
   ],
   Legal: [
-    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Privacy Policy", href: "/privacypolicy" },
     { label: "Terms of Use", href: "/terms" },
     { label: "Accessibility", href: "/accessibility" },
   ],

@@ -378,7 +378,7 @@ export function LeadCaptureForm({
           />
           <span>
             I agree to receive email follow-up about this request. See the{" "}
-            <Link href="/privacy-policy" className="underline underline-offset-2">Privacy Policy</Link>.
+            <Link href="/privacypolicy" className="underline underline-offset-2">Privacy Policy</Link>.
           </span>
         </label>
 
@@ -393,7 +393,7 @@ export function LeadCaptureForm({
           />
           <span>
             I agree to receive SMS follow-up about this request (optional). Message and data rates may apply. See the{" "}
-            <Link href="/privacy-policy" className="underline underline-offset-2">Privacy Policy</Link>.
+            <Link href="/privacypolicy" className="underline underline-offset-2">Privacy Policy</Link>.
           </span>
         </label>
 

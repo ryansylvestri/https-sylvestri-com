@@ -1262,3 +1262,57 @@ Added one external Next.js rewrite:
 The prefix is preserved so the isolated service's full page, static assets,
 iframe route, embed script, and API endpoint all remain under the canonical
 `sylvestri.com/forms` namespace.
+
+---
+
+## Thread Update
+
+Date: 2026-09-01
+Workspace: /Users/ryansylvestri/dev/github/https-sylvestri-com
+Shell: zsh
+OS: macOS 26.6.2, Darwin arm64
+Node: v22.22.3
+
+### Request
+
+Create and publish a comprehensive umbrella privacy policy at `https://sylvestri.com/privacypolicy` for use across Ryan Sylvestri-operated websites and as the public privacy-policy link required by Google Maps.
+
+### Audit and Policy Architecture
+
+1. Confirmed the existing `https://sylvestri.com/privacy-policy` route was live but contained only a short six-section summary.
+2. Resolved the requested template source: `360mgmtgroup.com` redirects to `360propertymgmt.com`, whose policy covers real-estate applications, transaction forms, consumer reports, financial identifiers, and email information.
+3. Inventoried the current Sylvestri platform data flows, including:
+   - lead forms and property context;
+   - email/SMS consent;
+   - Follow Up Boss and n8n routing;
+   - operator email notifications;
+   - Google Tag Manager, analytics/advertising integrations, and Microsoft Clarity support;
+   - Supabase accounts and waitlists;
+   - Cloudinary uploads and Cloudflare delivery;
+   - Stripe transaction infrastructure;
+   - Google Maps references and an embedded map in a hosted static experience.
+4. Defined the policy scope as every Ryan Sylvestri-operated website, subdomain, landing page, form, application, or digital service that displays or links to the policy. This avoids claiming control over unrelated third-party sites while making one policy reusable across the owned web portfolio.
+5. Added an explicit confidential/sensitive-information boundary so general forms and ordinary email/SMS are not represented as secure intake channels for Social Security numbers, government IDs, full financial credentials, medical records, consumer reports, or privileged material.
+6. Included the current public business contact details already used by the site.
+
+### Implementation
+
+1. Added the canonical public route at `app/privacypolicy/page.tsx`.
+2. Converted the legacy `app/privacy-policy/page.tsx` route to a permanent redirect so existing links continue to work.
+3. Updated footer navigation and the canonical sitemap route registry to use `/privacypolicy`.
+4. Added disclosures for data categories, sources, uses, service providers, advertising/analytics, Google services and location permissions, confidentiality, SMS consent, retention, security, privacy rights, children, third-party services, updates, and contact methods.
+5. Linked directly to Google's current Privacy Policy from the Google Maps/services disclosure.
+
+### Verification and Production Release
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run validate:content`: passed for all three content files.
+- `npm run build`: passed and generated 214 pages, including static `/privacypolicy` and the legacy route.
+- Built standalone canonical route: HTTP 200.
+- Built standalone legacy route: HTTP 308 with `Location: /privacypolicy`.
+- Rendered canonical metadata uses `https://sylvestri.com/privacypolicy`.
+- Rendered page includes the Google Privacy Policy link, confidential-information section, SMS non-sharing language, email, phone, and mailing address.
+- Built sitemap contains `https://sylvestri.com/privacypolicy` and omits the legacy URL.
+- Footer, lead forms, and newsletter links resolve directly to `/privacypolicy`.
+- Production deployment and live verification are pending.

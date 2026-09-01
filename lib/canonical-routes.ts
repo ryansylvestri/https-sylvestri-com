@@ -13,7 +13,7 @@ export const canonicalPublicRoutes = [
   "/intake",
   "/resources",
   "/tools",
-  "/privacy-policy",
+  "/privacypolicy",
   "/terms",
   "/accessibility",
 ] as const;

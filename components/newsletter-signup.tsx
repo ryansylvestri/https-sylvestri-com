@@ -98,7 +98,7 @@ export function NewsletterSignup({ source, campaign }: { source: string; campaig
             />
             <span>
               I agree to receive email updates. I can unsubscribe at any time. See the{" "}
-              <Link href="/privacy-policy" className="underline underline-offset-2">Privacy Policy</Link>.
+              <Link href="/privacypolicy" className="underline underline-offset-2">Privacy Policy</Link>.
             </span>
           </label>
           <input
